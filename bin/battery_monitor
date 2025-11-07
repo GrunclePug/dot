@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Configuration
+BATTERY_ID="BAT0"
+THRESHOLD=5
+CRITICAL_THRESHOLD=1
+DELAY=10
+SOUND_FILE="/usr/share/sounds/freedesktop/stereo/dialog-error.oga"
+ALERT_FLAG="/tmp/battery_alert_triggered"
+
+while true; do
+    # Read battery status
+    CAPACITY=$(cat "/sys/class/power_supply/$BATTERY_ID/capacity" 2>/dev/null)
+    STATUS=$(cat "/sys/class/power_supply/$BATTERY_ID/status" 2>/dev/null)
+
+    # Skip if status is unavailable
+    [ -z "$CAPACITY" ] && sleep "$DELAY" && continue
+
+    # Reset Logic: Clear flag if charging OR above the threshold
+    ([[ "$CAPACITY" -gt "$THRESHOLD" ]] || [[ "$STATUS" = "Charging" ]]) && rm -f "$ALERT_FLAG"
+
+    # Alert Logic
+    if [[ "$CAPACITY" -le "$THRESHOLD" ]] && [[ "$STATUS" = "Discharging" ]]; then
+        if [[ ! -f "$ALERT_FLAG" ]] || [[ "$CAPACITY" -le "$CRITICAL_THRESHOLD" ]]; then
+            paplay "$SOUND_FILE" &
+            notify-send -u critical -t 5000 "LOW BATTERY ALERT" "Current capacity: $CAPACITY% - Plug in now!"
+            
+            # Ensure the flag exists to prevent spam until the condition changes
+            [[ ! -f "$ALERT_FLAG" ]] && touch "$ALERT_FLAG"
+        fi
+    fi
+
+    sleep "$DELAY"
+done

@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+# Check if an argument was provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <path/to/project_dir_or_file>"
+    exit 1
+fi
+
+# --- 1. Determine Paths and Session Name ---
+
+TARGET_PATH="$1"
+
+# Resolve the absolute path of the target
+ABS_PATH=$(realpath "$TARGET_PATH")
+
+# Determine the directory to use as the working directory and session name
+if [ -d "$ABS_PATH" ]; then
+    PROJECT_DIR="$ABS_PATH"
+elif [ -f "$ABS_PATH" ]; then
+    PROJECT_DIR=$(dirname "$ABS_PATH")
+    FILE_TO_OPEN="$ABS_PATH"
+else
+    echo "Error: Target '$TARGET_PATH' is not a valid directory or file."
+    exit 1
+fi
+
+# Set the session name to the last part of the directory path
+SESSION_NAME=$(basename "$PROJECT_DIR")
+
+# --- 2. Create and Configure Tmux Session ---
+
+# Check if the session already exists
+tmux has-session -t="$SESSION_NAME" 2>/dev/null
+
+if [ $? != 0 ]; then
+    # Create a new detached tmux session, starting with window 1 (window 0 will be created but immediately replaced)
+    # The default window 0 is created first. We will rename it later.
+    tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR"
+
+    # --- Window 1: Neovim (using window 0, but will be indexed as 1 for the user) ---
+    
+    # Rename the first window (window index 0) to "nvim"
+    tmux rename-window -t "$SESSION_NAME:1" "nvim"
+
+    # Send the Neovim command to window 0
+    if [ -n "$FILE_TO_OPEN" ]; then
+        tmux send-keys -t "$SESSION_NAME:1" "nvim \"$FILE_TO_OPEN\"" C-m
+    else
+        tmux send-keys -t "$SESSION_NAME:1" "nvim ." C-m
+    fi
+
+    # --- Window 2: Terminal ---
+    
+    # Create a new window (window index 1, which will be the user's window 2)
+    # The -n flag sets the window name, and -c sets the starting directory.
+    tmux new-window -d -t "$SESSION_NAME:2" -c "$PROJECT_DIR" -n "shell"
+    
+    # Select the first window (Neovim) so the user attaches to the editor
+    tmux select-window -t "$SESSION_NAME:1"
+
+fi
+
+# --- 3. Attach to Session ---
+tmux attach-session -t "$SESSION_NAME"
