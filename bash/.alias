@@ -1,0 +1,4 @@
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias dust='dust --reverse'
+alias ff='fastfetch --logo-color-1 magenta --logo-color-2 magenta --color magenta --color-separator cyan'
