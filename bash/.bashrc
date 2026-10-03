@@ -32,14 +32,7 @@ PS1="\[${SEPARATOR_COLOR}\][\[${CLR}${PRIMARY_COLOR}\]\u\[${CLR}${SEPARATOR_COLO
 # Fetch
 fastfetch --logo-color-1 magenta --logo-color-2 magenta --color magenta --color-separator cyan
 
-# Vim Mode
-#set -o vi
-#bind 'set show-mode-in-prompt on'
-##bind 'set vi-ins-mode-string "+"'
-#bind 'set vi-ins-mode-string ""'
-#bind 'set vi-cmd-mode-string ":"'
-
-# Host-specific overrides (e.g. device colors, local paths, vi-mode)
+# Host-specific overrides (e.g. device colors, local paths)
 if [ -f ~/.bashrc.local ]; then
 	. ~/.bashrc.local
 fi
