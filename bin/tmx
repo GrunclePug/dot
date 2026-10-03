@@ -1,14 +1,54 @@
 #!/usr/bin/env bash
 
-# Check if an argument was provided
-if [ -z "$1" ]; then
-    echo "Usage: $0 <path/to/project_dir_or_file>"
+# Get the directory of this script to locate the helper script
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
+# --- 1. Parse Arguments and Determine Paths ---
+
+SPLIT_PERCENT=30
+TARGET_PATH=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -w|--wide)
+            SPLIT_PERCENT=40
+            shift
+            ;;
+        --split)
+            if [ -n "$2" ] && [ "$2" -eq "$2" ] 2>/dev/null; then
+                SPLIT_PERCENT="$2"
+                shift 2
+            else
+                echo "Error: --split requires a numeric percentage (e.g. 40)."
+                exit 1
+            fi
+            ;;
+        -h|--help)
+            echo "Usage: $0 [options] <path/to/project_dir_or_file>"
+            echo ""
+            echo "Options:"
+            echo "  -w, --wide        Use 40% width for agent/shell side panels (default: 30%)"
+            echo "  --split <percent> Specify custom panel width percentage (e.g. --split 40)"
+            echo "  -h, --help        Show this help message"
+            exit 0
+            ;;
+        *)
+            if [ -z "$TARGET_PATH" ]; then
+                TARGET_PATH="$1"
+                shift
+            else
+                echo "Error: Unexpected argument '$1'"
+                exit 1
+            fi
+            ;;
+    esac
+done
+
+if [ -z "$TARGET_PATH" ]; then
+    echo "Usage: $0 [options] <path/to/project_dir_or_file>"
+    echo "Run '$0 --help' for details."
     exit 1
 fi
-
-# --- 1. Determine Paths and Session Name ---
-
-TARGET_PATH="$1"
 
 # Resolve the absolute path of the target
 ABS_PATH=$(realpath "$TARGET_PATH")
@@ -33,32 +73,65 @@ SESSION_NAME=$(basename "$PROJECT_DIR")
 tmux has-session -t="$SESSION_NAME" 2>/dev/null
 
 if [ $? != 0 ]; then
-    # Create a new detached tmux session, starting with window 1 (window 0 will be created but immediately replaced)
-    # The default window 0 is created first. We will rename it later.
-    tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR"
-
-    # --- Window 1: Neovim (using window 0, but will be indexed as 1 for the user) ---
+    # Create background sessions to host the mirrored shell and agent instances
+    tmux new-session -d -s "${SESSION_NAME}-shell" -c "$PROJECT_DIR"
+    tmux set-option -t "${SESSION_NAME}-shell" status off
     
-    # Rename the first window (window index 0) to "nvim"
-    tmux rename-window -t "$SESSION_NAME:1" "nvim"
+    # For now, agent tab runs a shell. You can customize the starting command here later (e.g. by adding "agy" at the end)
+    tmux new-session -d -s "${SESSION_NAME}-agent" -c "$PROJECT_DIR"
+    tmux set-option -t "${SESSION_NAME}-agent" status off
 
-    # Send the Neovim command to window 0
+    # Create the main wrapper session
+    tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR"
+    tmux set-option -t "$SESSION_NAME" @tmx-split-percent "$SPLIT_PERCENT"
+
+    # Normalize window indexing to start at 1 (moves index 0 to index 1 if it exists)
+    tmux move-window -s "${SESSION_NAME}:0" -t "${SESSION_NAME}:1" 2>/dev/null
+
+    # --- Window 1: Neovim ---
+    tmux rename-window -t "${SESSION_NAME}:1" "nvim"
+
+    # Send the Neovim command to window 1
     if [ -n "$FILE_TO_OPEN" ]; then
-        tmux send-keys -t "$SESSION_NAME:1" "nvim \"$FILE_TO_OPEN\"" C-m
+        tmux send-keys -t "${SESSION_NAME}:1" "nvim \"$FILE_TO_OPEN\"" C-m
     else
-        tmux send-keys -t "$SESSION_NAME:1" "nvim ." C-m
+        tmux send-keys -t "${SESSION_NAME}:1" "nvim ." C-m
     fi
 
-    # --- Window 2: Terminal ---
-    
-    # Create a new window (window index 1, which will be the user's window 2)
-    # The -n flag sets the window name, and -c sets the starting directory.
-    tmux new-window -d -t "$SESSION_NAME:2" -c "$PROJECT_DIR" -n "shell"
-    
-    # Select the first window (Neovim) so the user attaches to the editor
-    tmux select-window -t "$SESSION_NAME:1"
+    # Retrieve the window ID of window 1 to initialize active window tracking
+    WINDOW1_ID=$(tmux list-windows -t "$SESSION_NAME" -F '#{window_id} #{window_index}' | grep ' 1$' | cut -d' ' -f1)
+    tmux set-option -t "$SESSION_NAME" @last-active-window "$WINDOW1_ID"
 
+    # Register the after-select-window hook for session-specific panel toggling/restoring (fixing size conflicts)
+    tmux set-hook -t "$SESSION_NAME" after-select-window "run-shell \"$SCRIPT_DIR/tmx-helper '#{session_name}' '#{window_id}' '#{window_index}' select-window\""
+
+    # --- Window 2: Shell ---
+    # Creates window index 2 and attaches it to the background shell session
+    tmux new-window -d -t "${SESSION_NAME}:2" -c "$PROJECT_DIR" -n "shell" "env TMUX= tmux attach-session -t \"${SESSION_NAME}-shell\""
+
+    # --- Window 3: Agent ---
+    # Creates window index 3 and attaches it to the background agent session
+    tmux new-window -d -t "${SESSION_NAME}:3" -c "$PROJECT_DIR" -n "agent" "env TMUX= tmux attach-session -t \"${SESSION_NAME}-agent\""
+
+    # Set up key bindings for side panel toggles (using the helper script)
+    tmux bind-key -T prefix a run-shell "\"$SCRIPT_DIR/tmx-helper\" '#{session_name}' '#{window_id}' '#{window_index}' agent"
+    tmux bind-key -T prefix s run-shell "\"$SCRIPT_DIR/tmx-helper\" '#{session_name}' '#{window_id}' '#{window_index}' shell"
+
+    # Select the first window (Neovim) so the user attaches to the editor
+    tmux select-window -t "${SESSION_NAME}:1"
+else
+    # If session already exists and custom split was requested, update it
+    if [ "$SPLIT_PERCENT" != "30" ]; then
+        tmux set-option -t "$SESSION_NAME" @tmx-split-percent "$SPLIT_PERCENT" 2>/dev/null
+    fi
 fi
 
 # --- 3. Attach to Session ---
 tmux attach-session -t "$SESSION_NAME"
+
+# --- 4. Cleanup ---
+# If the outer session was closed/killed, clean up the background sessions
+if ! tmux has-session -t="$SESSION_NAME" 2>/dev/null; then
+    tmux kill-session -t "${SESSION_NAME}-shell" 2>/dev/null
+    tmux kill-session -t "${SESSION_NAME}-agent" 2>/dev/null
+fi
