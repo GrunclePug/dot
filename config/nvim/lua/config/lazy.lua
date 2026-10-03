@@ -18,7 +18,7 @@ vim.opt.rtp:prepend(lazypath)
 -- Config
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.g.have_nerd_font = false -- Set to true if you have a Nerd Font installed and selected in the terminal
+vim.g.have_nerd_font = true -- Set to true if you have a Nerd Font installed and selected in the terminal
 
 -- line numbers
 vim.o.number = true
@@ -100,23 +100,28 @@ vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
 vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
-
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+
+-- Reload files changed outside of nvim (e.g. by an agent) when they haven't been modified here.
+--  Needs `set -g focus-events on` in tmux for FocusGained to fire.
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
+  desc = 'Check if files changed on disk',
+  group = vim.api.nvim_create_augroup('auto-reload', { clear = true }),
+  callback = function()
+    if vim.fn.getcmdwintype() == '' then
+      vim.cmd 'checktime'
+    end
+  end,
+})
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  desc = 'Notify when a file was reloaded',
+  group = 'auto-reload',
+  callback = function(args)
+    vim.notify('Reloaded ' .. vim.fn.fnamemodify(args.file, ':~:.'), vim.log.levels.INFO)
+  end,
+})
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode

@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+# Helper script for tmx panel management.
+# Usage: tmx-helper <session_name> <window_id> <window_index> <action: agent|shell|select-window>
+
+SESSION_NAME="$1"
+WINDOW_ID="$2"
+WINDOW_INDEX="$3"
+ACTION="$4"
+
+# --- Action: select-window (Hook triggered when switching windows) ---
+if [ "$ACTION" = "select-window" ]; then
+    LAST_WINDOW_ID=$(tmux show-option -v -t "$SESSION_NAME" @last-active-window 2>/dev/null)
+    
+    # If a window change actually occurred
+    if [ -n "$LAST_WINDOW_ID" ] && [ "$LAST_WINDOW_ID" != "$WINDOW_ID" ]; then
+        # Check if the previous window had an open panel
+        LAST_PANEL_TYPE=$(tmux show-option -wv -t "$LAST_WINDOW_ID" @panel-type 2>/dev/null)
+        LAST_PANEL_ID=$(tmux show-option -wv -t "$LAST_WINDOW_ID" @panel-id 2>/dev/null)
+        
+        if [ -n "$LAST_PANEL_TYPE" ] && [ -n "$LAST_PANEL_ID" ]; then
+            # Verify if the pane still exists in the previous window
+            if tmux list-panes -t "$LAST_WINDOW_ID" -F '#{pane_id}' | grep -q "^${LAST_PANEL_ID}$"; then
+                # Temporarily save it to restore option on the previous window
+                tmux set-option -w -t "$LAST_WINDOW_ID" @restore-panel "$LAST_PANEL_TYPE"
+                # Kill the panel pane in the previous window to free up space and release background attachment (dots fix)
+                tmux kill-pane -t "$LAST_PANEL_ID" 2>/dev/null
+            fi
+            # Clear pane options on the previous window
+            tmux set-option -w -u -t "$LAST_WINDOW_ID" @panel-type
+            tmux set-option -w -u -t "$LAST_WINDOW_ID" @panel-id
+        fi
+    fi
+    
+    # Check if the newly selected window has a pending panel to restore
+    RESTORE_TYPE=$(tmux show-option -wv -t "$WINDOW_ID" @restore-panel 2>/dev/null)
+    if [ -n "$RESTORE_TYPE" ]; then
+        TARGET_SESSION="${SESSION_NAME}-${RESTORE_TYPE}"
+        if tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
+            SPLIT_PERCENT=$(tmux show-option -v -t "$SESSION_NAME" @tmx-split-percent 2>/dev/null)
+            SPLIT_PERCENT="${SPLIT_PERCENT:-30}"
+            NEW_PANE_ID=$(tmux split-window -h -p "$SPLIT_PERCENT" -P -F '#{pane_id}' -t "$WINDOW_ID" "env TMUX= tmux attach-session -t \"$TARGET_SESSION\"")
+            if [ -n "$NEW_PANE_ID" ]; then
+                tmux set-option -w -t "$WINDOW_ID" @panel-type "$RESTORE_TYPE"
+                tmux set-option -w -t "$WINDOW_ID" @panel-id "$NEW_PANE_ID"
+            fi
+        fi
+        # Clear restore option
+        tmux set-option -w -u -t "$WINDOW_ID" @restore-panel
+    fi
+    
+    # Update the last active window reference
+    tmux set-option -t "$SESSION_NAME" @last-active-window "$WINDOW_ID"
+    exit 0
+fi
+
+# --- Fallback / Safety checks for user keybindings (agent/shell) ---
+TARGET="$ACTION"
+TARGET_SESSION="${SESSION_NAME}-${TARGET}"
+if ! tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
+    if [ "$TARGET" = "shell" ]; then
+        # Default behavior for prefix + s is choose-tree
+        tmux choose-tree -Zs
+    else
+        # Default behavior for prefix + a is send-prefix (if Ctrl-a is the prefix)
+        PREFIX_KEY=$(tmux show-option -gv prefix 2>/dev/null)
+        if [ "$PREFIX_KEY" = "C-a" ]; then
+            tmux send-prefix
+        fi
+    fi
+    exit 0
+fi
+
+# --- Failsafes ---
+# "make sure to have a failsafe so if im in shell and i try to open shell panel it doesnt let me"
+if [ "$TARGET" = "shell" ] && [ "$WINDOW_INDEX" = "2" ]; then
+    tmux display-message "Cannot open shell panel while in the shell tab."
+    exit 0
+fi
+
+# "...and agent panel in agent tab isnt allowed either."
+if [ "$TARGET" = "agent" ] && [ "$WINDOW_INDEX" = "3" ]; then
+    tmux display-message "Cannot open agent panel while in the agent tab."
+    exit 0
+fi
+
+# --- Panel Toggling and Mirroring Logic ---
+CURRENT_PANEL_TYPE=$(tmux show-option -wv -t "$WINDOW_ID" @panel-type 2>/dev/null)
+CURRENT_PANEL_ID=$(tmux show-option -wv -t "$WINDOW_ID" @panel-id 2>/dev/null)
+
+PANEL_EXISTS=false
+if [ -n "$CURRENT_PANEL_ID" ]; then
+    if tmux list-panes -t "$WINDOW_ID" -F '#{pane_id}' | grep -q "^${CURRENT_PANEL_ID}$"; then
+        PANEL_EXISTS=true
+    fi
+fi
+
+if [ "$PANEL_EXISTS" = "true" ]; then
+    tmux kill-pane -t "$CURRENT_PANEL_ID" 2>/dev/null
+    tmux set-option -w -u -t "$WINDOW_ID" @panel-type
+    tmux set-option -w -u -t "$WINDOW_ID" @panel-id
+    
+    # If the user requested the SAME panel type, we toggle it off and exit.
+    if [ "$CURRENT_PANEL_TYPE" = "$TARGET" ]; then
+        exit 0
+    fi
+else
+    # Clean up stale options if the pane was closed manually by the user
+    tmux set-option -w -u -t "$WINDOW_ID" @panel-type
+    tmux set-option -w -u -t "$WINDOW_ID" @panel-id
+    # Also clear any pending restore setting
+    tmux set-option -w -u -t "$WINDOW_ID" @restore-panel
+fi
+
+# Open the requested panel as a side panel (default 30%, or configured via @tmx-split-percent)
+SPLIT_PERCENT=$(tmux show-option -v -t "$SESSION_NAME" @tmx-split-percent 2>/dev/null)
+SPLIT_PERCENT="${SPLIT_PERCENT:-30}"
+NEW_PANE_ID=$(tmux split-window -h -p "$SPLIT_PERCENT" -P -F '#{pane_id}' -t "$WINDOW_ID" "env TMUX= tmux attach-session -t \"$TARGET_SESSION\"")
+
+if [ -n "$NEW_PANE_ID" ]; then
+    tmux set-option -w -t "$WINDOW_ID" @panel-type "$TARGET"
+    tmux set-option -w -t "$WINDOW_ID" @panel-id "$NEW_PANE_ID"
+fi

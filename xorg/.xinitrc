@@ -30,7 +30,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 # Setup
-xcompmgr -c -C -t-5 -l-5 -r4.2 -o.72 &
+picom -b &
 feh --bg-fill -g +0-70 $HOME/Pictures/wallpaper.png &
 slstatus &
 nm-applet &
@@ -38,3 +38,6 @@ pa-applet &
 dunst &
 battery_monitor &
 exec dwm
+#export XDG_SESSION_TYPE=x11
+#export XDG_CURRENT_DESKTOP=dwm
+#exec dbus-launch --exit-with-session dwm
