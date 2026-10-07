@@ -1,0 +1,628 @@
+#!/usr/bin/env python3
+"""pg-river-scratch: a one-window scratchpad for river (river-classic 0.3).
+
+Usage:
+  pg-river-scratch toggle   show/hide the scratchpad                (Super+Return)
+  pg-river-scratch stash    put the focused window in the scratchpad (Super+Shift+Return)
+  pg-river-scratch status   print what the scratchpad holds
+  pg-river-scratch daemon   run the daemon (started by ~/.config/river/init, and
+                            automatically by the commands above if it isn't running)
+
+The scratchpad is a hidden tag (21) that holds one window. Showing it lays that
+window over the current tags (tiled or floating, as you left it: Alt+f) and
+focuses it. If the scratchpad is empty, showing it opens a floating quick
+terminal (app-id pg-scratch; ~/.config/river/init floats it, sizes it and puts
+it on the scratchpad tag).
+
+Stashing a window when the scratchpad already holds one swaps them: the old one
+moves to the current tags. The exception is a quick terminal you never ran a
+command in: that is closed instead. Its shell (~/.config/river/scratch.bashrc)
+marks it as used on the first command.
+
+Why a daemon: riverctl can only act on the focused window and can't list
+windows. The daemon keeps a connection to river and follows every window through
+wlr-foreign-toplevel-management, so it knows which window is in the scratchpad
+and can focus it directly. Every action is then a single change river applies
+in one atomic step, so nothing flickers. Tags and focus come from river-status;
+commands go through river-control, the same protocol riverctl uses.
+"""
+import fcntl
+import os
+import selectors
+import shutil
+import signal
+import socket
+import struct
+import subprocess
+import sys
+import time
+import traceback
+
+SCRATCH_TAG = 1 << 20
+QUICK_APP_ID = "pg-scratch"
+QUICK_TERMINAL = [
+    "foot", "-c", os.path.expanduser("~/.config/river/foot.ini"),
+    "--app-id", QUICK_APP_ID,
+    "bash", "--rcfile", os.path.expanduser("~/.config/river/scratch.bashrc"),
+]
+
+DISPLAY = os.environ.get("WAYLAND_DISPLAY", "wayland-0")
+STATE_DIR = os.path.join(os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "pg-river-scratch")
+SOCKET_PATH = os.path.join(STATE_DIR, DISPLAY + ".sock")
+LOCK_PATH = os.path.join(STATE_DIR, DISPLAY + ".lock")
+LOG_PATH = os.path.join(STATE_DIR, DISPLAY + ".log")
+
+
+UNKNOWN_WINDOW = ("the scratchpad holds a window that wasn't stashed with Super+Shift+Return "
+                  "(or was stashed before the scratchpad daemon started). Move it out with "
+                  "Alt+Shift+<tag> and stash it again; until then it can't be")
+
+
+class UserError(Exception):
+    """Something the user should be told about; the daemon carries on."""
+
+
+# --- Wayland wire protocol -------------------------------------------------
+# Just enough of libwayland for the interfaces below: event signatures per
+# opcode, using the protocol's type codes (u int, i int, s string, o object,
+# n new object, a array). Events not listed are skipped.
+
+EVENTS = {
+    "wl_display": {0: ("error", "ous"), 1: ("delete_id", "u")},
+    "wl_registry": {0: ("global", "usu"), 1: ("global_remove", "u")},
+    "wl_callback": {0: ("done", "u")},
+    "wl_seat": {},
+    "wl_output": {},
+    "zriver_status_manager_v1": {},
+    "zriver_output_status_v1": {0: ("focused_tags", "u"), 1: ("view_tags", "a")},
+    "zriver_seat_status_v1": {0: ("focused_output", "o"), 1: ("unfocused_output", "o"),
+                              2: ("focused_view", "s")},
+    "zriver_control_v1": {},
+    "zriver_command_callback_v1": {0: ("success", "s"), 1: ("failure", "s")},
+    "zwlr_foreign_toplevel_manager_v1": {0: ("toplevel", "n"), 1: ("finished", "")},
+    "zwlr_foreign_toplevel_handle_v1": {0: ("title", "s"), 1: ("app_id", "s"),
+                                        2: ("output_enter", "o"), 3: ("output_leave", "o"),
+                                        4: ("state", "a"), 5: ("done", ""), 6: ("closed", "")},
+}
+
+TOPLEVEL_STATE_ACTIVATED = 2
+
+
+class ConnectionClosed(Exception):
+    pass
+
+
+def encode(signature, args):
+    out = bytearray()
+    for code, arg in zip(signature, args):
+        if code in "uon":
+            out += struct.pack("=I", arg.id if isinstance(arg, Proxy) else arg)
+        elif code == "i":
+            out += struct.pack("=i", arg)
+        elif code in "sa":
+            data = arg.encode() + b"\0" if code == "s" else bytes(arg)
+            out += struct.pack("=I", len(data)) + data + b"\0" * (-len(data) % 4)
+    return bytes(out)
+
+
+def decode(signature, body):
+    args, off = [], 0
+    for code in signature:
+        if code in "uon":
+            args.append(struct.unpack_from("=I", body, off)[0])
+            off += 4
+        elif code == "i":
+            args.append(struct.unpack_from("=i", body, off)[0])
+            off += 4
+        elif code in "sa":
+            size, = struct.unpack_from("=I", body, off)
+            data = body[off + 4:off + 4 + size]
+            args.append(data[:-1].decode(errors="replace") if code == "s" else data)
+            off += 4 + size + (-size % 4)
+    return args
+
+
+class Proxy:
+    def __init__(self, conn, oid, interface):
+        self.conn, self.id, self.interface = conn, oid, interface
+        self.handlers = {}
+
+    def on(self, event, handler):
+        self.handlers[event] = handler
+
+    def request(self, opcode, signature="", *args):
+        self.conn.queue(self.id, opcode, encode(signature, args))
+
+
+class Connection:
+    """A Wayland client connection. Requests are queued and sent by flush(),
+    so a batch reaches the compositor in one write."""
+
+    def __init__(self, display):
+        path = display if display.startswith("/") else os.path.join(
+            os.environ["XDG_RUNTIME_DIR"], display)
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
+        self.sock.connect(path)
+        self.objects, self.free_ids, self.next_id = {}, [], 2
+        self.outgoing, self.incoming = bytearray(), bytearray()
+        self.display = self.adopt(1, "wl_display")
+        self.display.on("error", self._on_error)
+        self.display.on("delete_id", self._on_delete_id)
+
+    def adopt(self, oid, interface):
+        proxy = Proxy(self, oid, interface)
+        self.objects[oid] = proxy
+        return proxy
+
+    def create(self, interface):
+        oid = self.free_ids.pop() if self.free_ids else self.next_id
+        if oid == self.next_id:
+            self.next_id += 1
+        return self.adopt(oid, interface)
+
+    def queue(self, oid, opcode, payload):
+        self.outgoing += struct.pack("=II", oid, (8 + len(payload)) << 16 | opcode) + payload
+
+    def flush(self):
+        if self.outgoing:
+            self.sock.sendall(self.outgoing)
+            self.outgoing.clear()
+
+    def fileno(self):
+        return self.sock.fileno()
+
+    def read(self):
+        """Read what the compositor sent and dispatch every complete event."""
+        data = self.sock.recv(65536)
+        if not data:
+            raise ConnectionClosed()
+        self.incoming += data
+        while len(self.incoming) >= 8:
+            oid, word = struct.unpack_from("=II", self.incoming)
+            size, opcode = word >> 16, word & 0xFFFF
+            if len(self.incoming) < size:
+                break
+            body = bytes(self.incoming[8:size])
+            del self.incoming[:size]
+            proxy = self.objects.get(oid)
+            event = proxy and EVENTS[proxy.interface].get(opcode)
+            if event and event[0] in proxy.handlers:
+                proxy.handlers[event[0]](*decode(event[1], body))
+
+    def roundtrip(self):
+        """Wait until the compositor has handled everything sent so far."""
+        done = []
+        callback = self.create("wl_callback")
+        callback.on("done", lambda _: done.append(True))
+        self.display.request(0, "n", callback)  # wl_display.sync
+        self.flush()
+        while not done:
+            self.read()
+
+    def _on_error(self, oid, code, message):
+        raise RuntimeError("Wayland protocol error on object %d (code %d): %s" % (oid, code, message))
+
+    def _on_delete_id(self, oid):
+        self.objects.pop(oid, None)
+        self.free_ids.append(oid)
+
+
+# --- river's state ------------------------------------------------------------
+
+class Output:
+    def __init__(self, proxy, global_name):
+        self.proxy, self.global_name = proxy, global_name
+        self.tags = 0       # focused tags
+        self.views = []     # tags of each window on this output
+
+    def holds_scratch_window(self):
+        return any(tags & SCRATCH_TAG for tags in self.views)
+
+
+class Toplevel:
+    """A window, followed through wlr-foreign-toplevel-management."""
+
+    def __init__(self, handle, river):
+        self.handle, self.app_id, self.title = handle, "", ""
+        self.activated = self.mapped = False
+        pending = {}
+        handle.on("app_id", lambda v: pending.__setitem__("app_id", v))
+        handle.on("title", lambda v: pending.__setitem__("title", v))
+        handle.on("state", lambda v: pending.__setitem__(
+            "activated", TOPLEVEL_STATE_ACTIVATED in struct.unpack("=%dI" % (len(v) // 4), v)))
+
+        def done():
+            for key, value in pending.items():
+                setattr(self, key, value)
+            pending.clear()
+            if not self.mapped:
+                self.mapped = True
+                river.on_new_toplevel(self)
+
+        def closed():
+            handle.request(7)  # destroy
+            handle.conn.objects.pop(handle.id, None)
+            river.on_closed_toplevel(self)
+
+        handle.on("done", done)
+        handle.on("closed", closed)
+
+    def __repr__(self):
+        return "%s (%s)" % (self.title or "untitled", self.app_id or "no app-id")
+
+
+class Batch:
+    """river commands (riverctl's) and window activations, applied in order."""
+
+    def __init__(self):
+        self.steps = []
+
+    def command(self, *args):
+        self.steps.append(("command", [str(a) for a in args]))
+        return self
+
+    def activate(self, toplevel):
+        self.steps.append(("activate", toplevel))
+        return self
+
+    def close(self, toplevel):
+        self.steps.append(("close", toplevel))
+        return self
+
+
+class River:
+    def __init__(self, conn):
+        self.conn = conn
+        self.outputs = {}      # wl_output proxy id -> Output
+        self.focused_output = None
+        self.toplevels = []
+        self.listeners = []    # objects with on_new_toplevel / on_closed_toplevel
+
+        self.registry = conn.create("wl_registry")
+        conn.display.request(1, "n", self.registry)  # get_registry
+        found = {}
+        self.registry.on("global", lambda name, iface, version: found.setdefault(iface, []).append(name))
+        conn.roundtrip()
+
+        required = ["wl_seat", "zriver_status_manager_v1", "zriver_control_v1",
+                    "zwlr_foreign_toplevel_manager_v1"]
+        missing = [iface for iface in required if iface not in found]
+        if missing:
+            raise SystemExit("pg-river-scratch: needs river (missing %s)" % ", ".join(missing))
+
+        self.seat = self.bind(found["wl_seat"][0], "wl_seat")
+        self.control = self.bind(found["zriver_control_v1"][0], "zriver_control_v1")
+        self.status = self.bind(found["zriver_status_manager_v1"][0], "zriver_status_manager_v1")
+        manager = self.bind(found["zwlr_foreign_toplevel_manager_v1"][0],
+                            "zwlr_foreign_toplevel_manager_v1")
+        manager.on("toplevel", self._on_toplevel)
+
+        # outputs first: river can only name the focused output once we have it
+        for name in found.get("wl_output", []):
+            self._add_output(name)
+        seat_status = conn.create("zriver_seat_status_v1")
+        self.status.request(2, "no", seat_status, self.seat)  # get_river_seat_status
+        seat_status.on("focused_output", lambda oid: setattr(self, "focused_output", self.outputs.get(oid)))
+        seat_status.on("unfocused_output", lambda oid: setattr(self, "focused_output", None))
+        self.registry.on("global", self._on_global)
+        self.registry.on("global_remove", self._on_global_remove)
+        conn.roundtrip()
+
+    def bind(self, name, interface, version=1):
+        proxy = self.conn.create(interface)
+        self.registry.request(0, "usun", name, interface, version, proxy)
+        return proxy
+
+    def _add_output(self, name):
+        proxy = self.bind(name, "wl_output")
+        output = self.outputs[proxy.id] = Output(proxy, name)
+        status = self.conn.create("zriver_output_status_v1")
+        self.status.request(1, "no", status, proxy)  # get_river_output_status
+        status.on("focused_tags", lambda tags: setattr(output, "tags", tags))
+        status.on("view_tags", lambda data: setattr(
+            output, "views", list(struct.unpack("=%dI" % (len(data) // 4), data))))
+
+    def _on_global(self, name, interface, version):
+        if interface == "wl_output":
+            self._add_output(name)
+
+    def _on_global_remove(self, name):
+        for oid, output in list(self.outputs.items()):
+            if output.global_name == name:
+                del self.outputs[oid]
+                if self.focused_output is output:
+                    self.focused_output = None
+
+    def _on_toplevel(self, oid):
+        handle = self.conn.adopt(oid, "zwlr_foreign_toplevel_handle_v1")
+        self.toplevels.append(Toplevel(handle, self))
+
+    def on_new_toplevel(self, toplevel):
+        for listener in self.listeners:
+            listener.on_new_toplevel(toplevel)
+
+    def on_closed_toplevel(self, toplevel):
+        self.toplevels.remove(toplevel)
+        for listener in self.listeners:
+            listener.on_closed_toplevel(toplevel)
+
+    def focused_toplevel(self):
+        return next((t for t in self.toplevels if t.activated), None)
+
+    def apply(self, batch):
+        """Send a batch in one write and wait until river has run it.
+
+        river applies changes in atomic transactions (lay out, wait for every
+        window to redraw, then show the result) and folds whatever arrives
+        while one is in flight into the next. A batch therefore reaches the
+        screen in at most two steps: its first request, then all the rest."""
+        callbacks = []
+        for kind, arg in batch.steps:
+            if kind == "command":
+                for word in arg:
+                    self.control.request(1, "s", word)  # add_argument
+                callback = self.conn.create("zriver_command_callback_v1")
+                result = {}
+                callback.on("success", lambda out, r=result: r.setdefault("ok", out))
+                callback.on("failure", lambda msg, r=result: r.setdefault("error", msg))
+                self.control.request(2, "on", self.seat, callback)  # run_command
+                callbacks.append((arg[0], result))
+            elif kind == "activate":
+                arg.handle.request(4, "o", self.seat)
+            elif kind == "close":
+                arg.handle.request(5)
+        self.conn.flush()
+        while not all(result for _, result in callbacks):
+            self.conn.read()
+        errors = ["%s: %s" % (name, r["error"]) for name, r in callbacks if "error" in r]
+        if errors:
+            raise UserError("; ".join(errors))
+
+
+# --- the scratchpad -------------------------------------------------------------
+
+class Scratchpad:
+    def __init__(self, river):
+        self.river = river
+        self.window = None          # the Toplevel in the scratchpad
+        self.quick_pid = None       # set while self.window is a quick terminal
+        self.spawned_quick = None   # quick terminal started, window not seen yet
+        river.listeners.append(self)
+
+    # events
+
+    def on_new_toplevel(self, toplevel):
+        if self.spawned_quick and toplevel.app_id == QUICK_APP_ID and self.window is None:
+            self.window, self.quick_pid, self.spawned_quick = toplevel, self.spawned_quick, None
+
+    def on_closed_toplevel(self, toplevel):
+        if toplevel is self.window:
+            self._forget()
+
+    # helpers
+
+    def _forget(self):
+        if self.quick_pid:
+            try:
+                os.remove(self._used_marker(self.quick_pid))
+            except FileNotFoundError:
+                pass
+        self.window = self.quick_pid = None
+
+    def _used_marker(self, pid):
+        return os.path.join(STATE_DIR, "used-%d" % pid)
+
+    def _quick_unused(self):
+        return self.quick_pid is not None and not os.path.exists(self._used_marker(self.quick_pid))
+
+    def _output(self):
+        self.river.conn.roundtrip()  # act on current state
+        output = self.river.focused_output
+        if output is None:
+            raise UserError("no focused output")
+        # moved out by hand (Alt+Shift+<n>, Super+s): no longer ours
+        if self.window and not any(o.holds_scratch_window() for o in self.river.outputs.values()):
+            self._forget()
+        return output
+
+    def _spawn_quick_terminal(self):
+        env = dict(os.environ, PG_SCRATCH_DIR=STATE_DIR)
+        proc = subprocess.Popen(QUICK_TERMINAL, env=env, start_new_session=True,
+                                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                stderr=subprocess.DEVNULL)
+        self.spawned_quick = proc.pid
+
+    # commands
+
+    def toggle(self):
+        output = self._output()
+        show = Batch().command("toggle-focused-tags", SCRATCH_TAG)
+        if output.tags & SCRATCH_TAG:
+            self.river.apply(show)                     # hide
+        elif self.window:
+            self.river.apply(show.activate(self.window))
+        elif output.holds_scratch_window():
+            # not stashed through this daemon (it started later, or the window
+            # got there via Alt+Shift+Ctrl+<n>): it can be shown, but there's
+            # no handle to focus it by
+            self.river.apply(show)
+            raise UserError(UNKNOWN_WINDOW + " focused")
+        else:
+            self.river.apply(show)
+            self._spawn_quick_terminal()
+
+    def stash(self):
+        output = self._output()
+        target = self.river.focused_toplevel()
+        if target is None:
+            raise UserError("no focused window to stash")
+        if target is self.window:
+            return
+        if self.window is None:
+            if output.holds_scratch_window():
+                raise UserError(UNKNOWN_WINDOW + " swapped out")
+            self.river.apply(Batch().command("set-view-tags", SCRATCH_TAG))
+            self.window = target
+            return
+
+        old = self.window
+        if self._quick_unused():
+            batch = Batch().close(old).command("set-view-tags", SCRATCH_TAG)
+        else:
+            base = output.tags & ~SCRATCH_TAG
+            if not base:
+                raise UserError("no tags to swap the scratchpad window out to")
+            if output.tags & SCRATCH_TAG:
+                # both are visible: just trade tags
+                batch = (Batch().activate(old).command("set-view-tags", base)
+                         .activate(target).command("set-view-tags", SCRATCH_TAG))
+            else:
+                # show the scratchpad to reach its window, trade tags, hide it
+                # again. The first step changes nothing on screen, so the
+                # in-between states are never drawn (see River.apply).
+                batch = (Batch().command("set-view-tags", base | SCRATCH_TAG)
+                         .command("toggle-focused-tags", SCRATCH_TAG)
+                         .activate(old).command("set-view-tags", base)
+                         .activate(target).command("set-view-tags", SCRATCH_TAG)
+                         .command("toggle-focused-tags", SCRATCH_TAG))
+        self.river.apply(batch)
+        self._forget()
+        self.window = target
+
+    def status(self):
+        output = self._output()
+        if self.window:
+            kind = ""
+            if self.quick_pid:
+                kind = " [quick terminal, pid %d, %s]" % (
+                    self.quick_pid, "unused" if self._quick_unused() else "used")
+            holds = "%r%s" % (self.window, kind)
+        elif output.holds_scratch_window():
+            holds = "a window it didn't stash"
+        else:
+            holds = "nothing"
+        return "scratchpad: %s, %s" % ("shown" if output.tags & SCRATCH_TAG else "hidden", holds)
+
+
+# --- daemon and client --------------------------------------------------------------
+
+def daemon():
+    os.makedirs(STATE_DIR, mode=0o700, exist_ok=True)
+    lock = open(LOCK_PATH, "w")  # held until exit: one daemon per display
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return  # already running for this display
+
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)  # quick terminals reap themselves
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+
+    conn = Connection(DISPLAY)
+    river = River(conn)
+    scratchpad = Scratchpad(river)
+    commands = {"toggle": scratchpad.toggle, "stash": scratchpad.stash,
+                "status": scratchpad.status}
+
+    if os.path.exists(SOCKET_PATH):
+        os.remove(SOCKET_PATH)
+    listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
+    listener.bind(SOCKET_PATH)
+    listener.listen()
+
+    selector = selectors.DefaultSelector()
+    selector.register(conn, selectors.EVENT_READ, "wayland")
+    selector.register(listener, selectors.EVENT_READ, "client")
+    try:
+        while True:
+            for key, _ in selector.select():
+                if key.data == "wayland":
+                    conn.read()
+                    continue
+                client, _ = listener.accept()
+                with client:
+                    client.settimeout(2)
+                    request = b""
+                    while len(request) < 64 and (chunk := client.recv(64)):
+                        request += chunk
+                    name = request.decode(errors="replace").strip()
+                    try:
+                        if name not in commands:
+                            raise UserError("unknown command %r" % name)
+                        reply = "ok\n%s" % (commands[name]() or "")
+                    except UserError as e:
+                        reply = "error\n%s" % e
+                    except ConnectionClosed:
+                        raise
+                    except Exception as e:  # a bug: report it, keep running
+                        traceback.print_exc()
+                        sys.stderr.flush()
+                        reply = "error\ninternal error (%s); see %s" % (e, LOG_PATH)
+                    client.sendall(reply.encode())
+    except ConnectionClosed:
+        pass  # river exited
+    finally:
+        os.remove(SOCKET_PATH)
+
+
+def connect():
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM | socket.SOCK_CLOEXEC)
+    sock.connect(SOCKET_PATH)
+    return sock
+
+
+def start_daemon():
+    os.makedirs(STATE_DIR, mode=0o700, exist_ok=True)
+    with open(LOG_PATH, "a") as log:
+        subprocess.Popen([sys.executable, os.path.realpath(__file__), "daemon"],
+                         start_new_session=True, stdin=subprocess.DEVNULL,
+                         stdout=log, stderr=log)
+    deadline = time.monotonic() + 3
+    while True:
+        try:
+            return connect()
+        except (FileNotFoundError, ConnectionRefusedError):
+            if time.monotonic() > deadline:
+                raise UserError("the daemon didn't start; see %s" % LOG_PATH)
+            time.sleep(0.02)
+
+
+def client(command):
+    try:
+        sock = connect()
+    except (FileNotFoundError, ConnectionRefusedError):
+        sock = start_daemon()
+    except OSError as e:
+        raise UserError("can't reach the daemon at %s: %s" % (SOCKET_PATH, e))
+    with sock:
+        sock.sendall(command.encode() + b"\n")
+        sock.shutdown(socket.SHUT_WR)
+        reply = b""
+        while chunk := sock.recv(4096):
+            reply += chunk
+    status, _, message = reply.decode().partition("\n")
+    if status != "ok":
+        raise UserError(message or "the daemon closed the connection")
+    if message:
+        print(message)
+
+
+def main():
+    args = sys.argv[1:]
+    if args == ["daemon"]:
+        daemon()
+    elif len(args) == 1 and args[0] in ("toggle", "stash", "status"):
+        try:
+            client(args[0])
+        except UserError as e:
+            print("pg-river-scratch: %s" % e, file=sys.stderr)
+            # usually run from a key binding, where stderr goes nowhere
+            if not sys.stderr.isatty() and shutil.which("notify-send"):
+                subprocess.run(["notify-send", "-a", "pg-river-scratch", "Scratchpad", str(e)])
+            sys.exit(1)
+    else:
+        print(__doc__.split("\n\n")[1], file=sys.stderr)
+        sys.exit(2)
+
+
+if __name__ == "__main__":
+    main()

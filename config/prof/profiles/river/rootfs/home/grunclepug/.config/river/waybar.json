@@ -1,0 +1,43 @@
+{
+  "//": "prof playground: river bar, same look as mango's. Flat, edge to edge: tags + mode + focused window ... status + clock + tray. Style: waybar.css next to this file.",
+  "layer": "top",
+  "position": "top",
+  "height": 22,
+  "spacing": 0,
+  "modules-left": ["river/tags", "river/mode", "river/window"],
+  "modules-right": ["cpu", "memory", "battery", "wireplumber", "clock", "tray"],
+
+  "river/tags": { "num-tags": 9 },
+  "river/mode": { "format": "{}" },
+  "river/window": { "max-length": 90, "tooltip": false },
+
+  "cpu": { "interval": 2, "format": "cpu {usage}%", "tooltip": false },
+  "memory": { "interval": 2, "format": "mem {used:0.1f}/{total:0.1f} Gi", "tooltip-format": "{used:0.1f} / {total:0.1f} GiB" },
+  "battery": {
+    "bat": "BAT0",
+    "interval": 5,
+    "states": { "warning": 25, "critical": 12 },
+    "format": "bat {capacity}% [-]",
+    "format-discharging": "bat {capacity}% [-]",
+    "format-charging": "bat {capacity}% [+]",
+    "format-plugged": "bat {capacity}% [o]",
+    "format-full": "bat {capacity}% [o]",
+    "tooltip-format": "{timeTo}"
+  },
+  "wireplumber": {
+    "format": "vol {volume}%",
+    "format-muted": "vol mute",
+    "scroll-step": 5,
+    "max-volume": 150,
+    "on-click": "pg-vol-slider",
+    "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "tooltip-format": "{node_name}"
+  },
+  "clock": {
+    "interval": 1,
+    "format": "{:%Y-%m-%d %H:%M:%S}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": { "mode": "month", "format": { "today": "<span color='#5fd4c4'><b>{}</b></span>" } }
+  },
+  "tray": { "spacing": 6, "icon-size": 14 }
+}

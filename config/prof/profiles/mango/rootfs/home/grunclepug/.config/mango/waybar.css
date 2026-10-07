@@ -1,0 +1,110 @@
+/* prof playground: mango "flat" bar. dwm's bar with the noise taken out:
+   one solid strip, the focused tag and focused window in teal, status as
+   quiet lowercase text. */
+@define-color base  #0e141a;
+@define-color shade #1b252d;
+@define-color line  #2a3640;
+@define-color text  #e6edf0;
+@define-color dim   #8fa3ad;
+@define-color teal  #5fd4c4;
+@define-color gold  #f2c46d;
+@define-color rose  #ef6b73;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 10pt;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+window#waybar { background: @base; color: @text; }
+
+/* tags */
+#workspaces button { padding: 0 7px; color: @dim; background: transparent; }
+#workspaces button:hover  { color: @text; background: @shade; }
+#workspaces button.active { color: @base; background: @teal; font-weight: bold; }
+#workspaces button.urgent { color: @base; background: @rose; }
+
+/* layout symbol, like dwm's []= */
+#custom-layout { padding: 0 8px; color: @dim; }
+
+/* focused window title */
+#custom-title { padding: 0 10px; color: @text; background: @shade; }
+
+/* status */
+#cpu, #memory, #battery, #wireplumber, #clock { padding: 0 10px; color: @dim; }
+#clock { color: @text; }
+#wireplumber.muted { color: @line; }
+#battery.charging, #battery.plugged { color: @teal; }
+#battery.warning:not(.charging)  { color: @gold; }
+#battery.critical:not(.charging) { color: @base; background: @rose; }
+
+#tray { padding: 0 8px; }
+#tray > .needs-attention { background: @rose; }
+
+/* systray context menus (nm-applet, discord, etc.) */
+#tray menu,
+menu {
+  background-color: @base;
+  color: @text;
+  border: 2px solid @teal;
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+#tray menu menuitem,
+menu menuitem {
+  color: @text;
+  background-color: transparent;
+  padding: 5px 12px;
+  margin: 1px 2px;
+  border-radius: 4px;
+}
+
+#tray menu menuitem:hover,
+menu menuitem:hover,
+#tray menu menuitem:selected,
+menu menuitem:selected {
+  background-color: @shade;
+  color: @teal;
+}
+
+#tray menu menuitem label,
+menu menuitem label {
+  color: @text;
+}
+
+#tray menu menuitem:hover label,
+menu menuitem:hover label,
+#tray menu menuitem:selected label,
+menu menuitem:selected label {
+  color: @teal;
+}
+
+#tray menu menuitem:disabled,
+menu menuitem:disabled,
+#tray menu menuitem:disabled label,
+menu menuitem:disabled label {
+  color: @dim;
+}
+
+#tray menu separator,
+menu separator {
+  background-color: @line;
+  border-bottom: 1px solid @line;
+  margin: 4px 6px;
+  min-height: 1px;
+}
+
+#tray menu check,
+menu check,
+#tray menu radio,
+menu radio {
+  color: @teal;
+}
+
+tooltip { background: @base; border: 1px solid @line; }
+tooltip label { color: @text; }

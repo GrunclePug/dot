@@ -1,0 +1,23 @@
+#!/bin/sh
+# prof playground: dwm's layout symbol for waybar, fed by mango's IPC.
+# Prints one line per change for the focused monitor: []= tile, [M] monocle,
+# [S] scroller, ### grid, and so on.
+# mango closes IPC streams now and then (config reloads, VT switches), so
+# reconnect here instead of relying on waybar's restart-interval, which
+# leaves zombie children behind.
+while :; do
+    mmsg watch all-monitors
+    sleep 1
+done | sed -u -n 's/.*[{,]"active":true,[^{}]*"layout_symbol":"\([A-Z]*\)".*/\1/p' |
+while read -r sym; do
+    case $sym in
+        T)  echo '[]=' ;;
+        M)  echo '[M]' ;;
+        S)  echo '[S]' ;;
+        G)  echo '###' ;;
+        K)  echo '[D]' ;;
+        CT) echo '|M|' ;;
+        VT) echo 'TTT' ;;
+        *)  echo "[$sym]" ;;
+    esac
+done

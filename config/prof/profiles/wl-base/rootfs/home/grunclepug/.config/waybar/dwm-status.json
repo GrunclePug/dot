@@ -1,0 +1,29 @@
+{
+  "//": "prof playground: slstatus (~/builds/slstatus/config.h) rebuilt from waybar modules, plus the dwm systray. Included by each ~/.config/<compositor>/waybar.json.",
+  "modules-right": ["cpu", "memory", "battery", "clock", "wireplumber", "tray"],
+  "cpu": { "interval": 1, "format": "CPU: {usage}% | ", "tooltip": false },
+  "memory": { "interval": 1, "format": "Mem: {used:0.1f} Gi/{total:0.1f} Gi | ", "tooltip": false },
+  "battery": {
+    "bat": "BAT0",
+    "interval": 1,
+    "format": "Batt: {capacity}% [?] | ",
+    "format-charging": "Batt: {capacity}% [+] | ",
+    "format-discharging": "Batt: {capacity}% [-] | ",
+    "format-full": "Batt: {capacity}% [o] | ",
+    "format-plugged": "Batt: {capacity}% [o] | ",
+    "tooltip": false
+  },
+  "clock": { "interval": 1, "format": "{:%F %T} |", "tooltip": false },
+  "//wireplumber": "pa-applet stand-in (it's XEmbed-only, so it can't sit in waybar's tray): scroll = volume, left click = mute, right click = pavucontrol.",
+  "wireplumber": {
+    "format": " {icon} {volume}% ",
+    "format-muted": " 󰝟 mute ",
+    "format-icons": ["󰕿", "󰖀", "󰕾"],
+    "scroll-step": 5,
+    "max-volume": 100,
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-click-right": "pavucontrol",
+    "tooltip-format": "{node_name}: {volume}%"
+  },
+  "tray": { "spacing": 2 }
+}

@@ -1,0 +1,174 @@
+// prof playground: niri as a drop-in for ~/builds/dwm.
+// Validate: niri validate -c ~/.config/niri/config.kdl
+//
+// niri is a scrolling tiler: each workspace is an endless horizontal strip of
+// columns, and workspaces stack vertically. There are no tags and no
+// master/stack, so the dwm keys are mapped to their closest niri meaning:
+//   tags 1-9 -> workspaces 1-9      master   -> the leftmost column
+//   j/k      -> walk the windows    mfact    -> column width
+//   nmaster  -> windows stacked in the focused column
+// Mod = Alt, exactly like dwm's MODKEY Mod1Mask. Lines that differ from dwm
+// are marked "dwm:". Mod+Shift+/ shows every bind.
+
+input {
+    mod-key "Alt"
+    mod-key-nested "Super"
+
+    // X server defaults + your xorg.conf.d touchpad
+    keyboard {
+        xkb { layout "us"; }
+        repeat-delay 660
+        repeat-rate 25
+    }
+    touchpad {
+        tap
+        natural-scroll
+        dwt
+    }
+    focus-follows-mouse max-scroll-amount="0%"
+}
+
+// look: dwm colors, square 1px border, fullgaps 8, picom-like shadow
+layout {
+    gaps 8
+    center-focused-column "never"
+    background-color "#222222"
+
+    preset-column-widths {
+        proportion 0.45
+        proportion 0.55
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    focus-ring { off; }
+    border {
+        width 1
+        active-color "#ff00ff"
+        inactive-color "#444444"
+        urgent-color "#bbbbbb"
+    }
+    shadow {
+        on
+        softness 6
+        spread 0
+        offset x=0 y=0
+        color "#000000b8"
+    }
+    tab-indicator {
+        active-color "#ff00ff"
+        inactive-color "#444444"
+    }
+}
+
+// wallpaper stays visible behind the overview (Mod+0)
+layer-rule {
+    match namespace="^wallpaper$"
+    place-within-backdrop true
+}
+
+// rules (dwm rules[]). dwm: Firefox -> tag 9 needs a named workspace in niri,
+// which would pin "9" to the top of the stack, so it's left out.
+window-rule {
+    match app-id="^[Gg]imp"
+    open-floating true
+}
+
+// ~/.xinitrc "Setup" block. xwayland-satellite is started by niri on demand.
+spawn-at-startup "pg-autostart" "niri"
+
+prefer-no-csd
+hotkey-overlay { skip-at-startup; }
+screenshot-path "~/Pictures/Screenshots/Screenshot_%Y-%m-%d_%H%M%S.png"
+
+binds {
+    // --- keys (dwm keys[])
+    Mod+P hotkey-overlay-title="Launcher" { spawn "pg-menu"; }
+    Mod+Shift+Return hotkey-overlay-title="Terminal" { spawn "foot"; }
+    Mod+Shift+S hotkey-overlay-title="Screenshot area" { spawn "vshot"; }
+    Mod+Shift+X hotkey-overlay-title="Screenshot all" { spawn "vshot" "-all"; }
+    Mod+B hotkey-overlay-title="Toggle bar" { spawn-sh "pkill -USR1 -x waybar"; }
+    Mod+J { focus-window-down-or-column-right; }
+    Mod+K { focus-window-up-or-column-left; }
+    // dwm: incnmaster +1/-1. Pull the next column into this one / push it back out.
+    Mod+I { consume-window-into-column; }
+    Mod+D { expel-window-from-column; }
+    // dwm: setmfact. Resizes the focused column.
+    Mod+H { set-column-width "-5%"; }
+    Mod+L { set-column-width "+5%"; }
+    // dwm: zoom. Moves the focused column to the front of the strip.
+    Mod+Return { move-column-to-first; }
+    Mod+Tab { focus-workspace-previous; }
+    Mod+Shift+C repeat=false { close-window; }
+    // dwm: tile / floating / monocle / previous layout. niri has one layout,
+    // so these act on the focused column or window instead.
+    Mod+T { set-column-width "50%"; }
+    Mod+F { toggle-window-floating; }
+    Mod+M { maximize-column; }
+    Mod+Space { maximize-column; }
+    Mod+Shift+Space { toggle-window-floating; }
+    // dwm: view all tags. The overview shows every workspace at once.
+    Mod+0 repeat=false { toggle-overview; }
+    Mod+Comma { focus-monitor-previous; }
+    Mod+Period { focus-monitor-next; }
+    Mod+Shift+Comma { move-column-to-monitor-previous; }
+    Mod+Shift+Period { move-column-to-monitor-next; }
+    // dwm: Mod+Shift+0 (tag all), Mod+Ctrl(+Shift)+1-9 (toggleview/toggletag)
+    // and Mod+minus/equal (gaps) have no niri equivalent and are left unbound.
+    Mod+Shift+Q { quit skip-confirmation=true; }
+
+    // --- tags (dwm TAGKEYS): view / tag
+    Mod+1 { focus-workspace 1; }
+    Mod+2 { focus-workspace 2; }
+    Mod+3 { focus-workspace 3; }
+    Mod+4 { focus-workspace 4; }
+    Mod+5 { focus-workspace 5; }
+    Mod+6 { focus-workspace 6; }
+    Mod+7 { focus-workspace 7; }
+    Mod+8 { focus-workspace 8; }
+    Mod+9 { focus-workspace 9; }
+    Mod+Shift+1 { move-window-to-workspace 1 focus=false; }
+    Mod+Shift+2 { move-window-to-workspace 2 focus=false; }
+    Mod+Shift+3 { move-window-to-workspace 3 focus=false; }
+    Mod+Shift+4 { move-window-to-workspace 4 focus=false; }
+    Mod+Shift+5 { move-window-to-workspace 5 focus=false; }
+    Mod+Shift+6 { move-window-to-workspace 6 focus=false; }
+    Mod+Shift+7 { move-window-to-workspace 7 focus=false; }
+    Mod+Shift+8 { move-window-to-workspace 8 focus=false; }
+    Mod+Shift+9 { move-window-to-workspace 9 focus=false; }
+
+    // Mouse (dwm buttons[]) is built in: Mod+left-drag moves, Mod+right-drag resizes.
+
+    // --- niri extras on keys dwm doesn't use
+    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+H { move-column-left; }
+    Mod+Shift+L { move-column-right; }
+    Mod+Shift+J { move-window-down; }
+    Mod+Shift+K { move-window-up; }
+    Mod+BracketLeft  { consume-or-expel-window-left; }
+    Mod+BracketRight { consume-or-expel-window-right; }
+    Mod+W { toggle-column-tabbed-display; }
+    Mod+R { switch-preset-column-width; }
+    Mod+C { center-column; }
+    Mod+E { expand-column-to-available-width; }
+    Mod+Shift+F { fullscreen-window; }
+    Mod+Page_Down { focus-workspace-down; }
+    Mod+Page_Up   { focus-workspace-up; }
+    Mod+Shift+Page_Down { move-column-to-workspace-down; }
+    Mod+Shift+Page_Up   { move-column-to-workspace-up; }
+    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
+    Mod+WheelScrollRight { focus-column-right; }
+    Mod+WheelScrollLeft  { focus-column-left; }
+    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "set" "+5%"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
+    XF86AudioRaiseVolume  allow-when-locked=true { spawn-sh "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"; }
+    XF86AudioLowerVolume  allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"; }
+    XF86AudioMute         allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+    XF86AudioMicMute      allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+    XF86AudioPlay         allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioNext         allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev         allow-when-locked=true { spawn "playerctl" "previous"; }
+}

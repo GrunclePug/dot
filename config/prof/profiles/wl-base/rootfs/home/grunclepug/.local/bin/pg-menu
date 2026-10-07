@@ -1,0 +1,4 @@
+#!/bin/sh
+# prof playground: dmenu_run with the dmenucmd colors from ~/builds/dwm/config.h.
+exec wmenu-run -f "monospace 10" \
+    -N 222222 -n bbbbbb -M ff00ff -m eeeeee -S ff00ff -s eeeeee "$@"

@@ -26,13 +26,15 @@ fi
 
 # Prompt
 # Default: PS1='[\u@\h \W]\$ '
-PRIMARY_COLOR=$'\e[1;35m'
-SEPARATOR_COLOR=$'\e[1;36m'
+# PRIMARY_COLOR=$'\e[1;35m'
+# SEPARATOR_COLOR=$'\e[1;36m'
+PRIMARY_COLOR=$'\e[1;36m'
+SEPARATOR_COLOR=$'\e[1;33m'
 CLR=$'\e[m'
 PS1="\[${SEPARATOR_COLOR}\][\[${CLR}${PRIMARY_COLOR}\]\u\[${CLR}${SEPARATOR_COLOR}\]@\[${CLR}${PRIMARY_COLOR}\]\h \W\[${CLR}${SEPARATOR_COLOR}\]]\[${CLR}${PRIMARY_COLOR}\]\$\[${CLR}\] "
 
 # Fetch
-fastfetch --logo-color-1 magenta --logo-color-2 magenta --color magenta --color-separator cyan
+fastfetch
 
 # Host-specific overrides (e.g. device colors, local paths)
 if [ -f ~/.bashrc.local ]; then
