@@ -1,0 +1,7 @@
+#!/bin/sh
+# prof playground launcher: run from a TTY (the startx of this profile).
+# niri-session wires niri into the systemd user session (portals, environment
+# import, graphical-session.target), so PATH is exported before it.
+export PATH="$HOME/.local/bin:$PATH"
+export MOZ_ENABLE_WAYLAND=1 QT_QPA_PLATFORM="wayland;xcb" SDL_VIDEODRIVER="wayland,x11"
+exec niri-session "$@"

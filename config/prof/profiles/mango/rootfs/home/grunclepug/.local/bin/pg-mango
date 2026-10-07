@@ -1,0 +1,6 @@
+#!/bin/sh
+# prof playground launcher: run from a TTY (the startx of this profile).
+export PATH="$HOME/.local/bin:$PATH"
+export XDG_CURRENT_DESKTOP=mango XDG_SESSION_TYPE=wayland XDG_SESSION_DESKTOP=mango
+export MOZ_ENABLE_WAYLAND=1 QT_QPA_PLATFORM="wayland;xcb" SDL_VIDEODRIVER="wayland,x11"
+exec mango "$@"

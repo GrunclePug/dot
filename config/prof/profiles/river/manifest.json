@@ -1,0 +1,6 @@
+{
+  "name": "river",
+  "dependencies": ["wl-base"],
+  "manager": "pacman",
+  "packages": ["river-classic", "xdg-desktop-portal-wlr"]
+}

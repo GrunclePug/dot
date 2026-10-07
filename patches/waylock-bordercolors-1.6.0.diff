@@ -1,0 +1,220 @@
+diff --git a/build.zig b/build.zig
+index cdbe456..d09c8d4 100644
+--- a/build.zig
++++ b/build.zig
+@@ -82,6 +82,7 @@ pub fn build(b: *Build) !void {
+     scanner.addSystemProtocol("stable/viewporter/viewporter.xml");
+ 
+     scanner.generate("wl_compositor", 4);
++    scanner.generate("wl_subcompositor", 1);
+     scanner.generate("wl_output", 3);
+     scanner.generate("wl_seat", 5);
+     scanner.generate("ext_session_lock_manager_v1", 1);
+diff --git a/src/Lock.zig b/src/Lock.zig
+index 3fd4685..b55c959 100644
+--- a/src/Lock.zig
++++ b/src/Lock.zig
+@@ -39,6 +39,8 @@ pub const Options = struct {
+     input_color: u24 = 0x6c71c4,
+     input_alt_color: u24 = 0x6c71c4,
+     fail_color: u24 = 0xdc322f,
++    border_width: u31 = 0,
++    bg_color: u24 = 0x000000,
+ 
+     fn rgb(options: Options, color: Color) u24 {
+         return switch (color) {
+@@ -71,16 +73,20 @@ color: Color = .init,
+ fork_on_lock: bool,
+ ready_fd: ?posix.fd_t,
+ ignore_empty_password: bool,
++border_width: u31,
+ 
+ pollfds: [2]posix.pollfd,
+ 
+ display: *wl.Display,
+ compositor: ?*wl.Compositor = null,
++subcompositor: ?*wl.Subcompositor = null,
+ session_lock_manager: ?*ext.SessionLockManagerV1 = null,
+ session_lock: ?*ext.SessionLockV1 = null,
+ viewporter: ?*wp.Viewporter = null,
+ buffer_manager: ?*wp.SinglePixelBufferManagerV1 = null,
+ buffers: [4]*wl.Buffer,
++/// Fills the area inside the border, only created if border_width > 0.
++bg_buffer: ?*wl.Buffer = null,
+ 
+ seats: wl.list.Head(Seat, .link),
+ outputs: wl.list.Head(Output, .link),
+@@ -96,6 +102,7 @@ pub fn run(io: Io, gpa: mem.Allocator, options: Options) void {
+         .fork_on_lock = options.fork_on_lock,
+         .ready_fd = options.ready_fd,
+         .ignore_empty_password = options.ignore_empty_password,
++        .border_width = options.border_width,
+         .pollfds = undefined,
+         .display = wl.Display.connect(null) catch |err| {
+             fatal("failed to connect to a wayland compositor: {s}", .{@errorName(err)});
+@@ -141,8 +148,12 @@ pub fn run(io: Io, gpa: mem.Allocator, options: Options) void {
+     if (lock.session_lock_manager == null) fatal_not_advertised(ext.SessionLockManagerV1);
+     if (lock.viewporter == null) fatal_not_advertised(wp.Viewporter);
+     if (lock.buffer_manager == null) fatal_not_advertised(wp.SinglePixelBufferManagerV1);
++    if (lock.border_width > 0 and lock.subcompositor == null) fatal_not_advertised(wl.Subcompositor);
+ 
+     lock.buffers = create_buffers(lock.buffer_manager.?, options) catch fatal_oom();
++    if (lock.border_width > 0) {
++        lock.bg_buffer = create_buffer(lock.buffer_manager.?, options.bg_color) catch fatal_oom();
++    }
+     lock.buffer_manager.?.destroy();
+     lock.buffer_manager = null;
+ 
+@@ -264,8 +275,10 @@ fn flush_wayland_and_prepare_read(lock: *Lock) void {
+ /// Clean up resources just so we can better use tooling such as valgrind to check for leaks.
+ fn deinit(lock: *Lock) void {
+     if (lock.compositor) |compositor| compositor.destroy();
++    if (lock.subcompositor) |subcompositor| subcompositor.destroy();
+     if (lock.viewporter) |viewporter| viewporter.destroy();
+     for (lock.buffers) |buffer| buffer.destroy();
++    if (lock.bg_buffer) |buffer| buffer.destroy();
+ 
+     assert(lock.buffer_manager == null);
+     assert(lock.session_lock_manager == null);
+@@ -302,6 +315,8 @@ fn registry_event(lock: *Lock, registry: *wl.Registry, event: wl.Registry.Event)
+                     fatal("advertised wl_compositor version too old, version 4 required", .{});
+                 }
+                 lock.compositor = try registry.bind(ev.name, wl.Compositor, 4);
++            } else if (mem.orderZ(u8, ev.interface, wl.Subcompositor.interface.name) == .eq) {
++                lock.subcompositor = try registry.bind(ev.name, wl.Subcompositor, 1);
+             } else if (mem.orderZ(u8, ev.interface, ext.SessionLockManagerV1.interface.name) == .eq) {
+                 lock.session_lock_manager = try registry.bind(ev.name, ext.SessionLockManagerV1, 1);
+             } else if (mem.orderZ(u8, ev.interface, wl.Output.interface.name) == .eq) {
+@@ -447,17 +462,23 @@ fn create_buffers(
+ ) error{OutOfMemory}![4]*wl.Buffer {
+     var buffers: [4]*wl.Buffer = undefined;
+     for ([_]Color{ .init, .input, .input_alt, .fail }) |color| {
+-        const rgb = options.rgb(color);
+-        buffers[@intFromEnum(color)] = try buffer_manager.createU32RgbaBuffer(
+-            @as(u32, (rgb >> 16) & 0xff) * (0xffff_ffff / 0xff),
+-            @as(u32, (rgb >> 8) & 0xff) * (0xffff_ffff / 0xff),
+-            @as(u32, (rgb >> 0) & 0xff) * (0xffff_ffff / 0xff),
+-            0xffff_ffff,
+-        );
++        buffers[@intFromEnum(color)] = try create_buffer(buffer_manager, options.rgb(color));
+     }
+     return buffers;
+ }
+ 
++fn create_buffer(
++    buffer_manager: *wp.SinglePixelBufferManagerV1,
++    rgb: u24,
++) error{OutOfMemory}!*wl.Buffer {
++    return buffer_manager.createU32RgbaBuffer(
++        @as(u32, (rgb >> 16) & 0xff) * (0xffff_ffff / 0xff),
++        @as(u32, (rgb >> 8) & 0xff) * (0xffff_ffff / 0xff),
++        @as(u32, (rgb >> 0) & 0xff) * (0xffff_ffff / 0xff),
++        0xffff_ffff,
++    );
++}
++
+ fn fork_to_background() void {
+     const pid: system.pid_t = fork: {
+         const rc = system.fork();
+diff --git a/src/Output.zig b/src/Output.zig
+index d13a6c7..00ab68f 100644
+--- a/src/Output.zig
++++ b/src/Output.zig
+@@ -20,6 +20,12 @@ surface: ?*wl.Surface = null,
+ viewport: ?*wp.Viewport = null,
+ lock_surface: ?*ext.SessionLockSurfaceV1 = null,
+ 
++// Inner background drawn over the colored surface, leaving a border.
++// Only created if lock.border_width > 0.
++bg_surface: ?*wl.Surface = null,
++bg_subsurface: ?*wl.Subsurface = null,
++bg_viewport: ?*wp.Viewport = null,
++
+ configured: bool = false,
+ // These fields are not used before the first configure is received.
+ width: u31 = undefined,
+@@ -36,10 +42,20 @@ pub fn create_surface(output: *Output) !void {
+     output.lock_surface = lock_surface;
+ 
+     output.viewport = try output.lock.viewporter.?.getViewport(surface);
++
++    if (output.lock.border_width > 0) {
++        const bg_surface = try output.lock.compositor.?.createSurface();
++        output.bg_surface = bg_surface;
++        output.bg_subsurface = try output.lock.subcompositor.?.getSubsurface(bg_surface, surface);
++        output.bg_viewport = try output.lock.viewporter.?.getViewport(bg_surface);
++    }
+ }
+ 
+ pub fn destroy(output: *Output) void {
+     output.wl_output.release();
++    if (output.bg_subsurface) |subsurface| subsurface.destroy();
++    if (output.bg_viewport) |viewport| viewport.destroy();
++    if (output.bg_surface) |surface| surface.destroy();
+     if (output.viewport) |viewport| viewport.destroy();
+     if (output.lock_surface) |lock_surface| lock_surface.destroy();
+     if (output.surface) |surface| surface.destroy();
+@@ -60,11 +76,27 @@ fn lock_surface_listener(
+             output.width = @min(std.math.maxInt(u31), ev.width);
+             output.height = @min(std.math.maxInt(u31), ev.height);
+             output.lock_surface.?.ackConfigure(ev.serial);
++            output.configure_bg();
+             output.attach_buffer(lock.buffers[@intFromEnum(lock.color)]);
+         },
+     }
+ }
+ 
++/// The subsurface is synchronized, so this takes effect on the next commit of the parent.
++fn configure_bg(output: *Output) void {
++    const bg_surface = output.bg_surface orelse return;
++    const border = output.lock.border_width;
++    if (output.width <= 2 * border or output.height <= 2 * border) {
++        bg_surface.attach(null, 0, 0);
++    } else {
++        output.bg_subsurface.?.setPosition(border, border);
++        bg_surface.attach(output.lock.bg_buffer.?, 0, 0);
++        bg_surface.damageBuffer(0, 0, math.maxInt(i32), math.maxInt(i32));
++        output.bg_viewport.?.setDestination(output.width - 2 * border, output.height - 2 * border);
++    }
++    bg_surface.commit();
++}
++
+ pub fn attach_buffer(output: *Output, buffer: *wl.Buffer) void {
+     if (!output.configured) return;
+     output.surface.?.attach(buffer, 0, 0);
+diff --git a/src/main.zig b/src/main.zig
+index 0a72b98..2e6c20a 100644
+--- a/src/main.zig
++++ b/src/main.zig
+@@ -27,6 +27,8 @@ const usage =
+     \\  -input-color 0xRRGGBB      Set the color used after input.
+     \\  -input-alt-color 0xRRGGBB  Set the alternate color used after input.
+     \\  -fail-color 0xRRGGBB       Set the color used on authentication failure.
++    \\  -border-width <px>         Draw the colors as a border of this width (0 = fill).
++    \\  -bg-color 0xRRGGBB         Set the color inside the border (default 0x000000).
+     \\
+ ;
+ 
+@@ -54,6 +56,8 @@ pub fn main(init: process.Init) error{ OutOfMemory, Unexpected }!void {
+         .{ .name = "input-color", .kind = .arg },
+         .{ .name = "input-alt-color", .kind = .arg },
+         .{ .name = "fail-color", .kind = .arg },
++        .{ .name = "border-width", .kind = .arg },
++        .{ .name = "bg-color", .kind = .arg },
+     }).parse(args[1..]) catch {
+         stderr.writeAll(usage) catch {};
+         process.exit(1);
+@@ -104,6 +108,13 @@ pub fn main(init: process.Init) error{ OutOfMemory, Unexpected }!void {
+     }
+     if (result.flags.@"input-alt-color") |raw| options.input_alt_color = parse_color(raw);
+     if (result.flags.@"fail-color") |raw| options.fail_color = parse_color(raw);
++    if (result.flags.@"border-width") |raw| {
++        options.border_width = std.fmt.parseInt(u31, raw, 10) catch {
++            log.err("invalid border width '{s}'", .{raw});
++            process.exit(1);
++        };
++    }
++    if (result.flags.@"bg-color") |raw| options.bg_color = parse_color(raw);
+ 
+     Lock.run(io, init.gpa, options);
+ }

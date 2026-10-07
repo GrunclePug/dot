@@ -1,0 +1,5 @@
+#!/bin/sh
+# prof playground: mango's dmenu_run (Alt+p). Same wmenu as pg-menu, in mango's
+# teal palette.
+exec wmenu-run -f "JetBrainsMono Nerd Font 10" -p run \
+    -N 0e141a -n 8fa3ad -M 5fd4c4 -m 0e141a -S 1b252d -s e6edf0 "$@"

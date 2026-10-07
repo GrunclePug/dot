@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# patched waylock (~/builds/waylock, see patches/) installed to ~/.local/bin
+# colors/border match slock-bordercolors
+exec "$HOME/.local/bin/waylock" \
+	-border-width 4 \
+	-bg-color 0x000000 \
+	-init-color 0x000000 \
+	-input-color 0x005577 \
+	-fail-color 0xcc3333 \
+	"$@"

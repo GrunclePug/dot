@@ -1,0 +1,11 @@
+{
+  "//": "prof playground: dwm bar for niri. Workspaces | focused title ... slstatus + tray (shared, see dwm-status.json).",
+  "include": ["~/.config/waybar/dwm-status.json"],
+  "layer": "top",
+  "position": "top",
+  "height": 19,
+  "spacing": 0,
+  "modules-left": ["niri/workspaces", "niri/window"],
+  "niri/workspaces": { "format": "{index}" },
+  "niri/window": { "max-length": 80, "tooltip": false }
+}

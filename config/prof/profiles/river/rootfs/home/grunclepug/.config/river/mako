@@ -1,0 +1,26 @@
+# prof playground: river notifications. Same as mango's: square and flat, teal edge.
+font=JetBrainsMono Nerd Font 10
+width=340
+anchor=top-right
+outer-margin=8,8,0,0
+margin=0,0,8,0
+padding=10,12
+border-size=2
+border-radius=0
+border-color=#5fd4c4
+background-color=#0e141a
+text-color=#d8e2e6
+progress-color=over #5fd4c455
+format=<b>%s</b>\n%b
+markup=1
+default-timeout=8000
+max-visible=6
+
+[urgency=low]
+border-color=#2a3640aa
+text-color=#8fa3ad
+
+[urgency=critical]
+border-color=#ef6b73
+background-color=#2a1418dd
+default-timeout=0

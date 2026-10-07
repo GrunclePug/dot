@@ -1,0 +1,11 @@
+#!/bin/sh
+# prof playground: dwm's focused-window title for waybar, fed by mango's IPC.
+# Prints one line per focus/title change; an empty line (nothing focused)
+# hides the module. Reconnects on its own, like pg-mango-layout.
+while :; do
+    mmsg watch focusing-client
+    sleep 1
+done | sed -u -E -n \
+        -e '/"title":null/{s/.*//p;d}' \
+        -e 's/.*"title":"((\\.|[^"\\])*)".*/\1/; T' \
+        -e 's/\\"/"/g; s/\\\\/\\/g; p'

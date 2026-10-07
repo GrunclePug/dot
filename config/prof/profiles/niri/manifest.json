@@ -1,0 +1,6 @@
+{
+  "name": "niri",
+  "dependencies": ["wl-base"],
+  "manager": "pacman",
+  "packages": ["niri", "xwayland-satellite", "xdg-desktop-portal-gnome"]
+}
