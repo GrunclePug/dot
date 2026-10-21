@@ -1,0 +1,39 @@
+# slock with the bordercolors patch
+# Pinned to an upstream commit; bordercolors.patch is the patch set as applied to the
+# owner's former build tree, and config.h is the owner's configuration.
+# To update: move _commit (and pkgver), refresh the patch if it no longer
+# applies, and edit config.h freely.
+pkgname=slock-arcus
+_name=slock
+pkgver=1.6.r2.g3791a99
+_commit=3791a996e230aec59d61faea46634ae4f031e359
+pkgrel=1
+pkgdesc="slock with the bordercolors patch"
+arch=(x86_64)
+url="https://slock.suckless.org"
+license=(MIT)
+depends=(libx11 libxext libxrandr libxcrypt)
+makedepends=(git)
+provides=(slock)
+conflicts=(slock)
+source=("$_name::git+https://git.suckless.org/$_name#commit=$_commit"
+        bordercolors.patch
+        config.h)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+prepare() {
+  cd $_name
+  patch -Np1 -i ../bordercolors.patch
+  cp ../config.h config.h
+}
+
+build() {
+  cd $_name
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd $_name
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

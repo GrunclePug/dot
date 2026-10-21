@@ -1,0 +1,196 @@
+/* prof playground: river bar, styled exactly like mango's (palette in
+   ~/.config/prof/profiles/mango/palette.md). Only the module names differ:
+   river/tags, river/mode, river/window. */
+@define-color base  #0e141a;
+@define-color shade #1b252d;
+@define-color line  #2a3640;
+@define-color text  #e6edf0;
+@define-color dim   #8fa3ad;
+@define-color teal  #5fd4c4;
+@define-color gold  #f2c46d;
+@define-color rose  #ef6b73;
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 10pt;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+window#waybar { background: @base; color: @text; }
+
+/* tags: dim when empty, brighter with windows, filled teal when focused */
+#tags button { padding: 0 7px; color: @line; background: transparent; }
+#tags button.occupied { color: @dim; }
+#tags button:hover    { color: @text; background: @shade; }
+#tags button.focused  { color: @base; background: @teal; font-weight: bold; }
+#tags button.urgent   { color: @base; background: @rose; }
+
+/* active mode */
+#mode { padding: 0 8px; color: @base; background: @teal; font-weight: bold; }
+
+/* focused window title */
+#window { padding: 0 10px; color: @text; background: @shade; }
+window#waybar.empty #window { background: transparent; }
+
+/* status */
+#cpu, #memory, #battery, #wireplumber, #clock { padding: 0 10px; color: @dim; }
+#clock { color: @text; }
+#wireplumber.muted { color: @line; }
+#battery.charging, #battery.plugged, #battery.full { color: @teal; }
+#battery.warning:not(.charging)  { color: @gold; }
+#battery.critical:not(.charging) { color: @base; background: @rose; }
+
+#tray { padding: 0 8px; }
+#tray > .needs-attention { background: @rose; }
+
+/* systray context menus (nm-applet, discord, etc.) */
+window.popup,
+window.popup.background,
+.popup {
+  background-color: transparent;
+}
+
+window.popup menu,
+#tray menu,
+menu,
+.menu {
+  background-color: @base;
+  color: @text;
+  border: 2px solid @teal;
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+window.popup menu menuitem,
+#tray menu menuitem,
+menu menuitem,
+.menu menuitem {
+  color: @text;
+  background-color: transparent;
+  padding: 5px 12px;
+  margin: 1px 2px;
+  border-radius: 4px;
+}
+
+window.popup menu menuitem:hover,
+#tray menu menuitem:hover,
+menu menuitem:hover,
+window.popup menu menuitem:selected,
+#tray menu menuitem:selected,
+menu menuitem:selected {
+  background-color: @shade;
+  color: @teal;
+}
+
+window.popup menu menuitem label,
+#tray menu menuitem label,
+menu menuitem label,
+window.popup menu menuitem *,
+#tray menu menuitem *,
+menu menuitem * {
+  color: @text;
+}
+
+window.popup menu menuitem:hover label,
+#tray menu menuitem:hover label,
+menu menuitem:hover label,
+window.popup menu menuitem:selected label,
+#tray menu menuitem:selected label,
+menu menuitem:selected label,
+window.popup menu menuitem:hover *,
+#tray menu menuitem:hover *,
+menu menuitem:hover *,
+window.popup menu menuitem:selected *,
+#tray menu menuitem:selected *,
+menu menuitem:selected * {
+  color: @teal;
+}
+
+window.popup menu menuitem:disabled,
+#tray menu menuitem:disabled,
+menu menuitem:disabled,
+window.popup menu menuitem:disabled *,
+#tray menu menuitem:disabled *,
+menu menuitem:disabled * {
+  color: @dim;
+}
+
+window.popup menu separator,
+#tray menu separator,
+menu separator {
+  background-color: @line;
+  border-bottom: 1px solid @line;
+  margin: 4px 6px;
+  min-height: 1px;
+}
+
+window.popup menu check,
+#tray menu check,
+menu check,
+window.popup menu radio,
+#tray menu radio,
+menu radio {
+  color: @teal;
+}
+
+tooltip { background: @base; border: 1px solid @line; }
+tooltip label { color: @text; }
+
+/* volume popup slider (pg-vol-slider) */
+#slider-card {
+  background-color: @base;
+  border: 2px solid @teal;
+  border-radius: 8px;
+  padding: 8px 6px 8px 6px;
+}
+#slider-card.boosted {
+  border-color: @gold;
+}
+#slider-card.muted {
+  border-color: @rose;
+}
+
+#vol-label {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 8.5pt;
+  font-weight: bold;
+  color: @teal;
+  margin-bottom: 4px;
+}
+#vol-label.boost {
+  color: @gold;
+}
+#vol-label.muted {
+  color: @rose;
+}
+
+scale trough {
+  min-width: 6px;
+  background-color: @shade;
+  border: 1px solid @line;
+  border-radius: 3px;
+}
+scale highlight {
+  min-width: 6px;
+  background-color: @teal;
+  border-radius: 3px;
+}
+scale.boost highlight {
+  background-color: @gold;
+}
+scale slider {
+  min-width: 14px;
+  min-height: 14px;
+  margin: -4px;
+  background-color: @text;
+  border: 1px solid @teal;
+  border-radius: 4px;
+  box-shadow: none;
+}
+scale.boost slider {
+  border-color: @gold;
+}

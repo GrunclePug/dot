@@ -1,0 +1,39 @@
+# slstatus with the owner's status line
+# Pinned to an upstream commit; config.patch is the patch set as applied to the
+# owner's former build tree, and config.h is the owner's configuration.
+# To update: move _commit (and pkgver), refresh the patch if it no longer
+# applies, and edit config.h freely.
+pkgname=slstatus-arcus
+_name=slstatus
+pkgver=1.1.r6.g614c275
+_commit=614c275b42064c5433fbb086e7d9639a19f1f127
+pkgrel=1
+pkgdesc="slstatus with the owner's status line"
+arch=(x86_64)
+url="https://slstatus.suckless.org"
+license=(MIT)
+depends=(libx11)
+makedepends=(git)
+provides=(slstatus)
+conflicts=(slstatus)
+source=("$_name::git+https://git.suckless.org/$_name#commit=$_commit"
+        config.patch
+        config.h)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+prepare() {
+  cd $_name
+  patch -Np1 -i ../config.patch
+  cp ../config.h config.h
+}
+
+build() {
+  cd $_name
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd $_name
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

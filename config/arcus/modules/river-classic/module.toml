@@ -1,0 +1,5 @@
+description = "river-classic 0.3 session"
+requires    = ["wl-base"]
+
+[packages]
+pacman = ["river-classic", "xdg-desktop-portal-wlr"]

@@ -1,0 +1,4 @@
+description = "bash, tmux and command-line helpers"
+
+[packages]
+pacman = ["tmux"]

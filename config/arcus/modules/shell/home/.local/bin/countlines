@@ -1,0 +1,36 @@
+#!/bin/bash
+
+project_path=$(realpath .)
+echo "Project: $project_path"
+echo
+
+declare -A file_counts
+declare -A line_counts
+total_files=0
+total_lines=0
+
+while IFS= read -r -d '' file; do
+    # Check if file is text
+    if file "$file" | grep -q "text"; then
+        ext="${file##*.}"
+        ext_upper=$(echo "$ext" | tr '[:lower:]' '[:upper:]')
+
+        # Count lines
+        line_count=$(wc -l < "$file" 2>/dev/null)
+        ((file_counts["$ext_upper"]++))
+        ((line_counts["$ext_upper"] += line_count))
+        ((total_files++))
+        ((total_lines += line_count))
+    fi
+done < <(find . -type f ! -name "*.import" -not -path '*/.*' -print0)
+
+# Output per-extension results
+for ext in "${!file_counts[@]}"; do
+    printf "%-8s Files: %d\n" "$ext" "${file_counts[$ext]}"
+    printf "%-8s Lines: %d\n" "$ext" "${line_counts[$ext]}"
+    echo
+done
+
+# Final total
+echo "Total Files: $total_files"
+echo "Total Lines: $total_lines"

@@ -1,0 +1,188 @@
+#!/bin/sh
+# prof playground: river-classic 0.3 (riverctl + rivertile), in mango's palette.
+# The 'river' package (0.4+) dropped riverctl/rivertile and needs an external
+# window manager; this profile deliberately uses 'river-classic'.
+# Previous dwm-lookalike version: ~/.config/prof/backups/2026-10-03-dwm-lookalike/
+#
+# Two layers of keys:
+#   Alt   = your dwm keys, unchanged (deviations marked "dwm:")
+#   Super = what river does that dwm can't: modal keymaps (move/resize mode),
+#           a scratchpad tag, sticky windows, live reload of this file
+#
+# Flat look, same palette as the mango profile (~/.config/prof/profiles/mango/
+# palette.md: teal from the roofs in the wallpaper, gold from the trim), so the
+# two differ only in how they work.
+base=0x0e141a     # background
+line=0x2a3640     # unfocused border
+teal=0x5fd4c4     # focus / accent
+rose=0xef6b73     # urgent
+
+mod=Alt
+term='foot -c ~/.config/river/foot.ini'
+menu='wmenu-run -f "JetBrainsMono Nerd Font 10" -p run -N 0e141a -n 8fa3ad -M 5fd4c4 -m 0e141a -S 1b252d -s e6edf0'
+
+# --- keys (dwm keys[]) ---------------------------------------------------
+riverctl map normal $mod P spawn "$menu"
+riverctl map normal $mod+Shift Return spawn "$term"
+riverctl map normal $mod+Shift S spawn vshot
+riverctl map normal $mod+Shift X spawn 'vshot -all'
+riverctl map normal $mod B spawn 'pkill -USR1 -x waybar'
+riverctl map normal $mod J focus-view next
+riverctl map normal $mod K focus-view previous
+riverctl map normal $mod I send-layout-cmd rivertile "main-count +1"
+riverctl map normal $mod D send-layout-cmd rivertile "main-count -1"
+riverctl map normal $mod H send-layout-cmd rivertile "main-ratio -0.05"
+riverctl map normal $mod L send-layout-cmd rivertile "main-ratio +0.05"
+riverctl map normal $mod Return zoom
+riverctl map normal $mod Tab focus-previous-tags
+riverctl map normal $mod+Shift C close
+riverctl map normal $mod T send-layout-cmd rivertile "main-location left"
+# dwm: floating layout. rivertile has none; floats/unfloats the focused window.
+riverctl map normal $mod F toggle-float
+# dwm: monocle / swap to previous layout. rivertile has no monocle, so both
+# toggle fullscreen on the focused window (Mod+m in, Mod+space back out).
+riverctl map normal $mod M toggle-fullscreen
+riverctl map normal $mod Space toggle-fullscreen
+riverctl map normal $mod+Shift Space toggle-float
+riverctl map normal $mod Comma focus-output previous
+riverctl map normal $mod Period focus-output next
+riverctl map normal $mod+Shift Comma send-to-output previous
+riverctl map normal $mod+Shift Period send-to-output next
+# dwm: Mod+minus / Mod+equal / Mod+Shift+equal change gaps. rivertile only
+# takes padding at startup (see the last line), so these are left unbound.
+riverctl map normal $mod+Shift Q exit
+
+# --- tags (dwm TAGKEYS) --------------------------------------------------
+# river's tags are dwm's tags: a bitmask, so views can sit on several at once.
+for i in $(seq 1 9); do
+    tags=$((1 << (i - 1)))
+    riverctl map normal $mod $i set-focused-tags $tags
+    riverctl map normal $mod+Control $i toggle-focused-tags $tags
+    riverctl map normal $mod+Shift $i set-view-tags $tags
+    riverctl map normal $mod+Shift+Control $i toggle-view-tags $tags
+done
+all_tags=$(((1 << 9) - 1))
+riverctl map normal $mod 0 set-focused-tags $all_tags
+riverctl map normal $mod+Shift 0 set-view-tags $all_tags
+
+# --- mouse (dwm buttons[] on client windows) -----------------------------
+riverctl map-pointer normal $mod BTN_LEFT move-view
+riverctl map-pointer normal $mod BTN_MIDDLE toggle-float
+riverctl map-pointer normal $mod BTN_RIGHT resize-view
+
+# --- rules (dwm rules[]) -------------------------------------------------
+riverctl rule-add -app-id 'gimp*' float
+riverctl rule-add -app-id 'Gimp*' float
+riverctl rule-add -app-id 'firefox' tags $((1 << 8))
+riverctl rule-add -app-id 'Firefox' tags $((1 << 8))
+riverctl rule-add -app-id '*pavucontrol' float
+riverctl rule-add -app-id 'nm-connection-editor' float
+# Ask every app for server-side decorations: one uniform 2px frame instead of
+# a mix of fat client titlebars (apps that insist on drawing their own still can).
+riverctl rule-add ssd
+
+# --- look: flat, 2px teal border ------------------------------------------
+riverctl background-color $base
+riverctl border-color-focused $teal
+riverctl border-color-unfocused $line
+riverctl border-color-urgent $rose
+riverctl border-width 2
+riverctl xcursor-theme Adwaita 24
+riverctl hide-cursor when-typing enabled
+
+# --- input: X server defaults + your xorg.conf.d touchpad ----------------
+riverctl set-repeat 25 660
+riverctl focus-follows-cursor normal
+riverctl set-cursor-warp disabled
+for pad in $(riverctl list-inputs | grep -i touchpad); do
+    riverctl input "$pad" tap enabled
+    riverctl input "$pad" natural-scroll enabled
+    riverctl input "$pad" disable-while-typing enabled
+done
+
+# --- extras dwm doesn't bind (unchanged from the dwm-lookalike) ----------
+riverctl map normal $mod+Shift J swap next
+riverctl map normal $mod+Shift K swap previous
+riverctl map normal $mod Up    send-layout-cmd rivertile "main-location top"
+riverctl map normal $mod Right send-layout-cmd rivertile "main-location right"
+riverctl map normal $mod Down  send-layout-cmd rivertile "main-location bottom"
+riverctl map normal $mod Left  send-layout-cmd rivertile "main-location left"
+riverctl map normal $mod+Shift Tab send-to-previous-tags
+
+# passthrough mode, for nested compositors / VMs that want Alt themselves
+riverctl declare-mode passthrough
+riverctl map normal $mod F11 enter-mode passthrough
+riverctl map passthrough $mod F11 enter-mode normal
+
+# --- Super: where river shines -------------------------------------------
+# Modes are river's superpower: a whole keymap you step into and out of.
+# The bar shows the active mode next to the tags.
+
+# Super+r: "float" mode. hjkl moves the focused window, Shift+hjkl resizes,
+# Ctrl+hjkl snaps it to an edge. Escape or Return leaves.
+riverctl declare-mode float
+riverctl map normal Super R enter-mode float
+riverctl map float None Escape enter-mode normal
+riverctl map float None Return enter-mode normal
+riverctl map float None F toggle-float
+riverctl map -repeat float None H move left 40
+riverctl map -repeat float None J move down 40
+riverctl map -repeat float None K move up 40
+riverctl map -repeat float None L move right 40
+riverctl map -repeat float Shift H resize horizontal -40
+riverctl map -repeat float Shift J resize vertical 40
+riverctl map -repeat float Shift K resize vertical -40
+riverctl map -repeat float Shift L resize horizontal 40
+riverctl map float Control H snap left
+riverctl map float Control J snap down
+riverctl map float Control K snap up
+riverctl map float Control L snap right
+
+# Scratchpad: a hidden 21st tag holding one window (pg-river-scratch; its
+# daemon is started under autostart below).
+# Super+Return shows/hides it on top of the current tags and focuses its
+# window; if it's empty, it opens with a floating quick terminal (app-id
+# pg-scratch, placed by the rules below). Super+Shift+Return stashes the
+# focused window there: the old one is swapped out to the current tags, or
+# closed if it's a quick terminal you never ran a command in.
+# New windows never land on it (spawn-tagmask). Windows in it tile like any
+# other; Alt+f floats/tiles the focused one.
+scratch=$((1 << 20))
+riverctl map normal Super Return spawn 'pg-river-scratch toggle'
+riverctl map normal Super+Shift Return spawn 'pg-river-scratch stash'
+riverctl spawn-tagmask $(( ((1 << 32) - 1) ^ scratch ))
+riverctl rule-add -app-id pg-scratch float
+riverctl rule-add -app-id pg-scratch tags $scratch
+riverctl rule-add -app-id pg-scratch dimensions 1000 600
+
+# Sticky: put the focused window on every tag (Super+s). Alt+Shift+<n> puts
+# it back on a single tag, exactly as in dwm. Pure bitmask.
+riverctl map normal Super S set-view-tags $all_tags
+
+# Live reload: re-run this file. Every map/rule above is replaced in place;
+# the guard at the bottom keeps a second rivertile from starting.
+riverctl map normal $mod+Shift R spawn '~/.config/river/init reload'
+
+for mode in normal locked float; do
+    riverctl map -repeat $mode None XF86MonBrightnessUp   spawn 'brightnessctl set +5%'
+    riverctl map -repeat $mode None XF86MonBrightnessDown spawn 'brightnessctl set 5%-'
+    riverctl map -repeat $mode None XF86AudioRaiseVolume  spawn 'wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+'
+    riverctl map -repeat $mode None XF86AudioLowerVolume  spawn 'wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-'
+    riverctl map $mode None XF86AudioMute    spawn 'wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle'
+    riverctl map $mode None XF86AudioMicMute spawn 'wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle'
+    riverctl map $mode None XF86AudioPlay    spawn 'playerctl play-pause'
+    riverctl map $mode None XF86AudioNext    spawn 'playerctl next'
+    riverctl map $mode None XF86AudioPrev    spawn 'playerctl previous'
+done
+
+# A reload stops here: autostart and the layout generator are already running.
+[ "$1" = reload ] && exit 0
+
+# --- autostart (~/.xinitrc "Setup" block) -------------------------------
+riverctl spawn 'pg-autostart river'
+riverctl spawn 'pg-river-scratch daemon'
+
+# rivertile is the layout generator; it must be the last, long-running process.
+# view-padding 4 + outer-padding 4 = 8px between and around windows (dwm fullgaps, same as mango).
+riverctl default-layout rivertile
+exec rivertile -view-padding 4 -outer-padding 4 -main-ratio 0.55

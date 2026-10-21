@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# patched waylock (package waylock-arcus, recipe in this module's pkg/)
+# colors/border match slock-bordercolors
+exec waylock \
+	-border-width 4 \
+	-bg-color 0x000000 \
+	-init-color 0x000000 \
+	-input-color 0x005577 \
+	-fail-color 0xcc3333 \
+	"$@"

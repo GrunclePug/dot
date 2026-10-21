@@ -1,0 +1,10 @@
+description = "Daily setup shared by every machine"
+
+# Stacking order: later modules win a shared file.
+modules = [
+  "shell",
+  "nvim",
+  "x11",
+  "wl-base",
+  "river-classic",
+]

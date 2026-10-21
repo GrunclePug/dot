@@ -1,0 +1,84 @@
+# waylock with the bordercolors patch (colours and border match slock).
+# Based on Arch's waylock PKGBUILD; pinned to the v1.6.0 commit instead of
+# a signed tag, so no PGP key is needed. Bump _commit and pkgver together.
+# waylock 1.6.0 needs zig 0.16 while Arch ships a newer zig, so the build
+# uses the official zig 0.16.0 release, pinned by checksum.
+pkgname=waylock-arcus
+_name=waylock
+pkgver=1.6.0
+_zig=0.16.0
+_commit=3f90742d4725cbd0516bb2a7304770c601641411
+pkgrel=1
+pkgdesc="A simple screenlocker for wayland compositors (bordercolors patch)"
+arch=(x86_64)
+url="https://codeberg.org/ifreund/waylock"
+license=(ISC)
+depends=(glibc libxkbcommon pam wayland)
+makedepends=(git scdoc wayland-protocols)
+provides=(waylock)
+conflicts=(waylock)
+_zig_deps=(
+  # https://codeberg.org/ifreund/waylock/src/tag/v${pkgver}/build.zig.zon
+  zig-wayland-v0.6.0.tar.gz::https://codeberg.org/ifreund/zig-wayland/archive/v0.6.0.tar.gz
+  zig-xkbcommon-v0.3.0.tar.gz::https://codeberg.org/ifreund/zig-xkbcommon/archive/v0.3.0.tar.gz
+)
+source=(
+  "$_name::git+$url#commit=$_commit"
+  "${_zig_deps[@]}"
+  bordercolors.patch
+  "https://ziglang.org/download/$_zig/zig-x86_64-linux-$_zig.tar.xz"
+)
+noextract=("${_zig_deps[@]}")
+# Codeberg regenerates its archive tarballs, so their checksums drift. Zig
+# checks each dependency against the content hash in waylock's build.zig.zon
+# (a missing or different package fails the build), and the git source is
+# pinned by commit, so the sums are skipped.
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP'
+            '70e49664a74374b48b51e6f3fdfbf437f6395d42509050588bd49abe52ba3d00')
+
+_zigbin() { "$srcdir/zig-x86_64-linux-$_zig/zig" "$@"; }
+
+prepare() {
+  (
+    cd $_name
+    patch -Np1 -i ../bordercolors.patch
+    for dep in "${_zig_deps[@]}"; do
+      file_name="${dep%%::*}"
+      # Link dependency tarfile into place so that `zig fetch` can find it.
+      ln -s "../$file_name" "$file_name"
+      _zigbin fetch --debug-hash --global-cache-dir ../zig-cache "$file_name"
+    done
+  )
+  (
+    cd zig-cache/p/
+    for file in *.tar.gz; do
+      # Extract and remove tar file, because `zig build` will only use the extracted sources.
+      tar --force-local --extract --verbose --file="$file"
+      rm -v "$file"
+    done
+  )
+}
+
+build() {
+  local zig_options=(
+    -Dcpu=baseline
+    -Dpie
+    -Dtarget=native-linux.6.6-gnu.2.40
+    --build-id=sha1
+    --prefix /usr
+    --search-prefix /usr
+    --system ../zig-cache/p
+  )
+
+  cd $_name
+  DESTDIR=build _zigbin build "${zig_options[@]}"
+}
+
+package() {
+  depends+=(libxkbcommon.so libpam.so libwayland-client.so)
+
+  cd $_name
+  mv -v build/* "$pkgdir"
+  install -vDm 644 LICENSE -t "$pkgdir/usr/share/licenses/$pkgname/"
+  install -vDm 644 README.md -t "$pkgdir/usr/share/doc/$pkgname/"
+}
