@@ -1,0 +1,45 @@
+#!/bin/sh
+# prof playground: ~/Pictures/wallpaper.png exactly as ~/.xinitrc draws it with
+# `feh --bg-fill -g +0-70`: scale to fill each output, but instead of centering
+# the crop, anchor it to the left edge and 70 image pixels above the bottom
+# (feh_wm_set_bg_filled). swaybg can't offset an image, so each output's crop is
+# rendered once with ffmpeg, cached, and handed to swaybg in "fill" mode.
+
+img="$HOME/Pictures/wallpaper.png"
+cache="${XDG_CACHE_HOME:-$HOME/.cache}/pg-wallpaper"
+
+[ -r "$img" ] || exec swaybg -c 222222
+
+dims=$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$img")
+iw=${dims%x*} ih=${dims#*x}
+stamp=$(stat -c %Y "$img")
+mkdir -p "$cache"
+find "$cache" -type f ! -name "$stamp-*" -delete
+
+# Outputs we can't see in sysfs (nested sessions, hotplug) get a plain fill.
+set -- -o '*' -i "$img" -m fill
+
+for conn in /sys/class/drm/card*-*; do
+    [ "$(cat "$conn/status" 2>/dev/null)" = connected ] || continue
+    mode=$(head -n1 "$conn/modes" 2>/dev/null)
+    [ -n "$mode" ] || continue
+    w=${mode%x*} h=${mode#*x}
+    out="$cache/$stamp-${w}x$h.png"
+
+    if [ ! -s "$out" ]; then
+        if [ $((iw * h)) -gt $((ih * w)) ]; then
+            # image wider than the output: "+0" pins the crop to the left
+            rw=$((ih * w / h)) rh=$ih rx=0 ry=0
+        else
+            # image taller than the output: "-70" sits 70px above the bottom
+            rw=$iw rh=$((iw * h / w)) rx=0 ry=$((ih - iw * h / w - 70))
+            [ "$ry" -lt 0 ] && ry=0
+        fi
+        ffmpeg -nostdin -v error -y -i "$img" \
+            -vf "crop=$rw:$rh:$rx:$ry,scale=$w:$h:flags=lanczos" \
+            -frames:v 1 -update 1 "$out" || continue
+    fi
+    set -- "$@" -o "${conn#*/card*-}" -i "$out" -m fill
+done
+
+exec swaybg "$@"

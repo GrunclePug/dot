@@ -1,0 +1,41 @@
+# st with the anysize patch
+# Pinned to an upstream commit; anysize.patch is the patch set as applied to the
+# owner's former build tree, and config.h is the owner's configuration.
+# To update: move _commit (and pkgver), refresh the patch if it no longer
+# applies, and edit config.h freely.
+pkgname=st-arcus
+_name=st
+pkgver=0.9.3.r2.g688f70a
+_commit=688f70add0d1da8a416bf7df763328d694a24a3a
+pkgrel=1
+pkgdesc="st with the anysize patch"
+arch=(x86_64)
+url="https://st.suckless.org"
+license=(MIT)
+depends=(libx11 libxft fontconfig freetype2)
+makedepends=(git)
+provides=(st)
+conflicts=(st)
+source=("$_name::git+https://git.suckless.org/$_name#commit=$_commit"
+        anysize.patch
+        config.h)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+prepare() {
+  cd $_name
+  patch -Np1 -i ../anysize.patch
+  cp ../config.h config.h
+  # ncurses already ships the st terminfo entries.
+  sed -i '/tic -sx/d' Makefile
+}
+
+build() {
+  cd $_name
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd $_name
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

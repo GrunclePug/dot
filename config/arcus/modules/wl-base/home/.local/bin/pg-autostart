@@ -1,0 +1,34 @@
+#!/bin/sh
+# prof playground: the "Setup" block of ~/.xinitrc for Wayland sessions.
+# Usage: pg-autostart <compositor>   (bar layout: ~/.config/<compositor>/waybar.json)
+# A compositor profile can bring its own look: ~/.config/<compositor>/waybar.css
+# and ~/.config/<compositor>/mako win over the shared dwm-styled ones.
+#   picom      -> the compositor itself (shadows/fades) + foot's own alpha
+#   feh        -> pg-wallpaper
+#   slstatus   -> waybar, using the same status text
+#   nm-applet  -> nm-applet in StatusNotifier mode (waybar's tray)
+#   dunst      -> mako, themed from your dunstrc
+#   pa-applet  -> waybar's wireplumber module next to the tray (pa-applet is
+#                 XEmbed-only and can't live in a Wayland tray)
+# No GTK_THEME: it forces GTK's hard-coded Adwaita and blocks the palette in
+# ~/.config/gtk-4.0/gtk.css for libadwaita apps. Dark mode comes from GSettings
+# (gtk-theme Adwaita-dark, color-scheme prefer-dark), which GTK reads on Wayland.
+# Older sessions exported it into the shared activation environment; drop it.
+systemctl --user unset-environment GTK_THEME 2>/dev/null
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP 2>/dev/null
+# Portals left over from an earlier session (dwm, another compositor) keep its
+# XDG_CURRENT_DESKTOP and pick the wrong backend; D-Bus restarts them on demand.
+systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service' 2>/dev/null
+
+own="$HOME/.config/$1"
+css="$HOME/.config/waybar/style.css"
+[ -r "$own/waybar.css" ] && css="$own/waybar.css"
+mako_cfg=
+[ -r "$own/mako" ] && mako_cfg="$own/mako"
+
+pg-wallpaper &
+waybar -c "$own/waybar.json" -s "$css" &
+mako ${mako_cfg:+-c "$mako_cfg"} &
+nm-applet --indicator &
+# battery_monitor outlives the session; don't stack copies across logins.
+pgrep -x battery_monitor >/dev/null || battery_monitor &

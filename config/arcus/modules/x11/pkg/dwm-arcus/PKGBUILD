@@ -1,0 +1,39 @@
+# dwm with the fullgaps and systray patches
+# Pinned to an upstream commit; fullgaps-systray.patch is the patch set as applied to the
+# owner's former build tree, and config.h is the owner's configuration.
+# To update: move _commit (and pkgver), refresh the patch if it no longer
+# applies, and edit config.h freely.
+pkgname=dwm-arcus
+_name=dwm
+pkgver=6.8.r3.gc3dd6a8
+_commit=c3dd6a829b3f5cb9474bcca787a9c8a86932d75d
+pkgrel=1
+pkgdesc="dwm with the fullgaps and systray patches"
+arch=(x86_64)
+url="https://dwm.suckless.org"
+license=(MIT)
+depends=(libx11 libxinerama libxft fontconfig freetype2)
+makedepends=(git)
+provides=(dwm)
+conflicts=(dwm)
+source=("$_name::git+https://git.suckless.org/$_name#commit=$_commit"
+        fullgaps-systray.patch
+        config.h)
+sha256sums=('SKIP' 'SKIP' 'SKIP')
+
+prepare() {
+  cd $_name
+  patch -Np1 -i ../fullgaps-systray.patch
+  cp ../config.h config.h
+}
+
+build() {
+  cd $_name
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd $_name
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
