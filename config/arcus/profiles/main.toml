@@ -4,6 +4,7 @@ description = "Daily setup shared by every machine"
 modules = [
   "shell",
   "nvim",
+  "vshot",
   "x11",
   "wl-base",
   "river-classic",
