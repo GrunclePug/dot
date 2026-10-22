@@ -1,0 +1,8 @@
+description = "Upkeep every machine gets: weekly package cache cleanup"
+
+[packages]
+pacman = ["pacman-contrib"]   # paccache
+
+[units]
+system = ["paccache.timer"]
+now    = true

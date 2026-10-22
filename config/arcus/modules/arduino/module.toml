@@ -1,0 +1,6 @@
+description = "Arduino IDE and a serial terminal"
+groups      = ["uucp"]   # access to serial ports
+
+[packages]
+pacman = ["picocom"]
+aur    = ["arduino-ide-bin"]

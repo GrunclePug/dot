@@ -1,4 +1,9 @@
-description = "bash, tmux and command-line helpers"
+# magic-wormhole is left out on purpose: 13 Python dependencies for a file
+# transfer. Replace it with an alternative or an own tool later.
+description = "bash, aliases, command-line tools and helpers"
 
 [packages]
-pacman = ["tmux"]
+pacman = [
+  "eza", "fd", "fzf", "ripgrep", "dust", "btop", "fastfetch", "tealdeer", "tree",
+  "wget", "zip", "unzip", "wireguard-tools", "cifs-utils",
+]

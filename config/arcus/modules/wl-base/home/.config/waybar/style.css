@@ -1,4 +1,4 @@
-/* prof playground: waybar dressed as the dwm bar (~/builds/dwm/config.h).
+/* prof playground: waybar dressed as the dwm bar (dwm/pkg/dwm-arcus/config.h).
    SchemeNorm = #bbbbbb on #222222, SchemeSel = #eeeeee on #FF00FF.
    Each compositor ships its own module layout in ~/.config/<compositor>/waybar.json. */
 * {

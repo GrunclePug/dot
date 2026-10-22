@@ -1,0 +1,7 @@
+# No units on purpose: the daemon runs only when started by hand
+# (sudo systemctl start docker), and never comes back on boot.
+description = "Docker and Compose; the daemon is started by hand"
+groups      = ["docker"]
+
+[packages]
+pacman = ["docker", "docker-compose"]

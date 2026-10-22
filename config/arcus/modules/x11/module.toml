@@ -1,8 +1,0 @@
-# The X11 fallback session: dwm started from ~/.xinitrc (startx). dunst is in
-# .xinitrc but not installed; it would compete with mako for notifications.
-description = "X11 dwm session (fallback): patched suckless builds, xinitrc, picom"
-
-[packages]
-pacman = ["xorg-server", "xorg-xinit", "picom", "feh", "dmenu"]
-aur    = ["pa-applet-git"]
-local  = ["dwm-arcus", "st-arcus", "slstatus-arcus", "slock-arcus"]

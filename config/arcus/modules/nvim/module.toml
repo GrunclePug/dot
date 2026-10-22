@@ -1,6 +1,0 @@
-# lazy-lock.json is not part of the profile (dot ignores it); nvim keeps
-# its own copy in ~/.config/nvim.
-description = "Neovim configuration"
-
-[packages]
-pacman = ["neovim"]

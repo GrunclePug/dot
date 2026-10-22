@@ -1,0 +1,11 @@
+description = "Shared by every graphical session: fonts, audio, network applet, notifications, vshot"
+
+[packages]
+pacman = [
+  "ttf-jetbrains-mono-nerd", "noto-fonts-cjk",
+  "pipewire", "pipewire-alsa", "pipewire-pulse", "pipewire-jack", "alsa-utils",
+  "pavucontrol", "qpwgraph",
+  "network-manager-applet", "nm-connection-editor",
+  "libnotify",
+]
+local = ["vshot"]   # pkg/vshot: built from a pinned commit on GitHub

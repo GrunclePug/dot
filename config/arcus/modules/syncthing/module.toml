@@ -1,0 +1,8 @@
+description = "Syncthing file sync, as a user service"
+
+[packages]
+pacman = ["syncthing"]
+
+[units]
+user = ["syncthing.service"]
+now  = true
