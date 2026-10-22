@@ -2,7 +2,6 @@ description = "Desktop PCs"
 
 # Stacking order: later modules win a shared file.
 modules = [
-  # "arcus", once 0.1.0 is on GitHub (its recipe builds from there)
   "base",
   "boot",
   "shell",

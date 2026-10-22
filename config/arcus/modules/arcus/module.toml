@@ -1,4 +1,0 @@
-description = "arcus itself, built from its release tag"
-
-[packages]
-local = ["arcus"]   # pkg/arcus: the tagged release from GitHub
