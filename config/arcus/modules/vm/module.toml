@@ -1,5 +1,5 @@
-description = "Run virtual machines: QEMU with KVM, UEFI firmware"
+description = "Run virtual machines: QEMU with KVM, a window, UEFI firmware"
 category    = "dev"
 
 [packages]
-pacman = ["qemu-base", "edk2-ovmf"]
+pacman = ["qemu-base", "qemu-ui-gtk", "edk2-ovmf"]   # qemu-ui-gtk: the VM window
