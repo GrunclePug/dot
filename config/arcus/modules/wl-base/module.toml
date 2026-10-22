@@ -1,4 +1,5 @@
 description = "Shared Wayland session: terminal, menu, bar, notifications, helper scripts"
+category    = "desktop"
 requires    = ["desktop"]
 
 [packages]

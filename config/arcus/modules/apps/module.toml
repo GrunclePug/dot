@@ -1,4 +1,5 @@
 description = "Everyday desktop applications"
+category    = "apps"
 
 [packages]
 pacman = ["thunar", "mpv", "obsidian", "gimp", "qbittorrent", "discord", "cardinal"]

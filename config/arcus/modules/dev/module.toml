@@ -1,6 +1,7 @@
 # lazy-lock.json is not part of the module (dot ignores it); nvim keeps
 # its own copy in ~/.config/nvim.
 description = "Development: Neovim, tmux, Go, Odin"
+category    = "dev"
 requires    = ["shell"]   # telescope searches with ripgrep and fd
 
 [packages]

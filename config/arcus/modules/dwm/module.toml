@@ -1,5 +1,6 @@
 # The X11 fallback session: dwm started from ~/.xinitrc (startx).
 description = "dwm session (fallback): patched dwm and slstatus, xinitrc"
+category    = "desktop"
 requires    = ["x11-base"]
 
 [packages]

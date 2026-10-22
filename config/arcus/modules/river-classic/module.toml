@@ -1,4 +1,5 @@
 description = "river-classic 0.3 session"
+category    = "desktop"
 requires    = ["wl-base"]
 
 [packages]

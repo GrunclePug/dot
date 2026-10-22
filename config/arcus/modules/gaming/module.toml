@@ -1,6 +1,7 @@
 # steam comes from [multilib], which must be enabled in /etc/pacman.conf
 # (pacman owns that file, so arcus doesn't change it).
 description = "Steam, Prism Launcher, ProtonPlus"
+category    = "apps"
 
 [packages]
 pacman = ["steam", "prismlauncher"]

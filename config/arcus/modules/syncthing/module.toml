@@ -1,4 +1,5 @@
 description = "Syncthing file sync, as a user service"
+category    = "apps"
 
 [packages]
 pacman = ["syncthing"]
