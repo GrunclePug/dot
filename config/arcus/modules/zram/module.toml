@@ -1,0 +1,5 @@
+description = "Swap in compressed RAM (zram-generator)"
+category    = "system"
+
+[packages]
+pacman = ["zram-generator"]
