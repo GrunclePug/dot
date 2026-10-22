@@ -4,6 +4,7 @@ description = "Desktop PCs"
 modules = [
   # "arcus", once 0.1.0 is on GitHub (its recipe builds from there)
   "base",
+  "boot",
   "shell",
   "dev",
   "docker",

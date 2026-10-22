@@ -2,7 +2,7 @@ description = "Shared by every graphical session: fonts, audio, network applet, 
 
 [packages]
 pacman = [
-  "ttf-jetbrains-mono-nerd", "noto-fonts-cjk",
+  "fontconfig", "ttf-jetbrains-mono-nerd", "noto-fonts-cjk",
   "pipewire", "pipewire-alsa", "pipewire-pulse", "pipewire-jack", "alsa-utils",
   "pavucontrol", "qpwgraph",
   "network-manager-applet", "nm-connection-editor",

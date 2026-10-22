@@ -1,0 +1,6 @@
+# Matches how these machines are installed: GRUB on UEFI, an XFS root, a
+# FAT EFI partition. The installer will pick these per machine later.
+description = "Bootloader and filesystem tools: GRUB (UEFI), XFS, ext4, FAT"
+
+[packages]
+pacman = ["grub", "efibootmgr", "xfsprogs", "e2fsprogs", "dosfstools"]
