@@ -1,8 +1,8 @@
-description = "Upkeep every machine gets: weekly package cache cleanup"
+description = "What every machine gets: networking, man pages, a pager, package cache cleanup"
 
 [packages]
-pacman = ["pacman-contrib"]   # paccache
+pacman = ["networkmanager", "man-db", "less", "pacman-contrib"]   # pacman-contrib: paccache
 
 [units]
-system = ["paccache.timer"]
+system = ["NetworkManager.service", "paccache.timer"]
 now    = true
