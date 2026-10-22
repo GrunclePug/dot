@@ -1,4 +1,5 @@
 description = "Arduino IDE and a serial terminal"
+category    = "dev"
 groups      = ["uucp"]   # access to serial ports
 
 [packages]

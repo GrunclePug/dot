@@ -1,4 +1,5 @@
 description = "Shared by every graphical session: fonts, audio, network applet, notifications, vshot"
+category    = "desktop"
 
 [packages]
 pacman = [

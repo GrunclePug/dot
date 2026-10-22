@@ -1,4 +1,5 @@
 description = "What every machine gets: networking, man pages, a pager, package cache cleanup"
+category    = "system"
 
 [packages]
 pacman = ["networkmanager", "man-db", "less", "pacman-contrib"]   # pacman-contrib: paccache

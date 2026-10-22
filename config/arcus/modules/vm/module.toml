@@ -1,0 +1,5 @@
+description = "Run virtual machines: QEMU with KVM, UEFI firmware"
+category    = "dev"
+
+[packages]
+pacman = ["qemu-base", "edk2-ovmf"]

@@ -1,4 +1,5 @@
 description = "Laptop hardware: low-battery warning (started by both sessions), backlight control"
+category    = "hardware"
 
 [packages]
 pacman = ["brightnessctl"]
