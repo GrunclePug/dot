@@ -1,0 +1,20 @@
+description = "Laptops: the desktop, plus battery and backlight"
+
+# Stacking order: later modules win a shared file.
+modules = [
+  # "arcus", once 0.1.0 is on GitHub (its recipe builds from there)
+  "base",
+  "shell",
+  "dev",
+  "docker",
+  "desktop",
+  "x11-base",
+  "dwm",
+  "wl-base",
+  "river-classic",
+  "apps",
+  "syncthing",
+  "arduino",
+  "gaming",
+  "battery",
+]

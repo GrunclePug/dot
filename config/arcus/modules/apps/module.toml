@@ -1,0 +1,5 @@
+description = "Everyday desktop applications"
+
+[packages]
+pacman = ["thunar", "mpv", "obsidian", "gimp", "qbittorrent", "discord", "cardinal"]
+aur    = ["zen-browser-bin"]   # shell's browser script opens it

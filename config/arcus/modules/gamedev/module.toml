@@ -1,0 +1,5 @@
+# Heavy and not always wanted: no profile lists it, turn it on per machine.
+description = "Godot game engine"
+
+[packages]
+pacman = ["godot"]

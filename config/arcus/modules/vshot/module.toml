@@ -1,6 +1,0 @@
-# Bound in both sessions: river-classic's init and dwm's config.h.
-description = "vshot screen capture for the river and dwm sessions"
-
-[packages]
-pacman = ["xclip"]   # the clipboard on X11; wl-base brings wl-clipboard for Wayland
-local  = ["vshot"]   # pkg/vshot: built from a pinned commit on GitHub

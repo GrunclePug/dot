@@ -1,8 +1,7 @@
 # ThinkPad. Profiles are expanded first, then this machine's own modules.
 profiles = [
-  "main",
+  "laptop",
 ]
 
 modules = [
-  "laptop",
 ]

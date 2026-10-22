@@ -1,0 +1,13 @@
+# The X11 pieces any window manager can use, as wl-base is for Wayland.
+# dunst and mako both offer the notification D-Bus service; each session
+# starts its own (.xinitrc, pg-autostart), so they never compete.
+description = "Shared X11 session: Xorg, terminal, menu, locker, compositor, notifications"
+requires    = ["desktop"]
+
+[packages]
+pacman = [
+  "xorg-server", "xorg-xinit", "xorg-xrandr", "xorg-xsetroot", "xclip",
+  "picom", "feh", "dmenu", "dunst",
+]
+aur   = ["pa-applet-git", "devour"]
+local = ["st-arcus", "slock-arcus"]   # pkg/: patched suckless builds

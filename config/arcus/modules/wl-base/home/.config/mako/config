@@ -1,4 +1,4 @@
-# prof playground: mako dressed as your dunstrc (~/builds/dot/config/dunst).
+# prof playground: mako dressed as your dunstrc (x11-base/home/.config/dunst).
 font=monospace 8
 width=300
 anchor=top-right

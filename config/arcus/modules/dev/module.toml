@@ -1,0 +1,11 @@
+# lazy-lock.json is not part of the module (dot ignores it); nvim keeps
+# its own copy in ~/.config/nvim.
+description = "Development: Neovim, tmux, Go, Odin"
+requires    = ["shell"]   # telescope searches with ripgrep and fd
+
+[packages]
+pacman = [
+  "neovim", "nano", "tmux", "git", "git-delta", "tree-sitter-cli",
+  "go", "odin", "raylib",
+  "npm",   # Mason installs basedpyright and bash-language-server with it
+]
