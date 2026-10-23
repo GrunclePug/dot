@@ -1,0 +1,337 @@
+/* GTK3 apps and the tray menus (nm-applet, Discord, ...); colours from the
+   active theme. */
+@import url("../theme/colors.css");
+
+window.popup,
+window.popup.background,
+.popup {
+  background-color: transparent;
+}
+
+window.popup menu,
+menu,
+.menu {
+  background-color: @base;
+  color: @text;
+  border: 2px solid @accent;
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+window.popup menu menuitem,
+menu menuitem,
+.menu menuitem {
+  color: @text;
+  background-color: transparent;
+  padding: 5px 12px;
+  margin: 1px 2px;
+  border-radius: 4px;
+}
+
+window.popup menu menuitem:hover,
+menu menuitem:hover,
+window.popup menu menuitem:selected,
+menu menuitem:selected {
+  background-color: @shade;
+  color: @accent;
+}
+
+window.popup menu menuitem label,
+menu menuitem label,
+window.popup menu menuitem *,
+menu menuitem * {
+  color: @text;
+}
+
+window.popup menu menuitem:hover label,
+menu menuitem:hover label,
+window.popup menu menuitem:selected label,
+menu menuitem:selected label,
+window.popup menu menuitem:hover *,
+menu menuitem:hover *,
+window.popup menu menuitem:selected *,
+menu menuitem:selected * {
+  color: @accent;
+}
+
+window.popup menu menuitem:disabled,
+menu menuitem:disabled,
+window.popup menu menuitem:disabled *,
+menu menuitem:disabled * {
+  color: @dim;
+}
+
+window.popup menu separator,
+menu separator {
+  background-color: @line;
+  border-bottom: 1px solid @line;
+  margin: 4px 6px;
+  min-height: 1px;
+}
+
+window.popup menu check,
+menu check,
+window.popup menu radio,
+menu radio {
+  color: @accent;
+}
+
+/* --- app windows: the same palette as the bar and the tray menus --------
+ * Scoped to window.csd, i.e. normal app windows on Wayland, so waybar and the
+ * layer-shell volume slider (which set their own window styles) stay untouched.
+ * dwm/X11 windows aren't .csd, so this changes nothing there. */
+window.csd,
+window.csd .background,
+window.csd .view,
+window.csd textview text,
+window.csd iconview,
+window.csd list,
+window.csd row,
+window.csd viewport,
+window.csd notebook > stack,
+window.csd notebook > header,
+window.csd .inline-toolbar,
+window.csd actionbar > revealer > box,
+window.csd .dialog-action-area,
+window.csd headerbar,
+window.csd popover {
+  background-color: @base;
+  background-image: none;
+  color: @text;
+  border-color: @line;
+  box-shadow: none;
+}
+window.csd frame > border,
+window.csd scrolledwindow,
+window.csd notebook,
+window.csd separator,
+window.csd .inline-toolbar,
+window.csd popover {
+  border-color: @line;
+}
+window.csd separator { background-color: @line; }
+window.csd popover { border: 2px solid @accent; border-radius: 8px; }
+window.csd *:disabled,
+window.csd label.dim-label,
+window.csd .dim-label { color: @dim; }
+window.csd *:link { color: @accent; }
+
+/* selection: like the tray menus (shade + teal text); text selection is teal */
+window.csd .view:selected,
+window.csd treeview.view:selected,
+window.csd iconview:selected,
+window.csd row:selected,
+window.csd row:selected label {
+  background-color: @shade;
+  color: @accent;
+}
+window.csd row:hover:not(:selected) { background-color: @shade; }
+window.csd selection,
+window.csd *:selected selection {
+  background-color: @accent;
+  color: @base;
+}
+window.csd treeview.view header button {
+  background-color: @base;
+  color: @dim;
+  border-color: @line;
+}
+window.csd treeview.view.expander { color: @dim; }
+window.csd treeview.view.expander:selected { color: @accent; }
+
+/* buttons */
+window.csd button {
+  background-color: @shade;
+  background-image: none;
+  color: @text;
+  border: 1px solid @line;
+  border-radius: 4px;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+window.csd button:hover { border-color: @accent; color: @accent; }
+window.csd button:active,
+window.csd button:checked {
+  background-color: @accent;
+  border-color: @accent;
+  color: @base;
+}
+window.csd button:disabled {
+  background-color: @base;
+  border-color: @line;
+  color: @line;
+}
+window.csd button.flat,
+window.csd treeview.view header button,
+window.csd notebook > header tab button {
+  background-color: transparent;
+  border-color: transparent;
+}
+window.csd button.flat:hover { background-color: @shade; }
+window.csd button.suggested-action,
+window.csd button.default {
+  background-color: @accent;
+  border-color: @accent;
+  color: @base;
+}
+window.csd button.suggested-action:hover,
+window.csd button.default:hover { background-color: @accent_bright; color: @base; }
+window.csd button.destructive-action {
+  background-color: @urgent;
+  border-color: @urgent;
+  color: @base;
+}
+
+/* entries, spin buttons, combo boxes */
+window.csd entry,
+window.csd spinbutton:not(.vertical) {
+  background-color: @shade;
+  background-image: none;
+  color: @text;
+  caret-color: @accent;
+  border: 1px solid @line;
+  border-radius: 4px;
+  box-shadow: none;
+}
+window.csd entry:focus,
+window.csd spinbutton:focus:not(.vertical) { border-color: @accent; }
+window.csd entry:disabled,
+window.csd spinbutton:disabled:not(.vertical) {
+  background-color: @base;
+  color: @dim;
+}
+window.csd spinbutton:not(.vertical) entry {
+  background-color: transparent;
+  border: none;
+}
+window.csd spinbutton:not(.vertical) button {
+  background-color: transparent;
+  border: none;
+  border-left: 1px solid @line;
+  border-radius: 0;
+  color: @dim;
+}
+window.csd spinbutton:not(.vertical) button:hover,
+window.csd combobox entry + button:hover { color: @accent; }
+window.csd combobox entry { border-radius: 4px 0 0 4px; }
+window.csd combobox entry + button {
+  background-color: @shade;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  color: @dim;
+}
+window.csd entry image { color: @dim; }
+
+/* tabs: dim, the open one teal with a teal underline */
+window.csd notebook > header tab {
+  color: @dim;
+  background-color: transparent;
+  box-shadow: none;
+}
+window.csd notebook > header tab:hover { color: @text; }
+window.csd notebook > header tab:checked {
+  color: @accent;
+  box-shadow: inset 0 -2px @accent;
+}
+window.csd notebook > header.left tab:checked { box-shadow: inset -2px 0 @accent; }
+window.csd notebook > header.right tab:checked { box-shadow: inset 2px 0 @accent; }
+window.csd notebook > header.bottom tab:checked { box-shadow: inset 0 2px @accent; }
+
+/* check boxes, radios, switches */
+window.csd check,
+window.csd radio {
+  background-color: @shade;
+  background-image: none;
+  border: 1px solid @line;
+  color: @base;
+  box-shadow: none;
+}
+window.csd check:checked,
+window.csd radio:checked,
+window.csd check:indeterminate,
+window.csd radio:indeterminate {
+  background-color: @accent;
+  border-color: @accent;
+  color: @base;
+}
+window.csd check:hover,
+window.csd radio:hover { border-color: @accent; }
+window.csd switch {
+  background-color: @shade;
+  border: 1px solid @line;
+  color: @dim;
+}
+window.csd switch:checked {
+  background-color: @accent;
+  border-color: @accent;
+  color: @base;
+}
+window.csd switch slider {
+  background-color: @text;
+  background-image: none;
+  border: 1px solid @line;
+  box-shadow: none;
+}
+
+/* scales, progress bars, level bars, scroll bars */
+window.csd scale trough,
+window.csd progressbar trough,
+window.csd levelbar trough {
+  background-color: @shade;
+  background-image: none;
+  border-color: @line;
+}
+window.csd scale highlight,
+window.csd progressbar progress,
+window.csd levelbar block.filled {
+  background-color: @accent;
+  background-image: none;
+  border-color: @accent;
+}
+window.csd scale slider {
+  background-color: @text;
+  background-image: none;
+  border: 1px solid @accent;
+  box-shadow: none;
+}
+window.csd scrollbar,
+window.csd scrollbar trough { background-color: transparent; border-color: transparent; }
+window.csd scrollbar slider { background-color: @line; }
+window.csd scrollbar slider:hover { background-color: @dim; }
+window.csd scrollbar slider:active { background-color: @accent; }
+
+/* infobars (e.g. "connection is missing a password") */
+window.csd infobar,
+window.csd infobar > revealer > box { background-color: @shade; color: @text; }
+window.csd infobar.warning > revealer > box { box-shadow: inset 3px 0 @accent2; }
+window.csd infobar.error > revealer > box { box-shadow: inset 3px 0 @urgent; }
+
+/* tooltips are their own windows, so they aren't .csd */
+tooltip,
+tooltip.background {
+  background-color: @base;
+  border: 1px solid @line;
+  border-radius: 4px;
+}
+tooltip label { color: @text; }
+
+/* No titlebars, like dwm. On Wayland GTK always draws its own (client-side)
+ * decorations: it ignores river's `rule-add ssd`, and GTK_CSD=0 only works on
+ * X11. So hide GTK's stock titlebar (the .default-decoration headerbar) and the
+ * CSD shadow/rounding. Apps that put real buttons in a custom headerbar keep it.
+ * Harmless under dwm/X11, where these elements aren't drawn. */
+headerbar.default-decoration {
+  min-height: 0;
+  padding: 0;
+  margin: -100px 0 50px 0;
+  border: none;
+  box-shadow: none;
+}
+
+window.csd,
+window.csd decoration {
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+}

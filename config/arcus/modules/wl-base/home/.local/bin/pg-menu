@@ -1,4 +1,5 @@
 #!/bin/sh
-# prof playground: dmenu_run with the dmenucmd colors from dwm/pkg/dwm-arcus/config.h.
+# wmenu-run in the active theme's colours.
+. "$HOME/.config/theme/colors.sh"
 exec wmenu-run -f "monospace 10" \
-    -N 222222 -n bbbbbb -M ff00ff -m eeeeee -S ff00ff -s eeeeee "$@"
+    -N "$base" -n "$dim" -M "$accent" -m "$accent_fg" -S "$sel_bg" -s "$sel_fg" "$@"

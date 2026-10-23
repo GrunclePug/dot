@@ -1,0 +1,13 @@
+# aurora: mako's colours (included by each mako config).
+border-color=#5fd4c4
+background-color=#0e141a
+text-color=#d8e2e6
+progress-color=over #5fd4c455
+
+[urgency=low]
+border-color=#2a3640aa
+text-color=#8fa3ad
+
+[urgency=critical]
+border-color=#ef6b73
+background-color=#2a1418dd

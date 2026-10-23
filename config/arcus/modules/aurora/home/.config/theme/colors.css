@@ -1,0 +1,12 @@
+/* aurora, for GTK 3 and 4 and waybar: @import url("../theme/colors.css"); */
+@define-color base          #0e141a;
+@define-color shade         #1b252d;
+@define-color line          #2a3640;
+@define-color text          #e6edf0;
+@define-color dim           #8fa3ad;
+@define-color accent        #5fd4c4;
+@define-color accent_fg     #0e141a;
+@define-color accent_bright #8ae8db;
+@define-color accent2       #f2c46d;
+@define-color urgent        #ef6b73;
+@define-color success       #8fd18a;

@@ -1,0 +1,6 @@
+# One theme is on at a time: 'arcus on <theme>' swaps it for the other.
+# Every app reads its colours from ~/.config/theme/ (colors.sh, colors.css,
+# foot.ini, mako, tmux.conf).
+description = "neon: magenta on graphite grey, the classic dwm look"
+category    = "theme"
+conflicts   = ["aurora"]

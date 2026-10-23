@@ -1,0 +1,26 @@
+// fastfetch: the small logo beside plain, aligned keys and usage bars. The
+// colours come from the active theme: .bashrc's fastfetch() passes them.
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": { "type": "small", "padding": { "top": 1, "right": 3 } },
+  "display": {
+    "separator": "  ",
+    "key": { "width": 10 },
+    "percent": { "type": ["num", "bar"] },
+    "bar": { "width": 12 }
+  },
+  "modules": [
+    "title",
+    { "type": "os",       "key": "os" },
+    { "type": "kernel",   "key": "kernel" },
+    { "type": "uptime",   "key": "uptime" },
+    { "type": "packages", "key": "packages" },
+    { "type": "wm",       "key": "wm" },
+    { "type": "terminal", "key": "terminal" },
+    { "type": "cpu",      "key": "cpu", "temp": true },
+    { "type": "gpu",      "key": "gpu" },
+    { "type": "memory",   "key": "memory" },
+    { "type": "disk",     "key": "disk", "folders": "/" },
+    { "type": "battery",  "key": "battery" }
+  ]
+}

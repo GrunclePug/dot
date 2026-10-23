@@ -4,5 +4,6 @@ profiles = [
 ]
 
 modules = [
+  "aurora",
   "vm",
 ]

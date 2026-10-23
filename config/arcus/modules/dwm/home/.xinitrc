@@ -29,6 +29,9 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
   unset f
 fi
 
+# Qt apps take their colours from the GTK theme (gtk.css, so the active theme).
+export QT_QPA_PLATFORMTHEME=gtk3
+
 # Setup
 picom -b &
 feh --bg-fill -g +0-70 $HOME/Pictures/wallpaper.png &
