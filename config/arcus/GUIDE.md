@@ -15,7 +15,7 @@ How to install a machine from this repository, what to do right after, how to br
    To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
-   - Profile: `laptop` or `pc`; add a theme (`aurora` or `neon`) and anything else the profile leaves out. `machine` is always on.
+   - Profile: `laptop` or `pc`; add a theme (`aurora` or `nebula`) and anything else the profile leaves out. `machine` is always on.
    - 32-bit packages: yes (steam needs them).
    - Swap: zram, unless the machine should hibernate. With dotfiles, zram needs the machine module, which the installer writes, so nothing else to pick.
 5. **Review**, then `r` to run; type the disk name to confirm. `s` only saves the plan (`/root/plan.toml`); `arcus-install run /root/plan.toml` runs it later.
@@ -78,7 +78,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 
 - **Edit a file a module deploys in `$HOME`:** edit it in `~/builds/dot`; it's a link, so the change is live. Commit and push.
 - **Add or remove a module's file, change `module.toml`, or edit a system file (`system/`):** then `arcus apply`.
-- **Switch theme:** `arcus on neon` (or `aurora`), then log out and back in.
+- **Switch theme:** `arcus on nebula` (or `aurora`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
 - **Update arcus:** download the latest release as in the adoption steps, or from the source: `cd ~/code/go/arcus && git pull && make build && sudo make install` (build as yourself, install with sudo).
