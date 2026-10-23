@@ -1,5 +1,6 @@
 description = "What every machine gets: networking, man pages, a pager, ext4 tools, package cache cleanup"
 category    = "system"
+dirs        = ["builds", "code", "Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"]
 
 [packages]
 pacman = [
