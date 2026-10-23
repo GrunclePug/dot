@@ -46,7 +46,7 @@ The result is the same machine as a fresh install of the profile.
 git clone https://github.com/grunclepug/dot ~/builds/dot
 mkdir -p ~/.config && ln -s ~/builds/dot/config/arcus ~/.config/arcus
 curl -LO https://github.com/grunclepug/arcus/releases/latest/download/arcus
-sudo install -m 755 arcus /usr/local/bin/arcus && rm arcus
+sudo install -m 755 arcus /usr/local/bin/arcus && rm arcus   # or build it from a clone, see "Update arcus"
 arcus machine        # writes /etc/arcus/modules/machine from this system
 arcus on pc          # the profile; takes over what is already installed, installs the rest
 arcus on aurora      # a theme, if the profile has none
@@ -69,6 +69,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `arcus clean` | Removes packages no module lists, marks the rest's install reasons (shows its plan first) |
 | `arcus doctor` | Checks state, files and the host file; lists packages no module lists; `-fix` repairs what is safe |
 | `arcus machine` | Writes this machine's module again (kernel, bootloader, filesystems, swap) |
+| `arcus update` | Replaces arcus with the latest release, checksum-verified; `doctor` says when one is out |
 | `arcus rebuild <package>` | Builds an own build again although its recipe didn't change |
 | `arcus new` / `rm` / `mv` | Creates, deletes or renames a module |
 
@@ -81,7 +82,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Switch theme:** `arcus on nebula` (or `aurora`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
-- **Update arcus:** download the latest release as in the adoption steps, or from the source: `cd ~/code/go/arcus && git pull && make build && sudo make install` (build as yourself, install with sudo).
+- **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
 - **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
 
 ### Where things are
