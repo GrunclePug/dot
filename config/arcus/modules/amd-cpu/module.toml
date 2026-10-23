@@ -1,7 +1,0 @@
-# GRUB loads /boot/amd-ucode.img; without the package the boot entry fails
-# until grub-mkconfig runs again. Turned on per machine (host file).
-description = "AMD CPU microcode"
-category    = "hardware"
-
-[packages]
-pacman = ["amd-ucode"]

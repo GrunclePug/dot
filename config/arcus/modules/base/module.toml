@@ -1,8 +1,12 @@
-description = "What every machine gets: networking, man pages, a pager, package cache cleanup"
+description = "What every machine gets: networking, man pages, a pager, ext4 tools, package cache cleanup"
 category    = "system"
 
 [packages]
-pacman = ["networkmanager", "man-db", "less", "pacman-contrib"]   # pacman-contrib: paccache
+pacman = [
+  "networkmanager", "man-db", "less",
+  "e2fsprogs",       # ext4 on USB drives, whatever the machine's own filesystems
+  "pacman-contrib",  # paccache
+]
 
 [units]
 system = ["NetworkManager.service", "paccache.timer"]
