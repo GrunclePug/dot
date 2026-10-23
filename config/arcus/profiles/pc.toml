@@ -3,7 +3,7 @@ description = "Desktop PCs"
 # Stacking order: later modules win a shared file.
 modules = [
   "base",
-  "boot",
+  "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
   "shell",
   "dev",
   "docker",

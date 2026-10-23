@@ -4,6 +4,5 @@ profiles = [
 ]
 
 modules = [
-  "amd-cpu",
   "vm",
 ]
