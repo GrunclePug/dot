@@ -1,5 +1,5 @@
 # The GTK stylesheets (gtk-3.0, gtk-4.0) read the active theme: keep a theme
-# module on (aurora or neon) with this one.
+# module on (aurora or nebula) with this one.
 description = "Shared by every graphical session: fonts, audio, network applet, notifications, GTK styling, vshot"
 category    = "desktop"
 

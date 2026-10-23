@@ -1,6 +1,6 @@
-# neon, for shell scripts: river's init, the bash prompt, wlock, menus. Hex
+# nebula, for shell scripts: river's init, the bash prompt, wlock, menus. Hex
 # without '#'; scripts add 0x or # as their app wants.
-theme=neon
+theme=nebula
 base=222222         # background
 shade=444444        # raised surfaces
 line=444444         # borders, separators, unfocused
