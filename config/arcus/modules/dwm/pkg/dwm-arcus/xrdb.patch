@@ -1,0 +1,75 @@
+diff --git a/dwm.c b/dwm.c
+index e6f3ef8..e17b871 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -35,6 +35,7 @@
+ #include <X11/Xatom.h>
+ #include <X11/Xlib.h>
+ #include <X11/Xproto.h>
++#include <X11/Xresource.h>
+ #include <X11/Xutil.h>
+ #ifdef XINERAMA
+ #include <X11/extensions/Xinerama.h>
+@@ -228,6 +229,7 @@ static void setfullscreen(Client *c, int fullscreen);
+ static void setgaps(const Arg *arg);
+ static void setlayout(const Arg *arg);
+ static void setmfact(const Arg *arg);
++static void loadxrdb(void);
+ static void setup(void);
+ static void seturgent(Client *c, int urg);
+ static void showhide(Client *c);
+@@ -304,6 +306,19 @@ static Window root, wmcheckwin;
+ /* configuration, allows nested code to access above variables */
+ #include "config.h"
+ 
++/* X resources that override the colours of config.h */
++static const struct {
++	const char *name;
++	char *color;
++} xrdbcolors[] = {
++	{ "dwm.normbgcolor",     normbgcolor },
++	{ "dwm.normbordercolor", normbordercolor },
++	{ "dwm.normfgcolor",     normfgcolor },
++	{ "dwm.selbgcolor",      selbgcolor },
++	{ "dwm.selbordercolor",  selbordercolor },
++	{ "dwm.selfgcolor",      selfgcolor },
++};
++
+ /* compile-time check if all tags fit into an unsigned int bit array. */
+ struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
+ 
+@@ -1147,6 +1162,26 @@ killclient(const Arg *arg)
+ 	}
+ }
+ 
++void
++loadxrdb(void)
++{
++	char *rm, *type;
++	unsigned int i;
++	XrmDatabase db;
++	XrmValue v;
++
++	if (!(rm = XResourceManagerString(dpy)))
++		return;
++	XrmInitialize();
++	if (!(db = XrmGetStringDatabase(rm)))
++		return;
++	for (i = 0; i < LENGTH(xrdbcolors); i++)
++		if (XrmGetResource(db, xrdbcolors[i].name, xrdbcolors[i].name, &type, &v)
++		&& v.addr && v.addr[0] == '#' && strlen(v.addr) == 7)
++			strcpy(xrdbcolors[i].color, v.addr);
++	XrmDestroyDatabase(db);
++}
++
+ void
+ manage(Window w, XWindowAttributes *wa)
+ {
+@@ -1781,6 +1816,7 @@ setup(void)
+ 	cursor[CurResize] = drw_cur_create(drw, XC_sizing);
+ 	cursor[CurMove] = drw_cur_create(drw, XC_fleur);
+ 	/* init appearance */
++	loadxrdb();
+ 	scheme = ecalloc(LENGTH(colors), sizeof(Clr *));
+ 	for (i = 0; i < LENGTH(colors); i++)
+ 		scheme[i] = drw_scm_create(drw, colors[i], 3);

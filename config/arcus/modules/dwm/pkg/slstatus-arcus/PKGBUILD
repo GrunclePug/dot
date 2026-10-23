@@ -1,6 +1,6 @@
-# slstatus with the owner's status line
-# Pinned to an upstream commit; config.patch is the patch set as applied to the
-# owner's former build tree, and config.h is the owner's configuration.
+# slstatus with a custom status line
+# Pinned to an upstream commit. config.patch is the former build tree's
+# patch set, and config.h is the configuration.
 # To update: move _commit (and pkgver), refresh the patch if it no longer
 # applies, and edit config.h freely.
 pkgname=slstatus-arcus
@@ -8,7 +8,7 @@ _name=slstatus
 pkgver=1.1.r6.g614c275
 _commit=614c275b42064c5433fbb086e7d9639a19f1f127
 pkgrel=1
-pkgdesc="slstatus with the owner's status line"
+pkgdesc="slstatus with a custom status line"
 arch=(x86_64)
 url="https://slstatus.suckless.org"
 license=(MIT)
