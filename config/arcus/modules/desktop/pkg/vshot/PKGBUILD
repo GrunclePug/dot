@@ -17,17 +17,20 @@ optdepends=('xclip: copy to the clipboard on X11'
 source=("$pkgname::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
+# Go's module cache stays in the build directory, not in ~/go: builds run
+# in a clean environment (the installer, arcus apply), not your shell.
 prepare() {
   cd $pkgname
-  go mod download
+  GOPATH="$srcdir/go" GOFLAGS=-modcacherw go mod download
 }
 
 # vshot needs cgo (libxkbcommon), so the build follows Arch's Go package
 # guidelines: makepkg's C flags for cgo, PIE and external linking.
 build() {
   cd $pkgname
+  export GOPATH="$srcdir/go"
   export CGO_CPPFLAGS="$CPPFLAGS" CGO_CFLAGS="$CFLAGS" CGO_CXXFLAGS="$CXXFLAGS" CGO_LDFLAGS="$LDFLAGS"
-  make GOFLAGS="-buildmode=pie -trimpath" LDFLAGS="-linkmode=external -X main.Version=${pkgver%%.r*}"
+  make GOFLAGS="-buildmode=pie -trimpath -modcacherw" LDFLAGS="-linkmode=external -X main.Version=${pkgver%%.r*}"
 }
 
 package() {

@@ -1,5 +1,6 @@
 description = "Syncthing file sync, as a user service"
 category    = "apps"
+dirs        = ["Sync"]   # the main synced folder; syncthing itself is set up by hand
 
 [packages]
 pacman = ["syncthing"]
