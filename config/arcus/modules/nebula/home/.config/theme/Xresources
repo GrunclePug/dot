@@ -1,0 +1,27 @@
+! nebula: the colours of dwm (and the dmenu it starts) and st, merged by
+! .xinitrc before dwm starts.
+dwm.normbgcolor: #222222
+dwm.normbordercolor: #444444
+dwm.normfgcolor: #bbbbbb
+dwm.selbgcolor: #ff00ff
+dwm.selbordercolor: #ff00ff
+dwm.selfgcolor: #eeeeee
+st.foreground: #e5e5e5
+st.background: #000000
+st.cursorColor: #cccccc
+st.color0: #000000
+st.color1: #cd0000
+st.color2: #00cd00
+st.color3: #cdcd00
+st.color4: #0000ee
+st.color5: #cd00cd
+st.color6: #00cdcd
+st.color7: #e5e5e5
+st.color8: #7f7f7f
+st.color9: #ff0000
+st.color10: #00ff00
+st.color11: #ffff00
+st.color12: #5c5cff
+st.color13: #ff00ff
+st.color14: #00ffff
+st.color15: #ffffff

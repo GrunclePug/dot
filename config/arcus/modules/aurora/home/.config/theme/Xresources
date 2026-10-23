@@ -1,0 +1,27 @@
+! aurora: the colours of dwm (and the dmenu it starts) and st, merged by
+! .xinitrc before dwm starts.
+dwm.normbgcolor: #0e141a
+dwm.normbordercolor: #2a3640
+dwm.normfgcolor: #8fa3ad
+dwm.selbgcolor: #5fd4c4
+dwm.selbordercolor: #5fd4c4
+dwm.selfgcolor: #0e141a
+st.foreground: #d8e2e6
+st.background: #000000
+st.cursorColor: #5fd4c4
+st.color0: #1b252d
+st.color1: #ef6b73
+st.color2: #8fd18a
+st.color3: #f2c46d
+st.color4: #6aa7f0
+st.color5: #c792ea
+st.color6: #5fd4c4
+st.color7: #c3ced3
+st.color8: #4a5a66
+st.color9: #ff8a90
+st.color10: #a8e6a2
+st.color11: #ffd88a
+st.color12: #8cc0ff
+st.color13: #dab0f5
+st.color14: #8ae8db
+st.color15: #f2f6f7

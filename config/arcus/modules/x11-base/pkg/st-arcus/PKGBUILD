@@ -1,14 +1,15 @@
-# st with the anysize patch
-# Pinned to an upstream commit; anysize.patch is the patch set as applied to the
-# owner's former build tree, and config.h is the owner's configuration.
+# st with the anysize and xrdb patches
+# Pinned to an upstream commit. anysize.patch is the former build tree's
+# patch set, xrdb.patch reads the st.* colours from X resources (the theme's
+# Xresources), and config.h is the configuration.
 # To update: move _commit (and pkgver), refresh the patch if it no longer
 # applies, and edit config.h freely.
 pkgname=st-arcus
 _name=st
 pkgver=0.9.3.r2.g688f70a
 _commit=688f70add0d1da8a416bf7df763328d694a24a3a
-pkgrel=1
-pkgdesc="st with the anysize patch"
+pkgrel=2
+pkgdesc="st with the anysize and xrdb patches"
 arch=(x86_64)
 url="https://st.suckless.org"
 license=(MIT)
@@ -18,12 +19,14 @@ provides=(st)
 conflicts=(st)
 source=("$_name::git+https://git.suckless.org/$_name#commit=$_commit"
         anysize.patch
+        xrdb.patch
         config.h)
-sha256sums=('SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 prepare() {
   cd $_name
   patch -Np1 -i ../anysize.patch
+  patch -Np1 -i ../xrdb.patch
   cp ../config.h config.h
   # ncurses already ships the st terminfo entries.
   sed -i '/tic -sx/d' Makefile

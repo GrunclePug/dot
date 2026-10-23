@@ -1,0 +1,71 @@
+diff --git a/x.c b/x.c
+index 43eeeba..4aed54e 100644
+--- a/x.c
++++ b/x.c
+@@ -10,6 +10,7 @@
+ #include <libgen.h>
+ #include <X11/Xatom.h>
+ #include <X11/Xlib.h>
++#include <X11/Xresource.h>
+ #include <X11/cursorfont.h>
+ #include <X11/keysym.h>
+ #include <X11/Xft/Xft.h>
+@@ -150,6 +151,7 @@ static int ximopen(Display *);
+ static void ximinstantiate(Display *, XPointer, XPointer);
+ static void ximdestroy(XIM, XPointer, XPointer);
+ static int xicdestroy(XIC, XPointer, XPointer);
++static void loadxrdb(void);
+ static void xinit(int, int);
+ static void cresize(int, int);
+ static void xresize(int, int);
+@@ -790,6 +792,42 @@ xloadcolor(int i, const char *name, Color *ncolor)
+ 	return XftColorAllocName(xw.dpy, xw.vis, xw.cmap, name, ncolor);
+ }
+ 
++/*
++ * X resources that override the colours of config.h: st.color0 to
++ * st.color15, st.foreground, st.background and st.cursorColor.
++ */
++void
++loadxrdb(void)
++{
++	const struct {
++		const char *name;
++		unsigned int idx;
++	} named[] = {
++		{ "st.foreground",  defaultfg },
++		{ "st.background",  defaultbg },
++		{ "st.cursorColor", defaultcs },
++	};
++	char *rm, *type, name[16];
++	unsigned int i;
++	XrmDatabase db;
++	XrmValue v;
++
++	if (!(rm = XResourceManagerString(xw.dpy)))
++		return;
++	XrmInitialize();
++	if (!(db = XrmGetStringDatabase(rm)))
++		return;
++	for (i = 0; i < 16 + LEN(named); i++) {
++		if (i < 16)
++			snprintf(name, sizeof(name), "st.color%u", i);
++		else
++			snprintf(name, sizeof(name), "%s", named[i - 16].name);
++		if (XrmGetResource(db, name, name, &type, &v) && v.addr && v.addr[0] == '#')
++			colorname[i < 16 ? i : named[i - 16].idx] = xstrdup(v.addr);
++	}
++	XrmDestroyDatabase(db);
++}
++
+ void
+ xloadcols(void)
+ {
+@@ -1149,6 +1187,7 @@ xinit(int cols, int rows)
+ 
+ 	/* colors */
+ 	xw.cmap = XDefaultColormap(xw.dpy, xw.scr);
++	loadxrdb();
+ 	xloadcols();
+ 
+ 	/* adjust fixed window geometry */
