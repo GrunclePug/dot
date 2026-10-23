@@ -4,13 +4,15 @@ How to install a machine from this repository, what to do right after, how to br
 
 ## Install from the Arch ISO
 
-1. **Make the USB stick:** write the [Arch ISO](https://archlinux.org/download/) to it, then copy `arcus-install` and `arcus` onto a second stick (or a partition of the same one). Until arcus has releases on GitHub, build them on a machine that has Go: `cd ~/code/go/arcus && make build`, then copy both files from `bin/`; they must sit in the same directory.
+1. **Make the USB stick:** write the [Arch ISO](https://archlinux.org/download/) to it.
 2. **Boot the ISO** (UEFI or BIOS both work) and get online: wired works by itself; for Wi-Fi run `iwctl`, then `station wlan0 connect <network>`.
-3. **Mount the stick with the binaries** and start the installer from there:
+3. **Download the installer** from the latest release and start it; `arcus` must sit next to it:
    ```sh
-   mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb    # lsblk shows which one
-   /mnt/usb/arcus-install
+   curl -LO https://github.com/grunclepug/arcus/releases/latest/download/arcus-install
+   curl -LO https://github.com/grunclepug/arcus/releases/latest/download/arcus
+   chmod +x arcus-install arcus && ./arcus-install
    ```
+   To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
    - Profile: `laptop` or `pc`; add a theme (`aurora` or `neon`) and anything else the profile leaves out. `machine` is always on.
@@ -43,8 +45,8 @@ The result is the same machine as a fresh install of the profile.
 ```sh
 git clone https://github.com/grunclepug/dot ~/builds/dot
 mkdir -p ~/.config && ln -s ~/builds/dot/config/arcus ~/.config/arcus
-git clone https://github.com/grunclepug/arcus ~/code/go/arcus   # once arcus is on GitHub
-cd ~/code/go/arcus && make build && sudo make install
+curl -LO https://github.com/grunclepug/arcus/releases/latest/download/arcus
+sudo install -m 755 arcus /usr/local/bin/arcus && rm arcus
 arcus machine        # writes /etc/arcus/modules/machine from this system
 arcus on pc          # the profile; takes over what is already installed, installs the rest
 arcus on aurora      # a theme, if the profile has none
@@ -79,7 +81,8 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Switch theme:** `arcus on neon` (or `aurora`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
-- **Update arcus:** `cd ~/code/go/arcus && git pull && make build && sudo make install` (build as yourself, install with sudo).
+- **Update arcus:** download the latest release as in the adoption steps, or from the source: `cd ~/code/go/arcus && git pull && make build && sudo make install` (build as yourself, install with sudo).
+- **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
 
 ### Where things are
 
