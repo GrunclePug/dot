@@ -6,10 +6,10 @@ How to install a machine from this repository, what to do right after, how to br
 
 1. **Make the USB stick:** write the [Arch ISO](https://archlinux.org/download/) to it, then copy `arcus-install` and `arcus` onto a second stick (or a partition of the same one). Until arcus has releases on GitHub, build them on a machine that has Go: `cd ~/code/go/arcus && make build`, then copy both files from `bin/`; they must sit in the same directory.
 2. **Boot the ISO** (UEFI or BIOS both work) and get online: wired works by itself; for Wi-Fi run `iwctl`, then `station wlan0 connect <network>`.
-3. **Mount the stick with the binaries** and start the installer from there. Not under `/mnt`: the installer mounts the new system there.
+3. **Mount the stick with the binaries** and start the installer from there:
    ```sh
-   mkdir -p /root/usb && mount /dev/sdX1 /root/usb    # lsblk shows which one
-   /root/usb/arcus-install
+   mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb    # lsblk shows which one
+   /mnt/usb/arcus-install
    ```
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
