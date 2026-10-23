@@ -12,15 +12,26 @@
   "modules": [
     "title",
     { "type": "os",       "key": "os" },
+    { "type": "host",     "key": "host", "format": "{?family}{family}{?}{/family}{name}{/}" },
     { "type": "kernel",   "key": "kernel" },
     { "type": "uptime",   "key": "uptime" },
     { "type": "packages", "key": "packages" },
+    // The host file's profiles, the theme that is on, and how many modules are.
+    {
+      "type": "command",
+      "key": "arcus",
+      "text": "arcus ls 2>/dev/null | awk '/^CATEGORY/ {m = 1; next} !m && $2 == \"on\" {p = p (p ? \"+\" : \"\") $1} m && $3 == \"on\" {n++; if ($1 == \"theme\") t = $2} END {if (n) printf \"%s · %s · %d modules on\", p, t, n}'"
+    },
+    { "type": "shell",    "key": "shell" },
     { "type": "wm",       "key": "wm" },
     { "type": "terminal", "key": "terminal" },
+    { "type": "display",  "key": "display" },
     { "type": "cpu",      "key": "cpu", "temp": true },
-    { "type": "gpu",      "key": "gpu" },
+    { "type": "gpu",      "key": "gpu", "temp": true },
     { "type": "memory",   "key": "memory" },
-    { "type": "disk",     "key": "disk", "folders": "/" },
-    { "type": "battery",  "key": "battery" }
+    { "type": "swap",     "key": "swap" },
+    { "type": "disk",     "key": "disk", "hideFolders": "/boot:/efi" },
+    { "type": "battery",  "key": "battery" },
+    { "type": "localip",  "key": "local ip", "showPrefixLen": false }
   ]
 }
