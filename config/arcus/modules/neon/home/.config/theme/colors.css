@@ -1,0 +1,12 @@
+/* neon, for GTK 3 and 4 and waybar: @import url("../theme/colors.css"); */
+@define-color base          #222222;
+@define-color shade         #444444;
+@define-color line          #444444;
+@define-color text          #bbbbbb;
+@define-color dim           #bbbbbb;
+@define-color accent        #ff00ff;
+@define-color accent_fg     #eeeeee;
+@define-color accent_bright #ff66ff;
+@define-color accent2       #00ffff;
+@define-color urgent        #cc3333;
+@define-color success       #00cd00;

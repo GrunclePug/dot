@@ -1,6 +1,6 @@
-/* prof playground: waybar dressed as the dwm bar (dwm/pkg/dwm-arcus/config.h).
-   SchemeNorm = #bbbbbb on #222222, SchemeSel = #eeeeee on #FF00FF.
-   Each compositor ships its own module layout in ~/.config/<compositor>/waybar.json. */
+/* waybar laid out like the dwm bar; colours from the active theme. Each
+   compositor ships its own module layout in ~/.config/<compositor>/waybar.json. */
+@import url("../theme/colors.css");
 * {
   font-family: monospace;
   font-size: 10pt;
@@ -12,33 +12,33 @@
   margin: 0;
   padding: 0;
 }
-window#waybar { background: #222222; color: #bbbbbb; }
+window#waybar { background: @base; color: @text; }
 
 /* tags */
 #workspaces button, #tags button {
   padding: 0 6px;
-  color: #bbbbbb;
-  background-color: #222222;
+  color: @text;
+  background-color: @base;
   background-repeat: no-repeat;
 }
-#workspaces button:hover, #tags button:hover { background-color: #444444; }
-#workspaces button.active, #tags button.focused { color: #eeeeee; background-color: #FF00FF; }
-#workspaces button.urgent, #tags button.urgent { color: #222222; background-color: #bbbbbb; }
+#workspaces button:hover, #tags button:hover { background-color: @shade; }
+#workspaces button.active, #tags button.focused { color: @accent_fg; background-color: @accent; }
+#workspaces button.urgent, #tags button.urgent { color: @base; background-color: @text; }
 /* dwm's little square on occupied tags */
 #tags button.occupied {
-  background-image: linear-gradient(#bbbbbb, #bbbbbb);
+  background-image: linear-gradient(@text, @text);
   background-size: 4px 4px;
   background-position: 2px 2px;
 }
-#tags button.occupied.focused { background-image: linear-gradient(#eeeeee, #eeeeee); }
+#tags button.occupied.focused { background-image: linear-gradient(@accent_fg, @accent_fg); }
 
 /* layout symbol and focused window title */
 #layout, #mode { padding: 0 6px; }
-#window { padding: 0 6px; color: #eeeeee; background-color: #FF00FF; }
+#window { padding: 0 6px; color: @accent_fg; background-color: @accent; }
 window#waybar.empty #window, #window.empty { background-color: transparent; }
 /* mango: the taskbar only shows the focused window, like dwm's title */
 #taskbar button { padding: 0; min-width: 0; font-size: 0; color: transparent; background-color: transparent; }
-#taskbar button.active { padding: 0 6px; font-size: 10pt; color: #eeeeee; background-color: #FF00FF; }
+#taskbar button.active { padding: 0 6px; font-size: 10pt; color: @accent_fg; background-color: @accent; }
 
 /* status text and systray */
 #tray { padding: 0 2px; }

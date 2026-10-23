@@ -1,5 +1,5 @@
 #!/bin/sh
-# prof playground: river-classic 0.3 (riverctl + rivertile), in mango's palette.
+# prof playground: river-classic 0.3 (riverctl + rivertile).
 # The 'river' package (0.4+) dropped riverctl/rivertile and needs an external
 # window manager; this profile deliberately uses 'river-classic'.
 # Previous dwm-lookalike version: ~/.config/prof/backups/2026-10-03-dwm-lookalike/
@@ -9,17 +9,12 @@
 #   Super = what river does that dwm can't: modal keymaps (move/resize mode),
 #           a scratchpad tag, sticky windows, live reload of this file
 #
-# Flat look, same palette as the mango profile (~/.config/prof/profiles/mango/
-# palette.md: teal from the roofs in the wallpaper, gold from the trim), so the
-# two differ only in how they work.
-base=0x0e141a     # background
-line=0x2a3640     # unfocused border
-teal=0x5fd4c4     # focus / accent
-rose=0xef6b73     # urgent
+# Flat look; the colours come from the active theme (~/.config/theme/colors.sh).
+. "$HOME/.config/theme/colors.sh"
 
 mod=Alt
 term='foot -c ~/.config/river/foot.ini'
-menu='wmenu-run -f "JetBrainsMono Nerd Font 10" -p run -N 0e141a -n 8fa3ad -M 5fd4c4 -m 0e141a -S 1b252d -s e6edf0'
+menu="wmenu-run -f 'JetBrainsMono Nerd Font 10' -p run -N $base -n $dim -M $accent -m $accent_fg -S $sel_bg -s $sel_fg"
 
 # --- keys (dwm keys[]) ---------------------------------------------------
 riverctl map normal $mod P spawn "$menu"
@@ -82,10 +77,10 @@ riverctl rule-add -app-id 'nm-connection-editor' float
 riverctl rule-add ssd
 
 # --- look: flat, 2px teal border ------------------------------------------
-riverctl background-color $base
-riverctl border-color-focused $teal
-riverctl border-color-unfocused $line
-riverctl border-color-urgent $rose
+riverctl background-color 0x$base
+riverctl border-color-focused 0x$accent
+riverctl border-color-unfocused 0x$line
+riverctl border-color-urgent 0x$urgent
 riverctl border-width 2
 riverctl xcursor-theme Adwaita 24
 riverctl hide-cursor when-typing enabled

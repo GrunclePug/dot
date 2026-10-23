@@ -1,14 +1,6 @@
-/* prof playground: river bar, styled exactly like mango's (palette in
-   ~/.config/prof/profiles/mango/palette.md). Only the module names differ:
-   river/tags, river/mode, river/window. */
-@define-color base  #0e141a;
-@define-color shade #1b252d;
-@define-color line  #2a3640;
-@define-color text  #e6edf0;
-@define-color dim   #8fa3ad;
-@define-color teal  #5fd4c4;
-@define-color gold  #f2c46d;
-@define-color rose  #ef6b73;
+/* river's bar, also the tray menus and the volume slider; colours from the
+   active theme. */
+@import url("../theme/colors.css");
 
 * {
   font-family: "JetBrainsMono Nerd Font", monospace;
@@ -26,11 +18,11 @@ window#waybar { background: @base; color: @text; }
 #tags button { padding: 0 7px; color: @line; background: transparent; }
 #tags button.occupied { color: @dim; }
 #tags button:hover    { color: @text; background: @shade; }
-#tags button.focused  { color: @base; background: @teal; font-weight: bold; }
-#tags button.urgent   { color: @base; background: @rose; }
+#tags button.focused  { color: @base; background: @accent; font-weight: bold; }
+#tags button.urgent   { color: @base; background: @urgent; }
 
 /* active mode */
-#mode { padding: 0 8px; color: @base; background: @teal; font-weight: bold; }
+#mode { padding: 0 8px; color: @base; background: @accent; font-weight: bold; }
 
 /* focused window title */
 #window { padding: 0 10px; color: @text; background: @shade; }
@@ -40,12 +32,12 @@ window#waybar.empty #window { background: transparent; }
 #cpu, #memory, #battery, #wireplumber, #clock { padding: 0 10px; color: @dim; }
 #clock { color: @text; }
 #wireplumber.muted { color: @line; }
-#battery.charging, #battery.plugged, #battery.full { color: @teal; }
-#battery.warning:not(.charging)  { color: @gold; }
-#battery.critical:not(.charging) { color: @base; background: @rose; }
+#battery.charging, #battery.plugged, #battery.full { color: @accent; }
+#battery.warning:not(.charging)  { color: @accent2; }
+#battery.critical:not(.charging) { color: @base; background: @urgent; }
 
 #tray { padding: 0 8px; }
-#tray > .needs-attention { background: @rose; }
+#tray > .needs-attention { background: @urgent; }
 
 /* systray context menus (nm-applet, discord, etc.) */
 window.popup,
@@ -60,7 +52,7 @@ menu,
 .menu {
   background-color: @base;
   color: @text;
-  border: 2px solid @teal;
+  border: 2px solid @accent;
   border-radius: 8px;
   padding: 6px 4px;
 }
@@ -83,7 +75,7 @@ window.popup menu menuitem:selected,
 #tray menu menuitem:selected,
 menu menuitem:selected {
   background-color: @shade;
-  color: @teal;
+  color: @accent;
 }
 
 window.popup menu menuitem label,
@@ -107,7 +99,7 @@ menu menuitem:hover *,
 window.popup menu menuitem:selected *,
 #tray menu menuitem:selected *,
 menu menuitem:selected * {
-  color: @teal;
+  color: @accent;
 }
 
 window.popup menu menuitem:disabled,
@@ -134,7 +126,7 @@ menu check,
 window.popup menu radio,
 #tray menu radio,
 menu radio {
-  color: @teal;
+  color: @accent;
 }
 
 tooltip { background: @base; border: 1px solid @line; }
@@ -143,29 +135,29 @@ tooltip label { color: @text; }
 /* volume popup slider (pg-vol-slider) */
 #slider-card {
   background-color: @base;
-  border: 2px solid @teal;
+  border: 2px solid @accent;
   border-radius: 8px;
   padding: 8px 6px 8px 6px;
 }
 #slider-card.boosted {
-  border-color: @gold;
+  border-color: @accent2;
 }
 #slider-card.muted {
-  border-color: @rose;
+  border-color: @urgent;
 }
 
 #vol-label {
   font-family: "JetBrainsMono Nerd Font", monospace;
   font-size: 8.5pt;
   font-weight: bold;
-  color: @teal;
+  color: @accent;
   margin-bottom: 4px;
 }
 #vol-label.boost {
-  color: @gold;
+  color: @accent2;
 }
 #vol-label.muted {
-  color: @rose;
+  color: @urgent;
 }
 
 scale trough {
@@ -176,21 +168,21 @@ scale trough {
 }
 scale highlight {
   min-width: 6px;
-  background-color: @teal;
+  background-color: @accent;
   border-radius: 3px;
 }
 scale.boost highlight {
-  background-color: @gold;
+  background-color: @accent2;
 }
 scale slider {
   min-width: 14px;
   min-height: 14px;
   margin: -4px;
   background-color: @text;
-  border: 1px solid @teal;
+  border: 1px solid @accent;
   border-radius: 4px;
   box-shadow: none;
 }
 scale.boost slider {
-  border-color: @gold;
+  border-color: @accent2;
 }

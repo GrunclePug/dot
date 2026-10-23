@@ -1,0 +1,178 @@
+/* GTK4 / libadwaita apps (pavucontrol, zenity, protonplus): the same palette as
+ * the bar, tray menus and GTK3 apps (~/.config/gtk-3.0/gtk.css). libadwaita
+ * builds every widget from these colours, so redefining them is enough. */
+@import url("../theme/colors.css");
+
+:root {
+  --accent-color: @accent;
+  --accent-bg-color: @accent;
+  --accent-fg-color: @accent_fg;
+  --destructive-color: @urgent;
+  --destructive-bg-color: @urgent;
+  --destructive-fg-color: @base;
+  --success-color: @success;
+  --warning-color: @accent2;
+  --error-color: @urgent;
+  --window-bg-color: @base;
+  --window-fg-color: @text;
+  --view-bg-color: @base;
+  --view-fg-color: @text;
+  --headerbar-bg-color: @base;
+  --headerbar-fg-color: @text;
+  --headerbar-border-color: @line;
+  --headerbar-backdrop-color: @base;
+  --sidebar-bg-color: @shade;
+  --sidebar-fg-color: @text;
+  --secondary-sidebar-bg-color: @shade;
+  --card-bg-color: @shade;
+  --card-fg-color: @text;
+  --dialog-bg-color: @base;
+  --dialog-fg-color: @text;
+  --popover-bg-color: @base;
+  --popover-fg-color: @text;
+  --thumbnail-bg-color: @shade;
+  --border-color: @line;
+}
+
+/* Plain GTK4 apps (pavucontrol) use GTK's built-in theme, which hard-codes its
+ * colours instead of reading the variables above, so the main widgets are
+ * recoloured here. Colours only, so libadwaita apps keep their own shapes. */
+.background,
+window.background,
+headerbar,
+notebook > header,
+notebook > stack,
+actionbar > revealer > box,
+popover > contents,
+popover > arrow {
+  background-color: @base;
+  background-image: none;
+  color: @text;
+  border-color: @line;
+  box-shadow: none;
+}
+.view,
+iconview,
+list,
+listview,
+columnview,
+textview > text {
+  background-color: @base;
+  color: @text;
+}
+popover > contents,
+popover > arrow { border: 2px solid @accent; }
+separator { background-color: @line; }
+frame > border,
+notebook,
+scrolledwindow { border-color: @line; }
+.dim-label { color: @dim; }
+
+/* selection: like the tray menus (shade + teal text); text selection is teal */
+.view:selected,
+iconview:selected,
+row:selected,
+listview > row:selected,
+columnview > listview > row:selected {
+  background-color: @shade;
+  color: @accent;
+}
+selection,
+textview > text > selection,
+textview > text > selection:focus-within {
+  background-color: @accent;
+  color: @base;
+}
+
+/* tabs: dim, the open one teal with a teal underline */
+notebook > header tab { color: @dim; }
+notebook > header tab:hover { color: @text; }
+notebook > header tab:checked { color: @accent; }
+notebook > header.top > tabs > tab:checked,
+notebook > header > tabs > tab:checked { box-shadow: inset 0 -2px @accent; }
+
+/* buttons, entries, drop-downs */
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.osd),
+entry,
+spinbutton,
+dropdown > button,
+combobox > box > button {
+  background-color: @shade;
+  background-image: none;
+  color: @text;
+  border-color: @line;
+  box-shadow: inset 0 0 0 1px @line;
+}
+button:hover:not(.suggested-action):not(.destructive-action),
+dropdown > button:hover { color: @accent; box-shadow: inset 0 0 0 1px @accent; }
+button:checked:not(.flat),
+button:active {
+  background-color: @accent;
+  color: @base;
+}
+button.flat:checked { color: @accent; }
+entry:focus-within,
+spinbutton:focus-within { box-shadow: inset 0 0 0 1px @accent; outline-color: @accent; }
+*:focus-visible { outline-color: alpha(@accent, 0.7); }
+button.suggested-action {
+  background-color: @accent;
+  color: @base;
+}
+button.destructive-action {
+  background-color: @urgent;
+  color: @base;
+}
+
+/* sliders, meters, switches, check boxes */
+scale > trough,
+progressbar > trough,
+levelbar > trough > block.empty,
+levelbar > trough { background-color: @shade; }
+scale > trough > highlight,
+progressbar > trough > progress,
+levelbar > trough > block.filled {
+  background-color: @accent;
+  border-color: @accent;
+}
+scale > trough > slider {
+  background-color: @text;
+  background-image: none;
+  border: 1px solid @accent;
+  border-radius: 100px;
+  box-shadow: none;
+}
+switch { background-color: @shade; color: @dim; }
+switch:checked { background-color: @accent; color: @base; }
+switch > slider { background-color: @text; }
+check,
+radio { background-color: @shade; color: @base; box-shadow: inset 0 0 0 1px @line; }
+check:checked,
+radio:checked,
+check:indeterminate,
+radio:indeterminate { background-color: @accent; color: @base; box-shadow: none; }
+scrollbar slider { background-color: @line; }
+scrollbar slider:hover { background-color: @dim; }
+scrollbar slider:active { background-color: @accent; }
+
+tooltip,
+tooltip.background { background-color: @base; color: @text; border: 1px solid @line; }
+
+/* No titlebars, like dwm. On Wayland GTK always draws its own (client-side)
+ * decorations: it ignores river's `rule-add ssd`, and GTK_CSD=0 only works on
+ * X11. So hide GTK's stock titlebar (the .default-decoration headerbar) and the
+ * CSD shadow/rounding. Apps that put real buttons in a custom headerbar keep it.
+ * Harmless under dwm/X11, where these elements aren't drawn. */
+headerbar.default-decoration {
+  min-height: 0;
+  padding: 0;
+  margin: -100px 0 50px 0;
+  border: none;
+  box-shadow: none;
+}
+
+window.csd,
+window.csd decoration {
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+}
