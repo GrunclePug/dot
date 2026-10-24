@@ -1,9 +1,0 @@
-# ThinkPad. Profiles are expanded first, then this machine's own modules.
-profiles = [
-  "laptop",
-]
-
-modules = [
-  "aurora",
-  "vm",
-]

@@ -73,12 +73,13 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `arcus rebuild <package>` | Builds an own build again although its recipe didn't change |
 | `arcus new` / `rm` / `mv` | Creates, deletes or renames a module |
 
-`-n` shows the plan without asking or doing anything; `-host <name>` uses another machine's host file.
+`-n` shows the plan without asking or doing anything.
 
 ### Day to day
 
 - **Edit a file a module deploys in `$HOME`:** edit it in `~/builds/dot`; it's a link, so the change is live. Commit and push.
 - **Add or remove a module's file, change `module.toml`, or edit a system file (`system/`):** then `arcus apply`.
+- **Turn a module on or off:** `arcus on <module>` / `arcus off <module>`. It only changes this machine; dot changes only when a module or profile does.
 - **Switch theme:** `arcus on nebula` (or `aurora`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
@@ -89,8 +90,8 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 
 | Path | What |
 |------|------|
-| `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles, host files |
-| `hosts/<hostname>.toml` | This machine: its profile and its own modules |
+| `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
+| `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
 | `~/.config/theme` | The active theme's colour files |
 | `~/.local/state/arcus`, `/var/lib/arcus` | What arcus has done (state, ledgers) |
