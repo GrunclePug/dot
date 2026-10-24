@@ -5,6 +5,6 @@ requires    = ["desktop"]
 [packages]
 pacman = [
   "foot", "wmenu", "waybar", "swaybg", "mako", "wl-clipboard", "playerctl",
-  "grim", "slurp", "ffmpeg",
+  "grim", "slurp", "ffmpeg", "xdg-desktop-portal-wlr",
 ]
 local = ["waylock-arcus"]   # pkg/waylock-arcus: waylock with the bordercolors patch (wlock)
