@@ -3,4 +3,4 @@ category    = "desktop"
 requires    = ["wl-base"]
 
 [packages]
-pacman = ["river-classic", "xdg-desktop-portal-wlr"]
+pacman = ["river-classic"]
