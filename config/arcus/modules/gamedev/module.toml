@@ -1,6 +1,6 @@
-# Heavy and not always wanted: no profile lists it, turn it on per machine.
-description = "Godot game engine"
+# Heavy and not always wanted: only the pc profile lists it.
+description = "Godot game engine, LibreSprite"
 category    = "dev"
 
 [packages]
-pacman = ["godot"]
+pacman = ["godot", "libresprite"]

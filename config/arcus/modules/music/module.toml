@@ -1,0 +1,5 @@
+description = "Music production: LMMS, the sfizz sampler, Audacity"
+category    = "apps"
+
+[packages]
+pacman = ["lmms", "sfizz", "audacity"]

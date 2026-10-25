@@ -1,0 +1,9 @@
+description = "Desk peripherals: keyboard firmware (QMK, VIA), mouse settings (Piper), RGB lighting (OpenRGB)"
+category    = "hardware"
+
+[packages]
+pacman = ["qmk", "piper", "openrgb"]
+aur    = ["via-bin"]
+
+[units]
+system = ["openrgb.service"]   # the OpenRGB server, so lighting is set at boot

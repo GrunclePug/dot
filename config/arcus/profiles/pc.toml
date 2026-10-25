@@ -14,4 +14,8 @@ modules = [
   "syncthing",
   "arduino",
   "gaming",
+  "gamedev",
+  "music",
+  "cad",
+  "peripherals",
 ]
