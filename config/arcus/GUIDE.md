@@ -15,7 +15,7 @@ How to install a machine from this repository, what to do right after, how to br
    To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
-   - Profile: `laptop` or `pc`; add a theme (`aurora` or `nebula`) and anything else the profile leaves out. `machine` is always on.
+   - Profile: `laptop` or `pc`; add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
    - 32-bit packages: yes (steam needs them).
    - Swap: zram, unless the machine should hibernate. With dotfiles, zram needs the machine module, which the installer writes, so nothing else to pick.
 5. **Review**, then `r` to run; type the disk name to confirm. `s` only saves the plan (`/root/plan.toml`); `arcus-install run /root/plan.toml` runs it later.
@@ -25,7 +25,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 
 ## Right after the install
 
-1. Log in on the TTY and start a session: `pg-river` for river, `startx` for dwm.
+1. Log in on the TTY and start a session: `startw` for stream, or `startx` for dwm where it's on.
 2. **Git identity**, kept on the machine (this repository is public):
    ```sh
    touch ~/.gitconfig     # first, so --global writes here and not into dot
@@ -49,7 +49,7 @@ curl -LO https://github.com/grunclepug/arcus/releases/latest/download/arcus
 sudo install -m 755 arcus /usr/local/bin/arcus && rm arcus   # or build it from a clone, see "Update arcus"
 arcus machine        # writes /etc/arcus/modules/machine from this system
 arcus on pc          # the profile; takes over what is already installed, installs the rest
-arcus on aurora      # a theme, if the profile has none
+arcus on h2o         # a theme, if the profile has none
 arcus clean          # removes what no module lists (read its plan first)
 ```
 
@@ -80,7 +80,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Edit a file a module deploys in `$HOME`:** edit it in `~/builds/dot`; it's a link, so the change is live. Commit and push.
 - **Add or remove a module's file, change `module.toml`, or edit a system file (`system/`):** then `arcus apply`.
 - **Turn a module on or off:** `arcus on <module>` / `arcus off <module>`. It only changes this machine; dot changes only when a module or profile does.
-- **Switch theme:** `arcus on nebula` (or `aurora`), then log out and back in.
+- **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
