@@ -1,0 +1,81 @@
+#!/bin/sh
+# Save the connected monitors as a kanshi profile, each at its native
+# resolution and highest refresh rate, where they are now. The profile goes
+# in ~/.config/kanshi/config, which belongs to this machine (dot doesn't
+# have it), and replaces the one saved for the same monitors; others stay.
+# kanshi then applies it now and whenever these monitors are connected.
+#
+# Monitors not where they sit on the desk: arrange them first, such as
+# wlr-randr --output DP-3 --left-of DP-2, then run wmon again.
+set -e
+
+conf="${XDG_CONFIG_HOME:-$HOME/.config}/kanshi/config"
+
+profile=$(wlr-randr | awk '
+function flush() {
+	if (name == "") return
+	id = make " " model " " serial
+	if (!enabled) {
+		line = "\toutput \"" id "\" disable"
+	} else {
+		# Native: the preferred mode, else the largest; then its fastest rate.
+		size = pref != "" ? pref : big
+		line = "\toutput \"" id "\" mode " size "@" rate[size] "Hz position " pos
+		if (scale + 0 != 1) line = line " scale " scale
+		if (transform != "normal") line = line " transform " transform
+	}
+	lines = lines line "\n"
+	m = model; gsub(/[^A-Za-z0-9]+/, "-", m)
+	pname = pname (pname == "" ? "" : "_") m
+	name = ""
+}
+/^[^ ]/ {
+	flush()
+	name = $1; make = model = serial = "Unknown"; modes = 0
+	enabled = 1; pref = big = ""; area = 0; split("", rate)
+	next
+}
+/^  [A-Z]/ { modes = 0 }
+/^  Make: /      { make = substr($0, 9) }
+/^  Model: /     { model = substr($0, 10) }
+/^  Serial: /    { serial = substr($0, 11) }
+/^  Enabled: no/ { enabled = 0 }
+/^  Position: /  { pos = $2 }
+/^  Transform: / { transform = $2 }
+/^  Scale: /     { scale = $2 }
+/^  Modes:/      { modes = 1; next }
+modes && /^    / {
+	size = $1; hz = $3 + 0
+	if (!(size in rate) || hz > rate[size]) rate[size] = hz
+	if (/preferred/) pref = size
+	split(size, d, "x")
+	if (d[1] * d[2] > area) { area = d[1] * d[2]; big = size }
+}
+END {
+	flush()
+	if (pname == "") exit 1
+	printf "profile %s {\n%s}\n", pname, lines
+}')
+
+mkdir -p "${conf%/*}"
+tmp="$conf.tmp"
+head=$(printf '%s\n' "$profile" | head -n 1)
+{
+	if [ -s "$conf" ]; then
+		# Every profile but the one for these monitors.
+		awk -v head="$head" '
+			$0 == head { skip = 1; next }
+			skip == 1 { if ($0 == "}") skip = 2; next }
+			skip == 2 { skip = 0; if ($0 == "") next }
+			{ print }
+		' "$conf"
+	else
+		printf '# kanshi profiles for this machine, written by wmon.\n\n'
+	fi
+	printf '%s\n\n' "$profile"
+} >"$tmp"
+mv "$tmp" "$conf"
+printf '%s\n' "$profile"
+
+# kanshi exits without a config, so the first profile starts it.
+kanshictl reload >/dev/null 2>&1 || setsid -f kanshi >/dev/null 2>&1

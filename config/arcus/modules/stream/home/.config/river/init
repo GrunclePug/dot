@@ -17,6 +17,9 @@ systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service'
 
 # river closes the bar and wallpaper if they start before swm is running.
 streamctl wait
+# Monitor modes and positions, once wmon has saved them on this machine;
+# without them river gives each monitor its preferred mode, often 60 Hz.
+[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/kanshi/config" ] && kanshi &
 swaybg -i "$HOME/Pictures/wallpaper.png" -m fill &
 waybar -c "$HOME/.config/river/waybar.json" -s "$HOME/.config/river/waybar.css" &
 mako &

@@ -26,17 +26,18 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 ## Right after the install
 
 1. Log in on the TTY and start a session: `startw` for stream, or `startx` for dwm where it's on.
-2. **Git identity**, kept on the machine (this repository is public):
+2. **Monitors**, in the session: `wmon` saves each one at its native resolution and highest refresh rate, where it is now; kanshi applies that from then on. If they're in the wrong order, arrange them first (`wlr-randr --output DP-3 --left-of DP-2`), then `wmon` again.
+3. **Git identity**, kept on the machine (this repository is public):
    ```sh
    touch ~/.gitconfig     # first, so --global writes here and not into dot
    git config --global user.name "<name>"
    git config --global user.email "<email>"
    ```
-3. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
-4. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
-5. **Neovim:** the first start installs the plugins and the language servers; let it finish.
-6. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
-7. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
+5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
+6. **Neovim:** the first start installs the plugins and the language servers; let it finish.
+7. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
+8. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
 
 ## Bring an existing Arch install under arcus
 
@@ -80,6 +81,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Edit a file a module deploys in `$HOME`:** edit it in `~/builds/dot`; it's a link, so the change is live. Commit and push.
 - **Add or remove a module's file, change `module.toml`, or edit a system file (`system/`):** then `arcus apply`.
 - **Turn a module on or off:** `arcus on <module>` / `arcus off <module>`. It only changes this machine; dot changes only when a module or profile does.
+- **Monitors changed** (another monitor, another desk, a new arrangement): arrange them with `wlr-randr` if needed, then `wmon`. It keeps the profiles for other sets of monitors.
 - **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
@@ -94,6 +96,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
+| `~/.config/kanshi/config` | This machine's monitor profiles, written by `wmon` (not in dot) |
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |
 | `~/Pictures/wallpaper.png` | The active theme's wallpaper, if it has one (the file it replaced is kept as `wallpaper.png.orig`) |
 | `~/.local/state/arcus`, `/var/lib/arcus` | What arcus has done (state, ledgers) |
