@@ -62,8 +62,9 @@ repeat-rate 25
 
 # Scratchpads
 scratchpad term foot-scratch foot --app-id foot-scratch
-# This file in $EDITOR; quitting the editor reloads it and closes the window.
-scratchpad config stream-config foot --app-id stream-config sh -c '${EDITOR:-vi} "$HOME/.config/stream/config"; streamctl reload'
+# This file in vi (from the dev module); quitting vi reloads it and closes
+# the window.
+scratchpad config stream-config foot --app-id stream-config sh -c 'vi "$HOME/.config/stream/config"; streamctl reload'
 
 # Rules
 rule -app-id gimp* float
