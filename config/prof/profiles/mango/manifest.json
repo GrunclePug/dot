@@ -1,6 +1,0 @@
-{
-  "name": "mango",
-  "dependencies": ["wl-base"],
-  "manager": "pacman",
-  "packages": ["mangowm", "xdg-desktop-portal-wlr"]
-}

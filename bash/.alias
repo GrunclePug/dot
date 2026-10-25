@@ -1,6 +1,0 @@
-alias ls='ls --color=auto'
-alias grep='grep --color=auto'
-alias dust='dust --reverse'
-alias ff='fastfetch'
-alias agx='agy --dangerously-skip-permissions'
-alias why='agy --model gemini-3-8-flash "Analyze this terminal output. Point out the exact error, why it happened, and give the one command to fix it without fluff."'

@@ -1,6 +1,0 @@
-{
-  "name": "wl-base",
-  "dependencies": [],
-  "manager": "pacman",
-  "packages": ["foot", "wmenu", "waybar", "swaybg", "mako", "wl-clipboard", "brightnessctl", "playerctl", "grim", "slurp", "libnotify", "ffmpeg", "network-manager-applet", "pavucontrol"]
-}
