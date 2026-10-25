@@ -1,0 +1,186 @@
+/* stream's bar, also the tray menus and the volume slider (pg-vol-slider);
+   colours from the active theme. */
+@import url("../theme/colors.css");
+
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 10pt;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+window#waybar { background: @base; color: @text; }
+
+/* tags: dim when empty, brighter with windows, filled with the accent when focused */
+.tag          { padding: 0 7px; color: @line; }
+.tag.occupied { color: @dim; }
+.tag.focused  { color: @base; background: @accent; font-weight: bold; }
+
+/* layout and active mode */
+#custom-layout { padding: 0 8px; color: @dim; }
+#custom-mode   { padding: 0 8px; color: @base; background: @accent; font-weight: bold; }
+
+/* focused window title; hidden when there is none */
+#custom-title { padding: 0 10px; color: @text; background: @shade; }
+
+/* status */
+#cpu, #memory, #battery, #wireplumber, #clock { padding: 0 10px; color: @dim; }
+#clock { color: @text; }
+#wireplumber.muted { color: @line; }
+#battery.charging, #battery.plugged, #battery.full { color: @accent; }
+#battery.warning:not(.charging)  { color: @accent2; }
+#battery.critical:not(.charging) { color: @base; background: @urgent; }
+
+#tray { padding: 0 8px; }
+#tray > .needs-attention { background: @urgent; }
+
+/* systray context menus (nm-applet, discord, etc.) */
+window.popup,
+window.popup.background,
+.popup {
+  background-color: transparent;
+}
+
+window.popup menu,
+#tray menu,
+menu,
+.menu {
+  background-color: @base;
+  color: @text;
+  border: 2px solid @accent;
+  border-radius: 8px;
+  padding: 6px 4px;
+}
+
+window.popup menu menuitem,
+#tray menu menuitem,
+menu menuitem,
+.menu menuitem {
+  color: @text;
+  background-color: transparent;
+  padding: 5px 12px;
+  margin: 1px 2px;
+  border-radius: 4px;
+}
+
+window.popup menu menuitem:hover,
+#tray menu menuitem:hover,
+menu menuitem:hover,
+window.popup menu menuitem:selected,
+#tray menu menuitem:selected,
+menu menuitem:selected {
+  background-color: @shade;
+  color: @accent;
+}
+
+window.popup menu menuitem label,
+#tray menu menuitem label,
+menu menuitem label,
+window.popup menu menuitem *,
+#tray menu menuitem *,
+menu menuitem * {
+  color: @text;
+}
+
+window.popup menu menuitem:hover label,
+#tray menu menuitem:hover label,
+menu menuitem:hover label,
+window.popup menu menuitem:selected label,
+#tray menu menuitem:selected label,
+menu menuitem:selected label,
+window.popup menu menuitem:hover *,
+#tray menu menuitem:hover *,
+menu menuitem:hover *,
+window.popup menu menuitem:selected *,
+#tray menu menuitem:selected *,
+menu menuitem:selected * {
+  color: @accent;
+}
+
+window.popup menu menuitem:disabled,
+#tray menu menuitem:disabled,
+menu menuitem:disabled,
+window.popup menu menuitem:disabled *,
+#tray menu menuitem:disabled *,
+menu menuitem:disabled * {
+  color: @dim;
+}
+
+window.popup menu separator,
+#tray menu separator,
+menu separator {
+  background-color: @line;
+  border-bottom: 1px solid @line;
+  margin: 4px 6px;
+  min-height: 1px;
+}
+
+window.popup menu check,
+#tray menu check,
+menu check,
+window.popup menu radio,
+#tray menu radio,
+menu radio {
+  color: @accent;
+}
+
+tooltip { background: @base; border: 1px solid @line; }
+tooltip label { color: @text; }
+
+/* volume popup slider (pg-vol-slider) */
+#slider-card {
+  background-color: @base;
+  border: 2px solid @accent;
+  border-radius: 8px;
+  padding: 8px 6px 8px 6px;
+}
+#slider-card.boosted {
+  border-color: @accent2;
+}
+#slider-card.muted {
+  border-color: @urgent;
+}
+
+#vol-label {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 8.5pt;
+  font-weight: bold;
+  color: @accent;
+  margin-bottom: 4px;
+}
+#vol-label.boost {
+  color: @accent2;
+}
+#vol-label.muted {
+  color: @urgent;
+}
+
+scale trough {
+  min-width: 6px;
+  background-color: @shade;
+  border: 1px solid @line;
+  border-radius: 3px;
+}
+scale highlight {
+  min-width: 6px;
+  background-color: @accent;
+  border-radius: 3px;
+}
+scale.boost highlight {
+  background-color: @accent2;
+}
+scale slider {
+  min-width: 14px;
+  min-height: 14px;
+  margin: -4px;
+  background-color: @text;
+  border: 1px solid @accent;
+  border-radius: 4px;
+  box-shadow: none;
+}
+scale.boost slider {
+  border-color: @accent2;
+}

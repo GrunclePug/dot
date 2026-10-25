@@ -1,0 +1,162 @@
+# stream configuration
+#
+# swm reads this file when it starts and on streamctl reload. streamctl
+# gen-config wrote it from swm's built-in defaults; the arcus stream module
+# changes the launcher, adds the bar toggle, screenshots, the lock key and a
+# few rules, and takes the border colours from the active theme.
+#
+# One directive per line. Lines starting with # are comments; a # anywhere
+# else is part of the line, as in a colour. A setting left out keeps its
+# default. Bindings are all or nothing: if any bind line is left, the bind
+# lines here replace every default binding. streamctl gen-config -missing
+# offers the default bindings this file lacks, such as new ones.
+#
+#   include <path>   read another file here (~/ and paths relative to this file)
+#   bind [-repeat] [-locked] [-also] <keys> <command>
+#   mode <name> {    bind lines for a mode, up to a line holding }
+#
+# Keys are modifiers and a key joined by +. Modifiers: Mod (the mod setting),
+# Super, Alt, Ctrl and Shift. Keys are xkb keysym names (xkbcommon-keysyms.h
+# without XKB_KEY_), such as Return, comma or XF86AudioMute; letters are
+# written in lower case, with Shift for capitals. BTN_LEFT, BTN_MIDDLE and
+# BTN_RIGHT make pointer bindings.
+#
+# -repeat runs the command again while the key is held. -locked keeps the
+# binding working while the screen is locked. A key bound more than once runs
+# every command, in order, with a warning unless the later bindings say
+# -also. Top-level bindings belong to the normal mode, which swm starts in.
+#
+#   rule [-app-id <glob>] [-title <glob>] <action>...
+#
+# Rules set up new windows whose app-id and title match; * and ? are
+# wildcards, and "double quotes" keep spaces in a value. Actions: float, tile,
+# tag <n> and monitor <name> (the output's name, such as DP-1 or eDP-1). Every
+# matching rule applies, in order. For example:
+#
+#   rule -app-id gimp* float
+#   rule -title "Picture-in-Picture" float
+#
+#   scratchpad <name> <app-id> <command>
+#
+# A scratchpad is a floating window that "scratchpad <name>" shows over the
+# current tags and hides again: the first window with the app-id, started with
+# the command when there is none. The command has to give its window that
+# app-id. Defining any scratchpad here replaces the default ones.
+
+# Look
+border-width 1
+# Border colours: the active theme's, if a theme module is on
+include -optional ~/.config/theme/stream
+
+# Layout every tag starts with, and the gap every monitor starts with
+layout tile
+nmaster 1
+mfact 0.55
+gap 5
+
+# Keyboard: what Mod stands for, and how -repeat bindings repeat
+mod alt
+repeat-delay 600
+repeat-rate 25
+
+# Scratchpads
+scratchpad term foot-scratch foot --app-id foot-scratch
+
+# Rules
+rule -app-id gimp* float
+rule -app-id Gimp* float
+rule -app-id *pavucontrol float
+rule -app-id nm-connection-editor float
+
+# Programs
+bind Mod+p               spawn pg-menu
+bind Mod+Shift+Return    spawn foot
+bind Super+Return        scratchpad term
+bind Mod+b               spawn pkill -USR1 -x waybar
+bind Mod+Shift+s         spawn vshot
+bind Mod+Shift+x         spawn vshot -all
+
+# Windows
+bind -repeat Mod+j       focus next
+bind -repeat Mod+k       focus prev
+bind -repeat Mod+Shift+j swap next
+bind -repeat Mod+Shift+k swap prev
+bind Mod+Return          zoom
+bind Mod+Shift+c         close
+bind Mod+Shift+space     toggle-float
+bind Mod+Shift+f         toggle-fullscreen
+
+# Layout
+bind Mod+t               layout tile
+bind Mod+f               layout floating
+bind Mod+m               layout monocle
+bind Mod+space           layout prev
+bind -repeat Mod+h       mfact -0.05
+bind -repeat Mod+l       mfact +0.05
+bind Mod+i               nmaster +1
+bind Mod+d               nmaster -1
+bind -repeat Mod+minus   gap -1
+bind -repeat Mod+equal   gap +1
+bind Mod+Shift+equal     gap reset
+
+# Tags
+bind Mod+1               view 1
+bind Mod+Ctrl+1          toggle-view 1
+bind Mod+Shift+1         tag 1
+bind Mod+Ctrl+Shift+1    toggle-tag 1
+bind Mod+2               view 2
+bind Mod+Ctrl+2          toggle-view 2
+bind Mod+Shift+2         tag 2
+bind Mod+Ctrl+Shift+2    toggle-tag 2
+bind Mod+3               view 3
+bind Mod+Ctrl+3          toggle-view 3
+bind Mod+Shift+3         tag 3
+bind Mod+Ctrl+Shift+3    toggle-tag 3
+bind Mod+4               view 4
+bind Mod+Ctrl+4          toggle-view 4
+bind Mod+Shift+4         tag 4
+bind Mod+Ctrl+Shift+4    toggle-tag 4
+bind Mod+5               view 5
+bind Mod+Ctrl+5          toggle-view 5
+bind Mod+Shift+5         tag 5
+bind Mod+Ctrl+Shift+5    toggle-tag 5
+bind Mod+6               view 6
+bind Mod+Ctrl+6          toggle-view 6
+bind Mod+Shift+6         tag 6
+bind Mod+Ctrl+Shift+6    toggle-tag 6
+bind Mod+7               view 7
+bind Mod+Ctrl+7          toggle-view 7
+bind Mod+Shift+7         tag 7
+bind Mod+Ctrl+Shift+7    toggle-tag 7
+bind Mod+8               view 8
+bind Mod+Ctrl+8          toggle-view 8
+bind Mod+Shift+8         tag 8
+bind Mod+Ctrl+Shift+8    toggle-tag 8
+bind Mod+9               view 9
+bind Mod+Ctrl+9          toggle-view 9
+bind Mod+Shift+9         tag 9
+bind Mod+Ctrl+Shift+9    toggle-tag 9
+bind Mod+0               view all
+bind Mod+Shift+0         toggle-tag all
+bind Mod+Tab             view prev
+
+# Monitors
+bind Mod+comma           focus-mon prev
+bind Mod+period          focus-mon next
+bind Mod+Shift+comma     tag-mon prev
+bind Mod+Shift+period    tag-mon next
+
+# Session
+bind Mod+Shift+r         reload
+bind Mod+Shift+q         quit
+bind Super+l             spawn wlock
+bind Super+F11           mode passthrough
+
+# Mouse
+bind Mod+BTN_LEFT        move
+bind Mod+BTN_MIDDLE      toggle-float
+bind Mod+BTN_RIGHT       resize
+
+mode passthrough {
+	bind Super+F11 mode normal
+}

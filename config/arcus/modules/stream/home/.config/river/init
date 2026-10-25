@@ -1,0 +1,24 @@
+#!/bin/sh
+# river runs this on startup. river ends everything started here when it
+# exits.
+
+# swm is restarted whenever it exits; river keeps the windows meanwhile.
+while :; do
+	swm
+	sleep 1
+done &
+
+# Portals and D-Bus-started apps need to know about this session. Portals
+# left over from an earlier session (dwm, another compositor) keep its
+# XDG_CURRENT_DESKTOP and pick the wrong backend; D-Bus restarts them on
+# demand.
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service'
+
+# river closes the bar and wallpaper if they start before swm is running.
+streamctl wait
+swaybg -i "$HOME/Pictures/wallpaper.png" -m fill &
+waybar -c "$HOME/.config/river/waybar.json" -s "$HOME/.config/river/waybar.css" &
+mako &
+nm-applet --indicator &
+pgrep -x battery_monitor >/dev/null || battery_monitor &

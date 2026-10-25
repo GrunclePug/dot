@@ -1,0 +1,3 @@
+# nebula: stream's colours (included by the stream config).
+border-focused #ff00ff
+border-unfocused #444444
