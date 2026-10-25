@@ -3,8 +3,8 @@
 # (pkgver is VERSION from config.mk, then the commit count and short hash:
 # git rev-list --count <commit>).
 pkgname=vshot
-pkgver=0.1.0.r11.g1fb7a84
-_commit=1fb7a84e4fa5264586c0699e8fb0f41288c9ef71
+pkgver=0.1.0.r11.g3d83186
+_commit=3d83186cf702e6d1682e0f08fc211030723c3ce0
 pkgrel=2
 pkgdesc="Screen selection and capture tool for X11 and Wayland"
 arch=(x86_64)
