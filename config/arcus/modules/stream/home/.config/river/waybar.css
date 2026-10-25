@@ -1,5 +1,4 @@
-/* stream's bar, also the tray menus and the volume slider (pg-vol-slider);
-   colours from the active theme. */
+/* stream's bar, also the tray menus; colours from the active theme. */
 @import url("../theme/colors.css");
 
 * {
@@ -129,58 +128,3 @@ menu radio {
 
 tooltip { background: @base; border: 1px solid @line; }
 tooltip label { color: @text; }
-
-/* volume popup slider (pg-vol-slider) */
-#slider-card {
-  background-color: @base;
-  border: 2px solid @accent;
-  border-radius: 8px;
-  padding: 8px 6px 8px 6px;
-}
-#slider-card.boosted {
-  border-color: @accent2;
-}
-#slider-card.muted {
-  border-color: @urgent;
-}
-
-#vol-label {
-  font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 8.5pt;
-  font-weight: bold;
-  color: @accent;
-  margin-bottom: 4px;
-}
-#vol-label.boost {
-  color: @accent2;
-}
-#vol-label.muted {
-  color: @urgent;
-}
-
-scale trough {
-  min-width: 6px;
-  background-color: @shade;
-  border: 1px solid @line;
-  border-radius: 3px;
-}
-scale highlight {
-  min-width: 6px;
-  background-color: @accent;
-  border-radius: 3px;
-}
-scale.boost highlight {
-  background-color: @accent2;
-}
-scale slider {
-  min-width: 14px;
-  min-height: 14px;
-  margin: -4px;
-  background-color: @text;
-  border: 1px solid @accent;
-  border-radius: 4px;
-  box-shadow: none;
-}
-scale.boost slider {
-  border-color: @accent2;
-}

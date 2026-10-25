@@ -1,0 +1,36 @@
+# wvol: a volume slider that drops down where you click, for Wayland bars.
+# Pinned to a commit on GitHub. To update: move _commit and pkgver together
+# (pkgver is VERSION from config.mk at that commit).
+pkgname=wvol
+pkgver=0.1.1
+_commit=d53a1eff4965bbe8e262cb0795d31b2479a13b40
+pkgrel=1
+pkgdesc="A volume slider that drops down where you click, for Wayland bars"
+arch=(x86_64)
+url="https://github.com/GrunclePug/wvol"
+license=(MIT)
+depends=(wireplumber)
+makedepends=(git go)
+source=("$pkgname::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+# Go's module cache stays in the build directory, not in ~/go: builds run
+# in a clean environment (the installer, arcus apply), not your shell.
+prepare() {
+  cd $pkgname
+  GOPATH="$srcdir/go" GOFLAGS=-modcacherw go mod download
+}
+
+# wvol is pure Go: its Makefile builds a static binary with cgo off, so
+# makepkg's C flags don't apply.
+build() {
+  cd $pkgname
+  export GOPATH="$srcdir/go"
+  make GOFLAGS="-trimpath -mod=readonly -modcacherw"
+}
+
+package() {
+  cd $pkgname
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

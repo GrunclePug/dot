@@ -7,4 +7,4 @@ conflicts   = ["river-classic"]  # both packages own /usr/bin/river, and both mo
 
 [packages]
 pacman = ["river", "jq"]  # jq: the bar picks its monitor out of streamctl watch
-local  = ["stream"]        # pkg/stream: swm and streamctl, pinned to a release
+local  = ["stream", "wvol"]  # pkg/: swm and streamctl; wvol, the volume slider the bar opens

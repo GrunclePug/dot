@@ -86,7 +86,7 @@ rule -app-id *pavucontrol float
 rule -app-id nm-connection-editor float
 
 # Programs
-bind Mod+p               spawn pg-menu
+bind Mod+p               spawn wrun
 bind Mod+Shift+Return    spawn foot
 bind Super+Return        scratchpad term
 bind Super+c             scratchpad config

@@ -107,12 +107,13 @@
     "format-full": "bat {capacity}% [o]",
     "tooltip-format": "{timeTo}"
   },
+  "//volume": "Click drops down the volume slider (wvol), right click mutes, scrolling steps by 5%.",
   "wireplumber": {
     "format": "vol {volume}%",
     "format-muted": "vol mute",
     "scroll-step": 5,
     "max-volume": 150,
-    "on-click": "pg-vol-slider",
+    "on-click": "wvol",
     "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
     "tooltip-format": "{node_name}"
   },
