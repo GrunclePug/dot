@@ -1,5 +1,5 @@
 {
-  "//": "stream's bar: tags, layout, mode and the focused window from streamctl watch (jq picks this bar's monitor), then status, clock and tray. Style: waybar.css next to this file.",
+  "//": "stream's bar: tags, layout, mode and the focused window from streamctl waybar (one process per module, for this bar's monitor), then status, clock and tray. Style: waybar.css next to this file.",
   "layer": "top",
   "position": "top",
   "height": 22,
@@ -9,63 +9,63 @@
 
   "//tags": "Like dwm's tag bar: click views the tag, right click adds it to the view.",
   "custom/tag-1": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"1\", class: [\"tag\", (if (.tags | contains([1])) then \"focused\" elif (.occupied | contains([1])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 1",
     "return-type": "json",
     "on-click": "streamctl view 1",
     "on-click-right": "streamctl toggle-view 1",
     "tooltip": false
   },
   "custom/tag-2": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"2\", class: [\"tag\", (if (.tags | contains([2])) then \"focused\" elif (.occupied | contains([2])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 2",
     "return-type": "json",
     "on-click": "streamctl view 2",
     "on-click-right": "streamctl toggle-view 2",
     "tooltip": false
   },
   "custom/tag-3": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"3\", class: [\"tag\", (if (.tags | contains([3])) then \"focused\" elif (.occupied | contains([3])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 3",
     "return-type": "json",
     "on-click": "streamctl view 3",
     "on-click-right": "streamctl toggle-view 3",
     "tooltip": false
   },
   "custom/tag-4": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"4\", class: [\"tag\", (if (.tags | contains([4])) then \"focused\" elif (.occupied | contains([4])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 4",
     "return-type": "json",
     "on-click": "streamctl view 4",
     "on-click-right": "streamctl toggle-view 4",
     "tooltip": false
   },
   "custom/tag-5": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"5\", class: [\"tag\", (if (.tags | contains([5])) then \"focused\" elif (.occupied | contains([5])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 5",
     "return-type": "json",
     "on-click": "streamctl view 5",
     "on-click-right": "streamctl toggle-view 5",
     "tooltip": false
   },
   "custom/tag-6": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"6\", class: [\"tag\", (if (.tags | contains([6])) then \"focused\" elif (.occupied | contains([6])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 6",
     "return-type": "json",
     "on-click": "streamctl view 6",
     "on-click-right": "streamctl toggle-view 6",
     "tooltip": false
   },
   "custom/tag-7": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"7\", class: [\"tag\", (if (.tags | contains([7])) then \"focused\" elif (.occupied | contains([7])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 7",
     "return-type": "json",
     "on-click": "streamctl view 7",
     "on-click-right": "streamctl toggle-view 7",
     "tooltip": false
   },
   "custom/tag-8": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"8\", class: [\"tag\", (if (.tags | contains([8])) then \"focused\" elif (.occupied | contains([8])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 8",
     "return-type": "json",
     "on-click": "streamctl view 8",
     "on-click-right": "streamctl toggle-view 8",
     "tooltip": false
   },
   "custom/tag-9": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"9\", class: [\"tag\", (if (.tags | contains([9])) then \"focused\" elif (.occupied | contains([9])) then \"occupied\" else \"empty\" end)]}'",
+    "exec": "streamctl waybar tag 9",
     "return-type": "json",
     "on-click": "streamctl view 9",
     "on-click-right": "streamctl toggle-view 9",
@@ -73,20 +73,20 @@
   },
   "//layout": "Like dwm's layout symbol, plus the master count unless it's 1: click goes back to the previous layout, right click is monocle.",
   "custom/layout": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: (if .nmaster == 1 then .layout else \"\\(.layout) \\(.nmaster)\" end)}'",
+    "exec": "streamctl waybar layout",
     "return-type": "json",
     "on-click": "streamctl layout prev",
     "on-click-right": "streamctl layout monocle",
     "tooltip": false
   },
   "custom/mode": {
-    "exec": "streamctl watch | jq --unbuffered -c '{text: (if .mode == \"normal\" then \"\" else .mode end)}'",
+    "exec": "streamctl waybar mode",
     "return-type": "json",
     "tooltip": false
   },
   "//title": "Like dwm's title: middle click zooms the focused window.",
   "custom/title": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: .title}'",
+    "exec": "streamctl waybar title",
     "return-type": "json",
     "escape": true,
     "max-length": 90,

@@ -1,10 +1,10 @@
 # The stream session: river 0.5 with stream's swm as its window manager,
 # started from a TTY with startw.
-description = "stream session: river 0.5 with swm, waybar fed by streamctl watch"
+description = "stream session: river 0.5 with swm, waybar fed by streamctl waybar"
 category    = "desktop"
 requires    = ["wl-base"]
 conflicts   = ["river-classic"]  # both packages own /usr/bin/river, and both modules ~/.config/river/
 
 [packages]
-pacman = ["river", "jq", "libqalculate"]  # jq: the bar picks its monitor out of streamctl watch; libqalculate: qalc, the calc scratchpad
+pacman = ["river", "libqalculate"]  # libqalculate: qalc, the calc scratchpad
 local  = ["stream", "wvol"]  # pkg/: swm and streamctl; wvol, the volume slider the bar opens

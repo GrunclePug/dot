@@ -1,0 +1,4 @@
+# Laptop keys for stream, included by the stream config: the screen's
+# brightness, never quite off. They work on the lock screen too.
+bind -repeat -locked XF86MonBrightnessUp   spawn brightnessctl -q set 5%+
+bind -repeat -locked XF86MonBrightnessDown spawn brightnessctl -q -n set 5%-

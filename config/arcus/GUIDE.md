@@ -83,6 +83,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
+- **Firmware updates** (base module): `fwupdmgr refresh`, then `fwupdmgr get-updates` and `fwupdmgr update`; BIOS updates install on the next reboot.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
 - **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
 

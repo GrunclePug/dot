@@ -2,8 +2,8 @@
 # Pinned to a commit on GitHub. To update: move _commit and pkgver together
 # (pkgver is VERSION from config.mk at that commit).
 pkgname=stream
-pkgver=0.2.0
-_commit=87a837540f3bc7f62983221d1aaae138c35a1bef
+pkgver=0.3.0
+_commit=0fa254973cc22f70257aa377aaa2b66deec6b4ea
 pkgrel=1
 pkgdesc="A dwm-inspired tiling window manager for river"
 arch=(x86_64)
@@ -14,8 +14,7 @@ makedepends=(git go libxkbcommon)
 optdepends=('foot: the default terminal'
             'wmenu: the default launcher'
             'swaybg: the wallpaper'
-            'waybar: a bar fed by streamctl watch'
-            'jq: the waybar setup in the docs')
+            'waybar: a bar fed by streamctl waybar')
 source=("$pkgname::git+$url.git#commit=$_commit")
 sha256sums=('SKIP')
 
