@@ -1,6 +1,9 @@
 # One theme is on at a time: 'arcus on <theme>' swaps it for the others.
-# Every app reads its colours from ~/.config/theme/ (colors.sh, colors.css,
-# foot.ini, mako, tmux.conf, Xresources); dunst takes its from a drop-in.
+# Each app's colours sit next to its own config, which includes them
+# (~/.config/foot/theme.ini, mako/theme, tmux/theme.conf, stream/theme; dunst
+# takes a drop-in). The colours several apps share stay in ~/.config/theme/
+# (colors.sh, colors.css, Xresources). Pictures/wallpaper.png (not in git)
+# is the theme's wallpaper; arcus keeps the one it replaces as .orig.
 description = "nebula: magenta on graphite grey, the classic dwm look"
 category    = "theme"
 conflicts   = ["aurora", "h2o"]

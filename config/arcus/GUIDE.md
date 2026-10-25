@@ -93,7 +93,8 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
-| `~/.config/theme` | The active theme's colour files |
+| `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |
+| `~/Pictures/wallpaper.png` | The active theme's wallpaper, if it has one (the file it replaced is kept as `wallpaper.png.orig`) |
 | `~/.local/state/arcus`, `/var/lib/arcus` | What arcus has done (state, ledgers) |
 | `~/.cache/arcus` | Own builds: their packages and sources |
 | `/var/log/arcus-install.log` | The install log |

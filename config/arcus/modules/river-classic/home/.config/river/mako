@@ -12,7 +12,7 @@ markup=1
 default-timeout=8000
 max-visible=6
 
-include=~/.config/theme/mako
+include=~/.config/mako/theme
 
 [urgency=critical]
 default-timeout=0

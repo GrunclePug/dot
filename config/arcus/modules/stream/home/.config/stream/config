@@ -47,7 +47,7 @@
 # Look
 border-width 1
 # Border colours: the active theme's, if a theme module is on
-include -optional ~/.config/theme/stream
+include -optional ~/.config/stream/theme
 
 # Layout every tag starts with, and the gap every monitor starts with
 layout tile
