@@ -2,8 +2,8 @@
 # Pinned to a commit on GitHub. To update: move _commit and pkgver together
 # (pkgver is VERSION from config.mk at that commit).
 pkgname=stream
-pkgver=0.1.0
-_commit=a47ead8995992281f2087764abb201b8850ec26d
+pkgver=0.2.0
+_commit=87a837540f3bc7f62983221d1aaae138c35a1bef
 pkgrel=1
 pkgdesc="A dwm-inspired tiling window manager for river"
 arch=(x86_64)
