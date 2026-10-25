@@ -17,7 +17,10 @@ systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service'
 
 # river closes the bar and wallpaper if they start before swm is running.
 streamctl wait
-swaybg -i "$HOME/Pictures/wallpaper.png" -m fill &
+# The theme's wallpaper, or ~/Pictures/wallpaper.png if it has none.
+wallpaper="$HOME/.config/theme/wallpaper.png"
+[ -r "$wallpaper" ] || wallpaper="$HOME/Pictures/wallpaper.png"
+swaybg -i "$wallpaper" -m fill &
 waybar -c "$HOME/.config/river/waybar.json" -s "$HOME/.config/river/waybar.css" &
 mako &
 nm-applet --indicator &

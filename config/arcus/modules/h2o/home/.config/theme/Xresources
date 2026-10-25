@@ -1,0 +1,27 @@
+! h2o: the colours of dwm (and the dmenu it starts) and st, merged by
+! .xinitrc before dwm starts.
+dwm.normbgcolor: #0b1826
+dwm.normbordercolor: #1f3a52
+dwm.normfgcolor: #8eabc4
+dwm.selbgcolor: #3fa9f5
+dwm.selbordercolor: #3fa9f5
+dwm.selfgcolor: #0b1826
+st.foreground: #dde9f3
+st.background: #000000
+st.cursorColor: #3fa9f5
+st.color0: #132536
+st.color1: #f2707a
+st.color2: #6fd6a8
+st.color3: #f0d38a
+st.color4: #3fa9f5
+st.color5: #a99cf5
+st.color6: #5fd7e8
+st.color7: #c5d6e4
+st.color8: #46637e
+st.color9: #ff8f97
+st.color10: #92e6c0
+st.color11: #f8e2a8
+st.color12: #7cc4fa
+st.color13: #c4baf9
+st.color14: #8fe3f0
+st.color15: #f2f8fc

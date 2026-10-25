@@ -1,0 +1,3 @@
+# h2o: stream's colours (included by the stream config).
+border-focused #3fa9f5
+border-unfocused #1f3a52

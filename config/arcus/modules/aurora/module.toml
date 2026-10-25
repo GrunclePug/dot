@@ -1,6 +1,6 @@
-# One theme is on at a time: 'arcus on <theme>' swaps it for the other.
+# One theme is on at a time: 'arcus on <theme>' swaps it for the others.
 # Every app reads its colours from ~/.config/theme/ (colors.sh, colors.css,
 # foot.ini, mako, tmux.conf, Xresources); dunst takes its from a drop-in.
 description = "aurora: teal and gold on a near-black blue"
 category    = "theme"
-conflicts   = ["nebula"]
+conflicts   = ["nebula", "h2o"]
