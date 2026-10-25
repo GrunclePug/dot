@@ -1,0 +1,41 @@
+# stream: a dwm-inspired tiling window manager for river (swm, streamctl).
+# Pinned to a commit on GitHub. To update: move _commit and pkgver together
+# (pkgver is VERSION from config.mk at that commit).
+pkgname=stream
+pkgver=0.1.0
+_commit=a47ead8995992281f2087764abb201b8850ec26d
+pkgrel=1
+pkgdesc="A dwm-inspired tiling window manager for river"
+arch=(x86_64)
+url="https://github.com/GrunclePug/stream"
+license=(MIT)
+depends=(river)
+makedepends=(git go libxkbcommon)
+optdepends=('foot: the default terminal'
+            'wmenu: the default launcher'
+            'swaybg: the wallpaper'
+            'waybar: a bar fed by streamctl watch'
+            'jq: the waybar setup in the docs')
+source=("$pkgname::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+# Go's module cache stays in the build directory, not in ~/go: builds run
+# in a clean environment (the installer, arcus apply), not your shell.
+prepare() {
+  cd $pkgname
+  GOPATH="$srcdir/go" GOFLAGS=-modcacherw go mod download
+}
+
+# stream is pure Go: its Makefile builds static binaries with cgo off, so
+# makepkg's C flags don't apply.
+build() {
+  cd $pkgname
+  export GOPATH="$srcdir/go"
+  make GOFLAGS="-trimpath -mod=readonly -modcacherw"
+}
+
+package() {
+  cd $pkgname
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

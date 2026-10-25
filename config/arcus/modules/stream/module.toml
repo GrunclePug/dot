@@ -1,7 +1,5 @@
 # The stream session: river 0.5 with stream's swm as its window manager,
-# started from a TTY with startw. swm and streamctl are installed by hand
-# for now (sudo make install in the stream repo); a pkg/ recipe follows once
-# stream is on GitHub.
+# started from a TTY with startw.
 description = "stream session: river 0.5 with swm, waybar fed by streamctl watch"
 category    = "desktop"
 requires    = ["wl-base"]
@@ -9,3 +7,4 @@ conflicts   = ["river-classic"]  # both packages own /usr/bin/river, and both mo
 
 [packages]
 pacman = ["river", "jq"]  # jq: the bar picks its monitor out of streamctl watch
+local  = ["stream"]        # pkg/stream: swm and streamctl, pinned to a release
