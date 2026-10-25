@@ -2,5 +2,7 @@
 *~
 *.swp
 *.bak
-# A theme's wallpaper is the owner's own image, not part of the repo.
+# A theme's wallpaper is usually the owner's own image, not part of the repo.
 config/arcus/modules/*/home/Pictures/wallpaper.png
+# h2o's is original art made for stream, so it can be published.
+!config/arcus/modules/h2o/home/Pictures/wallpaper.png
