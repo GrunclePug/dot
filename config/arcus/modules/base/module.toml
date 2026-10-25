@@ -1,4 +1,4 @@
-description = "What every machine gets: networking, man pages, a pager, ext4 tools, package cache cleanup, firmware updates"
+description = "What every machine gets: networking, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, firmware updates"
 category    = "system"
 dirs        = ["builds", "code", "Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"]
 
@@ -8,6 +8,8 @@ pacman = [
   "e2fsprogs",       # ext4 on USB drives, whatever the machine's own filesystems
   "pacman-contrib",  # paccache
   "fwupd",           # firmware updates from LVFS: fwupdmgr refresh, then fwupdmgr update
+  "ntfs-3g",         # NTFS on USB drives
+  "rsync",
 ]
 
 [units]

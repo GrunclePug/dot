@@ -6,5 +6,7 @@ category    = "system"
 [packages]
 pacman = [
   "eza", "fd", "fzf", "ripgrep", "dust", "btop", "fastfetch", "tealdeer", "tree",
-  "wget", "zip", "unzip", "wireguard-tools", "cifs-utils",
+  "wget", "zip", "unzip", "7zip", "unrar", "ncdu", "jq", "wireguard-tools", "cifs-utils",
+  "nmap", "traceroute", "bind",   # bind: dig, nslookup
+  "magic-wormhole",
 ]

@@ -6,5 +6,6 @@ requires    = ["desktop"]
 pacman = [
   "foot", "wmenu", "waybar", "swaybg", "mako", "wl-clipboard", "playerctl",
   "grim", "slurp", "ffmpeg", "xdg-desktop-portal-wlr",
+  "xdg-desktop-portal-gtk",   # what portals.conf sends everything but screen capture to
 ]
 local = ["waylock-arcus"]   # pkg/waylock-arcus: waylock with the bordercolors patch (wlock)
