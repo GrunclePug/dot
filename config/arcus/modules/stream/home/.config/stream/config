@@ -78,6 +78,9 @@ scratchpad term foot-scratch foot --app-id foot-scratch
 # This file in vi (from the dev module); quitting vi reloads it and closes
 # the window.
 scratchpad config stream-config foot --app-id stream-config sh -c 'vi "$HOME/.config/stream/config"; streamctl reload'
+# A calculator: type an expression, get the answer (qalc, libqalculate),
+# shown as you type without qalc asking about it first.
+scratchpad calc qalc-scratch foot --app-id qalc-scratch --window-size-chars=60x16 qalc -set "autocalc on"
 
 # Rules
 rule -app-id gimp* float
@@ -90,6 +93,7 @@ bind Mod+p               spawn wrun
 bind Mod+Shift+Return    spawn foot
 bind Super+Return        scratchpad term
 bind Super+c             scratchpad config
+bind Super+equal         scratchpad calc
 bind Mod+b               spawn pkill -USR1 -x waybar
 bind Mod+Shift+s         spawn vshot
 bind Mod+Shift+x         spawn vshot -all

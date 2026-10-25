@@ -6,5 +6,5 @@ requires    = ["wl-base"]
 conflicts   = ["river-classic"]  # both packages own /usr/bin/river, and both modules ~/.config/river/
 
 [packages]
-pacman = ["river", "jq"]  # jq: the bar picks its monitor out of streamctl watch
+pacman = ["river", "jq", "libqalculate"]  # jq: the bar picks its monitor out of streamctl watch; libqalculate: qalc, the calc scratchpad
 local  = ["stream", "wvol"]  # pkg/: swm and streamctl; wvol, the volume slider the bar opens
