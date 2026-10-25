@@ -71,9 +71,9 @@
     "on-click-right": "streamctl toggle-view 9",
     "tooltip": false
   },
-  "//layout": "Like dwm's layout symbol, plus the master count: click goes back to the previous layout, right click is monocle.",
+  "//layout": "Like dwm's layout symbol, plus the master count unless it's 1: click goes back to the previous layout, right click is monocle.",
   "custom/layout": {
-    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: \"\\(.layout) \\(.nmaster)\"}'",
+    "exec": "streamctl watch | jq --unbuffered -c '.outputs[] | select(.name == env.WAYBAR_OUTPUT_NAME) | {text: (if .nmaster == 1 then .layout else \"\\(.layout) \\(.nmaster)\" end)}'",
     "return-type": "json",
     "on-click": "streamctl layout prev",
     "on-click-right": "streamctl layout monocle",

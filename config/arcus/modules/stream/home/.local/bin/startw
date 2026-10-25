@@ -4,4 +4,8 @@
 export XDG_CURRENT_DESKTOP=river XDG_SESSION_TYPE=wayland
 # Qt apps take their colours from the GTK theme (gtk.css, so the active theme).
 export QT_QPA_PLATFORM="wayland;xcb" QT_QPA_PLATFORMTHEME=gtk3 SDL_VIDEODRIVER="wayland,x11"
-exec river "$@"
+# Everything the session prints (river, swm, the bar) goes to a log,
+# replaced at each login. SWM_LOG_LEVEL=debug startw makes swm log in detail.
+log="${XDG_STATE_HOME:-$HOME/.local/state}/stream/session.log"
+mkdir -p "${log%/*}"
+exec river "$@" >"$log" 2>&1

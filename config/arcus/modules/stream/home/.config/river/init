@@ -4,7 +4,7 @@
 
 # swm is restarted whenever it exits; river keeps the windows meanwhile.
 while :; do
-	swm
+	swm -log-level "${SWM_LOG_LEVEL:-info}"
 	sleep 1
 done &
 
