@@ -1,6 +1,6 @@
-description = "3D modelling and printing: FreeCAD, Cura, Flatpak (OrcaSlicer)"
+description = "3D modelling and printing: FreeCAD, SolidCraft, Cura, Flatpak (OrcaSlicer)"
 category    = "apps"
 
 [packages]
 pacman = ["freecad", "flatpak"]   # flatpak: OrcaSlicer, installed by hand with flatpak
-aur    = ["cura-bin"]
+aur    = ["cura-bin", "solidcraft-bin"]
