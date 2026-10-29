@@ -1,4 +1,4 @@
-description = "What every machine gets: networking, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, firmware updates"
+description = "What every machine gets: networking, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, firmware updates, aurlock for AUR packages"
 category    = "system"
 dirs        = ["builds", "code", "Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"]
 
@@ -11,6 +11,7 @@ pacman = [
   "ntfs-3g",         # NTFS on USB drives
   "rsync",
 ]
+local = ["aurlock"]  # pkg/: the AUR helper config.toml names
 
 [units]
 system = ["NetworkManager.service", "paccache.timer"]

@@ -1,0 +1,3 @@
+# aurlock installs AUR packages only at commits approved in
+# ~/Sync/aurlock/approved. It comes from the base module's own build.
+aur_helper = "aurlock"

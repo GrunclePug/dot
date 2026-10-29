@@ -35,9 +35,14 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
-6. **Neovim:** the first start installs the plugins and the language servers; let it finish.
-7. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
-8. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced, link the approvals, then apply: what the other machine approved installs without a prompt, and aurlock asks about the rest.
+   ```sh
+   mkdir -p ~/.config/aurlock && ln -s ~/Sync/aurlock/approved ~/.config/aurlock/approved
+   arcus apply
+   ```
+7. **Neovim:** the first start installs the plugins and the language servers; let it finish.
+8. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
+9. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
 
 ## Bring an existing Arch install under arcus
 
@@ -54,7 +59,7 @@ arcus on h2o         # a theme, if the profile has none
 arcus clean          # removes what no module lists (read its plan first)
 ```
 
-Then do the steps of "Right after the install" that the machine doesn't have yet.
+Then do the steps of "Right after the install" that the machine doesn't have yet. AUR packages another helper installed stay outside aurlock until you adopt them: `aurlock list` shows them, and `aurlock install <pkg>...` reviews and rebuilds them.
 
 ## Cheat sheet
 
@@ -84,7 +89,8 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Monitors changed** (another monitor, another desk, a new arrangement): arrange them with `wlr-randr` if needed, then `wmon`. It keeps the profiles for other sets of monitors.
 - **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
-- **System updates:** `yay` (or `sudo pacman -Syu`) as always; arcus doesn't update packages.
+- **System updates:** `sudo pacman -Syu && aurlock upgrade`; arcus doesn't update packages. `aurlock outdated` lists AUR updates that are waiting.
+- **AUR packages:** a module's new AUR package gets reviewed at aurlock's prompt during `arcus apply` (`-y` skips it until it's approved). aurlock's README has a cheatsheet.
 - **Firmware updates** (base module): `fwupdmgr refresh`, then `fwupdmgr get-updates` and `fwupdmgr update`; BIOS updates install on the next reboot.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
 - **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
@@ -95,6 +101,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 |------|------|
 | `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
+| `~/Sync/aurlock/approved` (`~/.config/aurlock/approved` links here) | AUR approvals, shared between the machines (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
 | `~/.config/kanshi/config` | This machine's monitor profiles, written by `wmon` (not in dot) |
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |

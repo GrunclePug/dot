@@ -1,0 +1,36 @@
+# aurlock: the AUR helper arcus uses; it installs only approved commits.
+# Pinned to a commit on GitHub. To update: move _commit and pkgver together
+# (pkgver is VERSION from config.mk at that commit).
+pkgname=aurlock
+pkgver=0.3.0
+_commit=a352d565108266de93e85c421ac8f99f03e4fb56
+pkgrel=1
+pkgdesc="A minimal AUR helper that never installs an AUR package at a commit you haven't approved"
+arch=(x86_64)
+url="https://github.com/GrunclePug/aurlock"
+license=(MIT)
+depends=(bubblewrap git pacman sudo)
+makedepends=(git go)
+source=("$pkgname::git+$url.git#commit=$_commit")
+sha256sums=('SKIP')
+
+# Go's module cache stays in the build directory, not in ~/go: builds run
+# in a clean environment (the installer, arcus apply), not your shell.
+prepare() {
+  cd $pkgname
+  GOPATH="$srcdir/go" GOFLAGS=-modcacherw go mod download
+}
+
+# aurlock is pure Go: its Makefile builds a static binary with cgo off, so
+# makepkg's C flags don't apply.
+build() {
+  cd $pkgname
+  export GOPATH="$srcdir/go"
+  make GOFLAGS="-trimpath -mod=readonly -modcacherw"
+}
+
+package() {
+  cd $pkgname
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
