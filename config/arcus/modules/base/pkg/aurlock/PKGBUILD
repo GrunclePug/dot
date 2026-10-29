@@ -2,8 +2,8 @@
 # Pinned to a commit on GitHub. To update: move _commit and pkgver together
 # (pkgver is VERSION from config.mk at that commit).
 pkgname=aurlock
-pkgver=0.3.0
-_commit=a352d565108266de93e85c421ac8f99f03e4fb56
+pkgver=0.3.1
+_commit=bca573681d0cbc081b4ee1f462ba0e88077e541d
 pkgrel=1
 pkgdesc="A minimal AUR helper that never installs an AUR package at a commit you haven't approved"
 arch=(x86_64)
