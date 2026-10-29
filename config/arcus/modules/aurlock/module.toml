@@ -1,0 +1,9 @@
+# aurlock, the AUR helper config.toml names, and its approvals: one file in
+# ~/Sync that Syncthing shares between the machines.
+description = "aurlock for AUR packages, its approvals linked into ~/Sync"
+category    = "system"
+requires    = ["syncthing"]  # ~/Sync
+links       = { ".config/aurlock/approved" = "Sync/aurlock/approved" }
+
+[packages]
+local = ["aurlock"]  # pkg/: installs AUR packages only at approved commits

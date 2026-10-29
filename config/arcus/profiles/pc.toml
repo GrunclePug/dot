@@ -12,6 +12,7 @@ modules = [
   "stream",
   "apps",
   "syncthing",
+  "aurlock",
   "arduino",
   "gaming",
   "gamedev",

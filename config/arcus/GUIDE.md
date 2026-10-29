@@ -35,11 +35,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
-6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced, link the approvals, then apply: what the other machine approved installs without a prompt, and aurlock asks about the rest.
-   ```sh
-   mkdir -p ~/.config/aurlock && ln -s ~/Sync/aurlock/approved ~/.config/aurlock/approved
-   arcus apply
-   ```
+6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced (the aurlock module already links `~/.config/aurlock/approved` there), run `arcus apply`: what the other machine approved installs without a prompt, and aurlock asks about the rest. Approve nothing before the sync, or Syncthing makes a conflict copy.
 7. **Neovim:** the first start installs the plugins and the language servers; let it finish.
 8. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
 9. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
@@ -101,7 +97,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 |------|------|
 | `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
-| `~/Sync/aurlock/approved` (`~/.config/aurlock/approved` links here) | AUR approvals, shared between the machines (not in dot) |
+| `~/Sync/aurlock/approved` (the aurlock module links `~/.config/aurlock/approved` here) | AUR approvals, shared between the machines (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
 | `~/.config/kanshi/config` | This machine's monitor profiles, written by `wmon` (not in dot) |
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |
