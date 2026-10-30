@@ -34,4 +34,7 @@ vfat | exfat | ntfs | ntfs3) opts=(-o "uid=$(id -u),gid=$(id -g),fmask=0022,dmas
 esac
 
 [ -d "$mnt" ] || sudo mkdir -p "$mnt"
-sudo mount "${opts[@]}" "$dev" "$mnt" && echo "mounted $dev at $mnt"
+sudo mount "${opts[@]}" "$dev" "$mnt" || exit
+echo "mounted $dev at $mnt"
+# a fresh linux filesystem belongs to root; the owner sticks once changed
+[ -w "$mnt" ] || echo "not writable for you; once per stick: sudo chown $USER: $mnt"
