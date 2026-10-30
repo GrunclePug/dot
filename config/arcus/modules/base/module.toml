@@ -1,14 +1,15 @@
-description = "What every machine gets: networking, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, firmware updates"
+description = "What every machine gets: networking, SSH, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, rebuild checks, firmware updates"
 category    = "system"
 dirs        = ["builds", "code", "Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"]
 
 [packages]
 pacman = [
-  "networkmanager", "man-db", "less",
-  "e2fsprogs",       # ext4 on USB drives, whatever the machine's own filesystems
-  "pacman-contrib",  # paccache
-  "fwupd",           # firmware updates from LVFS: fwupdmgr refresh, then fwupdmgr update
-  "ntfs-3g",         # NTFS on USB drives
+  "networkmanager", "man-db", "less", "openssh",
+  "e2fsprogs",        # ext4 on USB drives, whatever the machine's own filesystems
+  "pacman-contrib",   # paccache
+  "rebuild-detector", # after each transaction, lists AUR packages and own builds linked against a library that's gone; checkrebuild on demand
+  "fwupd",            # firmware updates from LVFS: fwupdmgr refresh, then fwupdmgr update
+  "ntfs-3g",          # NTFS on USB drives
   "rsync",
 ]
 

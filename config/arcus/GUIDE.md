@@ -69,7 +69,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `arcus on <module or profile>` | Turns it on and records it in the host file; a conflicting module (another theme) is swapped out |
 | `arcus off <module or profile>` | Turns it off: removes what it installed or took over, unless another module lists it or it's protected (`-f` also turns off what requires it) |
 | `arcus clean` | Removes packages no module lists, marks the rest's install reasons (shows its plan first) |
-| `arcus doctor` | Checks state, files and the host file; lists packages no module lists; `-fix` repairs what is safe |
+| `arcus doctor` | Checks state, files and the host file; lists packages no module lists; reports a stale machine module and units, groups and AUR approvals no module lists; `-fix` repairs what is safe |
 | `arcus machine` | Writes this machine's module again (kernel, bootloader, filesystems, swap) |
 | `arcus update` | Replaces arcus with the latest release, checksum-verified; `doctor` says when one is out |
 | `arcus rebuild <package>` | Builds an own build again although its recipe didn't change |
@@ -85,7 +85,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Monitors changed** (another monitor, another desk, a new arrangement): arrange them with `wlr-randr` if needed, then `wmon`. It keeps the profiles for other sets of monitors.
 - **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
-- **System updates:** `sudo pacman -Syu && aurlock upgrade`; arcus doesn't update packages. `aurlock outdated` lists AUR updates that are waiting.
+- **System updates:** `sudo pacman -Syu && aurlock upgrade`; arcus doesn't update packages. `aurlock outdated` lists AUR updates that are waiting. When an update ends with rebuild-detector listing packages, they are linked against a library that's gone: `arcus rebuild <package>` for own builds; `checkrebuild` lists them again.
 - **AUR packages:** a module's new AUR package gets reviewed at aurlock's prompt during `arcus apply` (`-y` skips it until it's approved). aurlock's README has a cheatsheet.
 - **Firmware updates** (base module): `fwupdmgr refresh`, then `fwupdmgr get-updates` and `fwupdmgr update`; BIOS updates install on the next reboot.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
