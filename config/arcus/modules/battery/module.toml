@@ -2,4 +2,7 @@ description = "Laptop hardware: low-battery warning (started by both sessions), 
 category    = "hardware"
 
 [packages]
-pacman = ["brightnessctl"]
+pacman = [
+  "brightnessctl",
+  "upower", "sound-theme-freedesktop",   # battery_monitor: battery events, its alert sound
+]

@@ -1,34 +1,42 @@
 #!/bin/bash
+# Low-battery alert: once at 5% while discharging, then every 30s at 1%.
+# Woken by UPower's change events (battery or AC); it reads UPower's display
+# device, which combines every battery.
 
-# Configuration
-BATTERY_ID="BAT0"
 THRESHOLD=5
 CRITICAL_THRESHOLD=1
-DELAY=10
+REPEAT=30
 SOUND_FILE="/usr/share/sounds/freedesktop/stereo/dialog-error.oga"
-ALERT_FLAG="/tmp/battery_alert_triggered"
+DISPLAY_DEVICE="/org/freedesktop/UPower/devices/DisplayDevice"
 
-while true; do
-    # Read battery status
-    CAPACITY=$(cat "/sys/class/power_supply/$BATTERY_ID/capacity" 2>/dev/null)
-    STATUS=$(cat "/sys/class/power_supply/$BATTERY_ID/status" 2>/dev/null)
+alerted=""   # set once alerted, cleared when charging or above the threshold
+last=-$REPEAT
 
-    # Skip if status is unavailable
-    [ -z "$CAPACITY" ] && sleep "$DELAY" && continue
+check() {
+    local info capacity status
+    info=$(upower -i "$DISPLAY_DEVICE") || return
+    capacity=$(awk '$1 == "percentage:" { print int($2) }' <<<"$info")
+    status=$(awk '$1 == "state:" { print $2 }' <<<"$info")
+    [ -z "$capacity" ] && return
 
-    # Reset Logic: Clear flag if charging OR above the threshold
-    ([[ "$CAPACITY" -gt "$THRESHOLD" ]] || [[ "$STATUS" = "Charging" ]]) && rm -f "$ALERT_FLAG"
-
-    # Alert Logic
-    if [[ "$CAPACITY" -le "$THRESHOLD" ]] && [[ "$STATUS" = "Discharging" ]]; then
-        if [[ ! -f "$ALERT_FLAG" ]] || [[ "$CAPACITY" -le "$CRITICAL_THRESHOLD" ]]; then
-            paplay "$SOUND_FILE" &
-            notify-send -u critical -t 5000 "LOW BATTERY ALERT" "Current capacity: $CAPACITY% - Plug in now!"
-            
-            # Ensure the flag exists to prevent spam until the condition changes
-            [[ ! -f "$ALERT_FLAG" ]] && touch "$ALERT_FLAG"
-        fi
+    if [ "$status" != "discharging" ] || [ "$capacity" -gt "$THRESHOLD" ]; then
+        alerted=""
+        return
     fi
 
-    sleep "$DELAY"
+    if [ -z "$alerted" ] || { [ "$capacity" -le "$CRITICAL_THRESHOLD" ] && (( SECONDS - last >= REPEAT )); }; then
+        paplay "$SOUND_FILE" &
+        notify-send -u critical -t 5000 "LOW BATTERY ALERT" "Current capacity: $capacity% - Plug in now!"
+        alerted=1
+        last=$SECONDS
+    fi
+}
+
+# Start over if the monitor ends, for example when upowerd restarts.
+while true; do
+    check
+    while read -r line; do
+        case $line in *"device changed:"*) check ;; esac
+    done < <(upower --monitor)
+    sleep 10
 done
