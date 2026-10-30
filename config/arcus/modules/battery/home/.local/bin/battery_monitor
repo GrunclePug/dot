@@ -1,7 +1,8 @@
 #!/bin/bash
 # Low-battery alert: once at 5% while discharging, then every 30s at 1%.
 # Woken by UPower's change events (battery or AC); it reads UPower's display
-# device, which combines every battery.
+# device, which combines every battery. Only at 1% does it also wake when
+# the next alert is due, so it never polls otherwise.
 
 THRESHOLD=5
 CRITICAL_THRESHOLD=1
@@ -9,7 +10,8 @@ REPEAT=30
 SOUND_FILE="/usr/share/sounds/freedesktop/stereo/dialog-error.oga"
 DISPLAY_DEVICE="/org/freedesktop/UPower/devices/DisplayDevice"
 
-alerted=""   # set once alerted, cleared when charging or above the threshold
+alerted=""    # set once alerted, cleared when charging or above the threshold
+critical=""   # set while discharging at the critical threshold: the alert repeats
 last=-$REPEAT
 
 check() {
@@ -21,10 +23,13 @@ check() {
 
     if [ "$status" != "discharging" ] || [ "$capacity" -gt "$THRESHOLD" ]; then
         alerted=""
+        critical=""
         return
     fi
+    critical=""
+    [ "$capacity" -le "$CRITICAL_THRESHOLD" ] && critical=1
 
-    if [ -z "$alerted" ] || { [ "$capacity" -le "$CRITICAL_THRESHOLD" ] && (( SECONDS - last >= REPEAT )); }; then
+    if [ -z "$alerted" ] || { [ -n "$critical" ] && (( SECONDS - last >= REPEAT )); }; then
         paplay "$SOUND_FILE" &
         notify-send -u critical -t 5000 "LOW BATTERY ALERT" "Current capacity: $capacity% - Plug in now!"
         alerted=1
@@ -35,8 +40,23 @@ check() {
 # Start over if the monitor ends, for example when upowerd restarts.
 while true; do
     check
-    while read -r line; do
-        case $line in *"device changed:"*) check ;; esac
+    while true; do
+        if [ -n "$critical" ]; then
+            # Wait no longer than until the next alert is due.
+            left=$(( REPEAT - (SECONDS - last) ))
+            (( left < 1 )) && left=1
+            read -r -t "$left" line
+        else
+            read -r line
+        fi
+        status=$?
+        if (( status > 128 )); then
+            check   # timed out: the next alert is due
+        elif (( status != 0 )); then
+            break   # the monitor ended
+        else
+            case $line in *"device changed:"*) check ;; esac
+        fi
     done < <(upower --monitor)
     sleep 10
 done
