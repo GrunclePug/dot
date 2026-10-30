@@ -222,6 +222,13 @@ return {
         },
       }
 
+      -- Servers that pacman installs (dev and arduino modules), so Mason leaves them alone.
+      -- Each one is enabled only where its command exists.
+      local system_servers = {
+        rust_analyzer = 'rust-analyzer',
+        arduino_language_server = 'arduino-language-server',
+      }
+
       -- Ensure the servers and tools above are installed
       --
       -- To check the current status of installed tools and/or manually install
@@ -233,7 +240,6 @@ return {
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'goimports', -- Go Import Formatter
-        'gofumpt', -- Stricter Go Formatter
         'shellcheck', -- Shell linter (used by bashls)
         'shfmt', -- Shell formatter
       })
@@ -243,6 +249,12 @@ return {
         vim.lsp.config(name, config)
       end
       vim.lsp.enable(vim.tbl_keys(servers))
+
+      for name, cmd in pairs(system_servers) do
+        if vim.fn.executable(cmd) == 1 then
+          vim.lsp.enable(name)
+        end
+      end
     end,
   },
   { -- Autoformat
@@ -277,7 +289,7 @@ return {
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        go = { 'goimports', 'gofumpt' },
+        go = { 'goimports' },
         python = { 'ruff_organize_imports', 'ruff_format' },
         sh = { 'shfmt' },
         bash = { 'shfmt' },
