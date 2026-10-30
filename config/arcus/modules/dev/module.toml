@@ -1,6 +1,6 @@
 # lazy-lock.json is not part of the module (dot ignores it); nvim keeps
 # its own copy in ~/.config/nvim.
-description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), Go, Odin, Rust"
+description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), C, Go, Odin, Rust"
 category    = "dev"
 requires    = ["shell"]   # telescope searches with ripgrep and fd
 
@@ -9,6 +9,7 @@ pacman = [
   "neovim", "nano",
   "ex-vi-compat",   # vi, for quick edits such as stream's config scratchpad
   "tmux", "git", "git-delta", "github-cli", "tree-sitter-cli",
+  "clang",   # clangd for C
   "go", "odin", "raylib",
   "rustup", "rust-analyzer",
   "npm",   # Mason installs basedpyright and bash-language-server with it
