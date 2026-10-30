@@ -81,8 +81,9 @@ if [ $? != 0 ]; then
     tmux new-session -d -s "${SESSION_NAME}-agent" -c "$PROJECT_DIR"
     tmux set-option -t "${SESSION_NAME}-agent" status off
 
-    # Create the main wrapper session
-    tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR"
+    # Create the main wrapper session; window 1 runs Neovim and drops to a shell when it exits
+    tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR" \
+        bash -c 'nvim "$1"; exec bash' tmx "${FILE_TO_OPEN:-.}"
     tmux set-option -t "$SESSION_NAME" @tmx-split-percent "$SPLIT_PERCENT"
 
     # Normalize window indexing to start at 1 (moves index 0 to index 1 if it exists)
@@ -90,13 +91,6 @@ if [ $? != 0 ]; then
 
     # --- Window 1: Neovim ---
     tmux rename-window -t "${SESSION_NAME}:1" "nvim"
-
-    # Send the Neovim command to window 1
-    if [ -n "$FILE_TO_OPEN" ]; then
-        tmux send-keys -t "${SESSION_NAME}:1" "nvim \"$FILE_TO_OPEN\"" C-m
-    else
-        tmux send-keys -t "${SESSION_NAME}:1" "nvim ." C-m
-    fi
 
     # Retrieve the window ID of window 1 to initialize active window tracking
     WINDOW1_ID=$(tmux list-windows -t "$SESSION_NAME" -F '#{window_id} #{window_index}' | grep ' 1$' | cut -d' ' -f1)
