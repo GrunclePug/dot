@@ -1,5 +1,3 @@
-# magic-wormhole is left out on purpose: 13 Python dependencies for a file
-# transfer. Replace it with an alternative or an own tool later.
 description = "bash, aliases, command-line tools and helpers"
 category    = "system"
 
