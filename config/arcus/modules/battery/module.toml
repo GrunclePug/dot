@@ -1,4 +1,4 @@
-description = "Laptop hardware: low-battery warning (started by both sessions), backlight and its keys in stream, touchpad (X11), the Realtek Wi-Fi fix"
+description = "Laptop hardware: low-battery warning (started by both sessions; UPower takes no action of its own), backlight and its keys in stream, touchpad (X11), the Realtek Wi-Fi fix"
 category    = "hardware"
 
 [packages]
