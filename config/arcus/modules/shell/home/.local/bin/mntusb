@@ -1,11 +1,37 @@
 #!/usr/bin/env bash
-# toggle usb mount at /mnt/usb; optional arg picks the partition (default sda1)
+# toggle usb mount at /mnt/usb; optional arg picks the partition, else the one
+# unmounted filesystem on a usb drive is used
 mnt=/mnt/usb
-dev=/dev/${1:-sda1}
-dev=/dev/${dev#/dev/}
 
 if mountpoint -q "$mnt"; then
 	sudo umount "$mnt" && echo "unmounted $mnt"
-else
-	sudo mount -o uid="$(id -u)",gid="$(id -g)",fmask=0022,dmask=0022 "$dev" "$mnt" && echo "mounted $dev at $mnt"
+	exit
 fi
+
+if [ -n "$1" ]; then
+	dev=/dev/${1#/dev/}
+else
+	# usb filesystems that aren't mounted (no swap); empty fields drop out of NF
+	mapfile -t found < <(lsblk -rnpo NAME,TRAN,FSTYPE,MOUNTPOINT |
+		awk '$2 == "usb" && NF == 3 && $3 != "swap" {print $1}')
+	if [ ${#found[@]} -ne 1 ]; then
+		if [ ${#found[@]} -eq 0 ]; then
+			echo "no unmounted usb partition" >&2
+		else
+			lsblk -o NAME,SIZE,FSTYPE,LABEL "${found[@]}" >&2
+			echo "pick one: mntusb <name>" >&2
+		fi
+		exit 1
+	fi
+	dev=${found[0]}
+fi
+[ -b "$dev" ] || { echo "no such device: $dev" >&2; exit 1; }
+
+# filesystems without owners get the user's; linux ones keep their own
+case $(lsblk -dno FSTYPE "$dev") in
+vfat | exfat | ntfs | ntfs3) opts=(-o "uid=$(id -u),gid=$(id -g),fmask=0022,dmask=0022") ;;
+*) opts=() ;;
+esac
+
+[ -d "$mnt" ] || sudo mkdir -p "$mnt"
+sudo mount "${opts[@]}" "$dev" "$mnt" && echo "mounted $dev at $mnt"
