@@ -14,5 +14,5 @@ pacman = [
 ]
 
 [units]
-system = ["NetworkManager.service", "paccache.timer"]
+system = ["NetworkManager.service", "paccache.timer", "sshd.service"]
 now    = true
