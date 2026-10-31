@@ -23,6 +23,7 @@ function flush() {
 		line = "\toutput \"" id "\" mode " size "@" rate[size] "Hz position " pos
 		if (scale + 0 != 1) line = line " scale " scale
 		if (transform != "normal") line = line " transform " transform
+		if (vrr == "enabled") line = line " adaptive_sync on"
 	}
 	lines = lines line "\n"
 	m = model; gsub(/[^A-Za-z0-9]+/, "-", m)
@@ -32,7 +33,7 @@ function flush() {
 /^[^ ]/ {
 	flush()
 	name = $1; make = model = serial = "Unknown"; modes = 0
-	enabled = 1; pref = big = ""; area = 0; split("", rate)
+	enabled = 1; pref = big = ""; area = 0; vrr = ""; split("", rate)
 	next
 }
 /^  [A-Z]/ { modes = 0 }
@@ -43,6 +44,7 @@ function flush() {
 /^  Position: /  { pos = $2 }
 /^  Transform: / { transform = $2 }
 /^  Scale: /     { scale = $2 }
+/^  Adaptive Sync: / { vrr = $3 }
 /^  Modes:/      { modes = 1; next }
 modes && /^    / {
 	size = $1; hz = $3 + 0
