@@ -1,0 +1,5 @@
+description = "Helium browser, with a chrome command to open it"
+category    = "apps"
+
+[packages]
+aur = ["helium-browser-bin"]
