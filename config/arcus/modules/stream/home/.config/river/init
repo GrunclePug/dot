@@ -3,8 +3,10 @@
 # exits.
 
 # swm is restarted whenever it exits; river keeps the windows meanwhile.
+river_pid=$PPID
 while :; do
 	swm -log-level "${SWM_LOG_LEVEL:-info}"  # debug with startw --log
+	kill -0 "$river_pid" 2>/dev/null || break
 	sleep 1
 done &
 
@@ -12,7 +14,7 @@ done &
 # left over from an earlier session (dwm, another compositor) keep its
 # XDG_CURRENT_DESKTOP and pick the wrong backend; D-Bus restarts them on
 # demand.
-dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE ELECTRON_OZONE_PLATFORM_HINT
 systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service'
 
 # river closes the bar and wallpaper if they start before swm is running.
