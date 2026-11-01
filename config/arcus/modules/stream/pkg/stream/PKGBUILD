@@ -3,8 +3,8 @@
 # (pkgver is VERSION from config.mk at that commit).
 pkgname=stream
 pkgver=0.3.0
-_commit=0fa254973cc22f70257aa377aaa2b66deec6b4ea
-pkgrel=1
+_commit=42e737c3f887523bed3be68f1c54bcf69a6211f6
+pkgrel=2
 pkgdesc="A dwm-inspired tiling window manager for river"
 arch=(x86_64)
 url="https://github.com/GrunclePug/stream"
