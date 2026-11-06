@@ -90,7 +90,8 @@ rule -app-id nm-connection-editor float
 
 # Programs
 bind Mod+p               spawn wrun
-bind Mod+Shift+Return    spawn foot
+# Each new terminal is its own tmux session, gone when the window closes
+bind Mod+Shift+Return    spawn foot tmux new-session \; set-option destroy-unattached on
 bind Super+Return        scratchpad term
 bind Super+c             scratchpad config
 bind Super+equal         scratchpad calc
