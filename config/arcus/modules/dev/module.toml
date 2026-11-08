@@ -12,5 +12,6 @@ pacman = [
   "clang",   # clangd for C
   "go", "odin", "raylib",
   "rustup", "rust-analyzer",
+  "vulkan-swrast",   # lavapipe, software Vulkan for headless render tests
   "npm",   # Mason installs basedpyright and bash-language-server with it
 ]
