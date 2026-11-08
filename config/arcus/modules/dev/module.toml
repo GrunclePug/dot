@@ -14,4 +14,5 @@ pacman = [
   "rustup", "rust-analyzer",
   "vulkan-swrast",   # lavapipe, software Vulkan for headless render tests
   "npm",   # Mason installs basedpyright and bash-language-server with it
+  "python-psutil",   # process queries for wpo (~/builds/wpo)
 ]
