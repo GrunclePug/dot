@@ -2,5 +2,5 @@ description = "Everyday desktop applications"
 category    = "apps"
 
 [packages]
-pacman = ["thunar", "tumbler", "mpv", "obsidian", "gimp", "qbittorrent", "discord", "cardinal", "obs-studio", "android-tools"]   # tumbler: Thunar's thumbnails; android-tools: adb
+pacman = ["thunar", "tumbler", "mpv", "imv", "obsidian", "gimp", "qbittorrent", "discord", "cardinal", "obs-studio", "android-tools"]   # tumbler: Thunar's thumbnails; android-tools: adb
 aur    = ["zen-browser-bin"]   # shell's browser script opens it
