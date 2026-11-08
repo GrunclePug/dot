@@ -1,0 +1,8 @@
+// Syncthing ignore patterns for ~/code, the same on every machine.
+// Build output and caches: each machine builds its own.
+// (?d) lets Syncthing delete these when it removes the directory around them.
+(?d)target
+(?d).venv
+(?d).gradle
+(?d)node_modules
+(?d)__pycache__
