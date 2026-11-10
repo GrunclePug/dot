@@ -1,0 +1,4 @@
+#!/bin/sh
+# Chromium picks its password store from XDG_CURRENT_DESKTOP and falls back
+# to plain text for river, which T3 Code refuses; point it at the keyring.
+exec /usr/bin/t3code --password-store=gnome-libsecret "$@"
