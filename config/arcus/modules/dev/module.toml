@@ -1,6 +1,6 @@
 # lazy-lock.json is not part of the module (dot ignores it); nvim keeps
 # its own copy in ~/.config/nvim.
-description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), C, Go, Odin, Rust"
+description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), C, Go, Odin, Rust; T3 Code"
 category    = "dev"
 requires    = ["shell"]   # telescope searches with ripgrep and fd
 
@@ -16,3 +16,4 @@ pacman = [
   "npm",   # Mason installs basedpyright and bash-language-server with it
   "python-psutil",   # process queries for wpo (~/builds/wpo)
 ]
+aur = ["t3code-bin"]   # T3 Code, a desktop app for coding agents
