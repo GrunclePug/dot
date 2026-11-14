@@ -4,5 +4,6 @@ description = "Steam, Prism Launcher, ProtonPlus, protontricks, OpenTTD"
 category    = "apps"
 
 [packages]
-pacman = ["steam", "prismlauncher", "protontricks", "openttd"]
+# flite: Minecraft's narrator (and tether's spoken status) loads libflite on Linux.
+pacman = ["steam", "prismlauncher", "flite", "protontricks", "openttd"]
 aur    = ["protonplus"]
