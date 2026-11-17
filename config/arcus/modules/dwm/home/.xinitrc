@@ -44,7 +44,7 @@ slstatus &
 nm-applet &
 pa-applet &
 dunst &
-battery_monitor &
+command -v battery_monitor >/dev/null && battery_monitor &  # laptops only (battery module)
 exec dwm
 #export XDG_SESSION_TYPE=x11
 #export XDG_CURRENT_DESKTOP=dwm
