@@ -35,7 +35,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone) and `~/code` (PC and laptop). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the PC, which is always on, give both folders *trash can* versioning, kept 30 days.
-6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced (the aurlock module already links `~/.config/aurlock/approved` there), run `arcus apply`: what the other machine approved installs without a prompt, and aurlock asks about the rest. Approve nothing before the sync, or Syncthing makes a conflict copy.
+6. **AUR packages:** approvals come with dot (`aurlock/home/.config/aurlock/approved`), so `arcus apply` installs every approved AUR package without asking; aurlock prompts only for packages nobody has approved yet.
 7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
    ```sh
    sudo install -d -m 700 /etc/samba/credentials
@@ -93,7 +93,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **Switch theme:** `arcus on h2o` (or `aurora`, `nebula`), then log out and back in.
 - **Own builds** (`pkg/<name>/PKGBUILD`): change the recipe and `arcus apply` rebuilds it; bump `_commit` and `pkgver` together to update.
 - **System updates:** `sudo pacman -Syu && aurlock upgrade`; arcus doesn't update packages. `aurlock outdated` lists AUR updates that are waiting. When an update ends with rebuild-detector listing packages, they are linked against a library that's gone: `arcus rebuild <package>` for own builds; `checkrebuild` lists them again.
-- **AUR packages:** a module's new AUR package gets reviewed at aurlock's prompt during `arcus apply` (`-y` skips it until it's approved). aurlock's README has a cheatsheet.
+- **AUR packages:** a module's new AUR package gets reviewed at aurlock's prompt during `arcus apply` (`-y` skips it until it's approved). Approving writes into dot: commit `approved` and push, and `git pull` brings it to the other machine. aurlock's README has a cheatsheet.
 - **Firmware updates** (base module): `fwupdmgr refresh`, then `fwupdmgr get-updates` and `fwupdmgr update`; BIOS updates install on the next reboot.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
 - **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
@@ -104,7 +104,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 |------|------|
 | `~/builds/dot/config/arcus` (`~/.config/arcus` links here) | Modules, profiles |
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
-| `~/Sync/aurlock/approved` (the aurlock module links `~/.config/aurlock/approved` here) | AUR approvals, shared between the machines (not in dot) |
+| `~/.config/aurlock/approved` (links to `modules/aurlock/home/.config/aurlock/approved`) | AUR approvals, tracked in dot |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
 | `/etc/samba/credentials/andromeda` | The shared drive's login (root-only, not in dot) |
 | `~/.local/share/arcus/modules` | This machine's own modules, such as `trial` for packages being tried out (not in dot) |

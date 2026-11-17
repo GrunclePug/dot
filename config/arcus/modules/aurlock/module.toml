@@ -1,9 +1,9 @@
-# aurlock, the AUR helper config.toml names, and its approvals: one file in
-# ~/Sync that Syncthing shares between the machines.
-description = "aurlock for AUR packages, its approvals linked into ~/Sync"
+# aurlock, the AUR helper config.toml names. Its approvals,
+# home/.config/aurlock/approved, are tracked here: every approval is a diff to
+# review and commit, and reaches the other machine with git pull. aurlock
+# follows the link when it saves, so approving writes into this repository.
+description = "aurlock for AUR packages; its approvals are tracked in dot"
 category    = "system"
-requires    = ["syncthing"]  # ~/Sync
-links       = { ".config/aurlock/approved" = "Sync/aurlock/approved" }
 
 [packages]
 local = ["aurlock"]  # pkg/: installs AUR packages only at approved commits
