@@ -2,7 +2,7 @@
 # safeStorage use; T3 Code keeps its connection credentials there. The TTY
 # login unlocks it with the login password (system/etc/pam.d), and passwd
 # keeps the two passwords in step.
-description = "gnome-keyring as the Secret Service, unlocked at login; T3 Code stores its secrets there"
+description = "gnome-keyring as the Secret Service, unlocked at login (T3 Code keeps its secrets there)"
 category    = "desktop"
 requires    = ["desktop"]
 

@@ -1,6 +1,8 @@
-description = "Everyday desktop applications"
+# The everyday desktop. home/.config/mimeapps.list sets the default apps; a
+# program that changes a default replaces the link with its own file, which
+# 'arcus doctor' then reports (copy the change back here, or 'arcus apply -f').
+description = "Everyday desktop apps: Thunar, mpv, imv, Obsidian, Discord, and the default apps"
 category    = "apps"
 
 [packages]
-pacman = ["thunar", "tumbler", "mpv", "imv", "obsidian", "gimp", "qbittorrent", "discord", "cardinal", "obs-studio", "android-tools"]   # tumbler: Thunar's thumbnails; android-tools: adb
-aur    = ["zen-browser-bin"]   # shell's browser script opens it
+pacman = ["thunar", "tumbler", "mpv", "imv", "obsidian", "discord"]   # tumbler: Thunar's thumbnails

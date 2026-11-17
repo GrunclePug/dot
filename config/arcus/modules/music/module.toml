@@ -1,5 +1,5 @@
-description = "Music production: LMMS, the sfizz sampler, Audacity"
+description = "Music production: LMMS, the sfizz sampler, Audacity, Cardinal"
 category    = "apps"
 
 [packages]
-pacman = ["lmms", "sfizz", "audacity"]
+pacman = ["lmms", "sfizz", "audacity", "cardinal"]

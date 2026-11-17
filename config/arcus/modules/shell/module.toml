@@ -1,11 +1,9 @@
-description = "bash, aliases, command-line tools and helpers"
+description = "bash, aliases, everyday command-line tools and helpers"
 category    = "system"
 
 [packages]
 pacman = [
-  "eza", "fd", "fzf", "ripgrep", "dust", "btop", "fastfetch", "tealdeer", "tree",
-  "wget", "zip", "unzip", "7zip", "unrar", "ncdu", "jq", "wireguard-tools", "cifs-utils",
-  "nmap", "traceroute", "bind",   # bind: dig, nslookup
-  "magic-wormhole",
+  "eza", "fd", "fzf", "ripgrep", "dust", "ncdu", "btop", "fastfetch", "tealdeer", "tree", "jq", "wget",
+  "zip", "unzip", "7zip", "unrar",
   "bitwarden-cli",   # bw
 ]

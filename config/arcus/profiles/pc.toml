@@ -5,13 +5,17 @@ modules = [
   "base",
   "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
   "shell",
+  "net",
   "dev",
-  "docker",
   "desktop",
   "wl-base",
   "keyring",
+  "agents",
   "stream",
   "apps",
+  "browser",
+  "creative",
+  "torrent",
   "syncthing",
   "share",     # the shared drive on andromeda
   "aurlock",

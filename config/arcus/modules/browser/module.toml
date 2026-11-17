@@ -1,0 +1,9 @@
+# Zen is the browser (shell scripts open it through `browser`); Helium, a
+# Chromium, is the fallback (`chrome`). Zen installs the extensions in
+# system/etc/zen/policies/policies.json by itself; check about:policies after
+# a change.
+description = "Browsers: Zen with its extensions by policy, Helium as the fallback"
+category    = "apps"
+
+[packages]
+aur = ["zen-browser-bin", "helium-browser-bin"]

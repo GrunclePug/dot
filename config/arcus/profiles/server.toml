@@ -5,6 +5,6 @@ modules = [
   "base",
   "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
   "shell",
+  "net",
   "dev",
-  "docker",
 ]

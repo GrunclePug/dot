@@ -1,7 +1,8 @@
 # lazy-lock.json is not part of the module (dot ignores it); nvim keeps
 # its own copy in ~/.config/nvim.
-description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), C, Go, Odin, Rust, Python (uv); T3 Code"
+description = "Development: Neovim, vi, tmux, git (GitHub sign-in through gh), C, Go, Odin, Rust, Python (uv), adb; Docker and Podman with no daemon at boot"
 category    = "dev"
+groups      = ["docker"]   # docker without sudo, once the daemon is started by hand
 requires    = ["shell"]   # telescope searches with ripgrep and fd
 
 [packages]
@@ -15,6 +16,9 @@ pacman = [
   "vulkan-swrast",   # lavapipe, software Vulkan for headless render tests
   "npm",   # Mason installs basedpyright and bash-language-server with it
   "uv",   # Python projects, tools and interpreters
-  "python-psutil",   # process queries for wpo (~/builds/wpo)
+  "android-tools",   # adb
+  "gitleaks",   # look for committed secrets: gitleaks git <repo>
+  # No units on purpose: start the daemon by hand (sudo systemctl start docker);
+  # it never comes back on boot. Podman needs no daemon.
+  "docker", "docker-compose", "podman",
 ]
-aur = ["t3code-bin"]   # T3 Code, a desktop app for coding agents

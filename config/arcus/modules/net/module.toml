@@ -1,0 +1,10 @@
+description = "Network tools: nmap, traceroute, dig, WireGuard, magic-wormhole"
+category    = "system"
+
+[packages]
+pacman = [
+  "nmap", "traceroute",
+  "bind",             # dig, nslookup
+  "wireguard-tools",  # wg; the laptop's VPN is a NetworkManager profile (vpn-up/vpn-down)
+  "magic-wormhole",   # send a file with a short code
+]

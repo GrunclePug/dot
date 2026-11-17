@@ -1,0 +1,5 @@
+description = "Image editing and recording: GIMP, OBS Studio"
+category    = "apps"
+
+[packages]
+pacman = ["gimp", "obs-studio"]

@@ -1,0 +1,5 @@
+description = "qBittorrent"
+category    = "apps"
+
+[packages]
+pacman = ["qbittorrent"]
