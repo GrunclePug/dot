@@ -37,4 +37,3 @@ audio/x-wav=mpv.desktop
 x-scheme-handler/obsidian=obsidian.desktop
 x-scheme-handler/t3code=t3code.desktop
 x-scheme-handler/claude-cli=claude-code-url-handler.desktop
-x-scheme-handler/ckan=ckan-handler.desktop
