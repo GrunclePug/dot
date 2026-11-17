@@ -1,0 +1,6 @@
+# REAPER's own backups, undo history and waveform caches
+Backups/
+*.rpp-bak
+*.RPP-bak
+*.RPP-UNDO
+*.reapeaks

@@ -1,5 +1,10 @@
-description = "Music production: LMMS, the sfizz sampler, Audacity, Cardinal"
+# The playground: one REAPER project with a Cardinal instance, and Cardinal's
+# saved patches. They live in playground/ here, linked into ~/Documents, so
+# saving in REAPER or Cardinal changes dot: commit them when you like. Turning
+# the module off removes only the links; the files stay here for next time.
+description = "Music: REAPER with the Cardinal and sfizz plugins, LMMS, Audacity, and the playground project"
 category    = "apps"
+links       = { "Documents/REAPER Media" = ".config/arcus/modules/music/playground/REAPER Media", "Documents/patches" = ".config/arcus/modules/music/playground/patches" }
 
 [packages]
-pacman = ["lmms", "sfizz", "audacity", "cardinal"]
+pacman = ["reaper", "cardinal", "sfizz", "lmms", "audacity"]
