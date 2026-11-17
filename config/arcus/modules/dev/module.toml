@@ -11,7 +11,7 @@ pacman = [
   "ex-vi-compat",   # vi, for quick edits such as stream's config scratchpad
   "tmux", "git", "git-delta", "github-cli", "tree-sitter-cli",
   "clang",   # clangd for C
-  "go", "odin", "raylib",
+  "go", "odin",   # odin pulls in raylib (vendor:raylib links to the system library)
   "rustup",   # rust-analyzer comes from rustup too, in step with the toolchain
   "vulkan-swrast",   # lavapipe, software Vulkan for headless render tests
   "npm",   # Mason installs basedpyright and bash-language-server with it
