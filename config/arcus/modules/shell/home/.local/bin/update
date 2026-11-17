@@ -1,0 +1,104 @@
+#!/bin/bash
+# update: the whole system and the tools that update themselves.
+#
+# aurlock's approvals are tracked in dot, so they travel through git: dot is
+# pulled first (the other machine's approvals install without asking) and new
+# approvals are committed and pushed at the end. Only approvals are ever
+# committed or pushed; anything else uncommitted in dot stops the run. Never
+# runs arcus apply: it ends with what `arcus plan` says.
+set -uo pipefail
+
+say() { printf '\n== %s\n' "$*"; }
+warn() { printf 'update: %s\n' "$*" >&2; }
+die() { warn "$*"; exit 1; }
+
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/update.lock"
+flock -n 9 || die "already running"
+
+repo=$(git -C "$HOME/.config/arcus" rev-parse --show-toplevel 2>/dev/null) ||
+	die "can't find the dot repository through ~/.config/arcus"
+approved=config/arcus/modules/aurlock/home/.config/aurlock/approved
+host=$(cat /etc/hostname 2>/dev/null || uname -n)
+g() { git -C "$repo" "$@"; }
+
+# Nothing else in flight: on a branch with an upstream, no rebase or merge,
+# and no uncommitted changes besides the approvals.
+g symbolic-ref -q HEAD >/dev/null || die "dot isn't on a branch"
+g rev-parse -q --verify '@{upstream}' >/dev/null || die "dot's branch has no upstream"
+gitdir=$(g rev-parse --absolute-git-dir)
+for f in rebase-merge rebase-apply MERGE_HEAD; do
+	[[ -e $gitdir/$f ]] && die "dot has a rebase or merge in progress; finish or abort it first"
+done
+other=$(g diff --name-only HEAD | grep -vxF "$approved")
+[[ -z $other ]] || die "dot has uncommitted changes besides the approvals; commit or stash them first:
+$other"
+
+commit_approvals() {
+	g diff --quiet HEAD -- "$approved" && return 0
+	g commit -q -m "aurlock: approvals ($host)" -- "$approved" && echo "committed approvals"
+}
+
+# pull: rebase onto the upstream. On a conflict, abort the rebase this run
+# started and say how to recover; returns non-zero on any failure.
+pull() {
+	if g pull -q --rebase; then return 0; fi
+	if [[ -e $gitdir/rebase-merge || -e $gitdir/rebase-apply ]]; then
+		g rebase --abort
+		warn "dot's approvals conflict with the other machine's; your commits are kept. Resolve by hand:
+  git -C $repo pull --rebase   (keep both machines' lines in $approved)"
+	else
+		warn "couldn't pull dot (no network?)"
+	fi
+	return 1
+}
+
+say "dot"
+commit_approvals || die "couldn't commit the approvals"
+pull || die "nothing was upgraded"
+
+say "pacman"
+sudo pacman -Syu || die "pacman failed; nothing else was upgraded"
+
+if command -v rustup >/dev/null; then
+	say "rustup"   # before aurlock: AUR builds use the Rust toolchain
+	rustup update stable || warn "rustup update failed"
+fi
+
+say "aurlock"
+aurlock upgrade
+aur=$?
+((aur == 0)) || warn "aurlock upgrade failed (exit $aur); approvals made before the failure are still committed"
+
+for t in claude codex agy; do
+	command -v "$t" >/dev/null || continue
+	say "$t"
+	"$t" update || warn "$t update failed"
+done
+
+say "approvals"
+commit_approvals || warn "couldn't commit the approvals"
+if [[ -n $(g rev-list '@{upstream}..HEAD') ]]; then
+	if [[ -n $(g diff --name-only '@{upstream}' HEAD | grep -vxF "$approved") ]]; then
+		warn "dot has unpushed commits besides the approvals; not pushing. Push them yourself."
+	elif ! err=$(g push -q 2>&1); then
+		if grep -qE 'non-fast-forward|fetch first|rejected' <<<"$err" && pull && g push -q; then
+			echo "pushed approvals (after pulling the other machine's)"
+		else
+			warn "approvals are committed here but not pushed: $(g rev-list --count '@{upstream}..HEAD') commit(s). Push with: git -C $repo push"
+		fi
+	else
+		echo "pushed approvals"
+	fi
+else
+	echo "nothing to push"
+fi
+
+say "arcus"
+if plan=$(arcus plan 2>&1); then
+	grep -q '^Nothing to do' <<<"$plan" && echo "nothing to apply" || echo "dot has changes to apply: run arcus apply"
+else
+	warn "arcus plan failed:
+$plan"
+fi
+
+exit "$aur"
