@@ -1,9 +1,9 @@
 # steam comes from [multilib], which must be enabled in /etc/pacman.conf
 # (pacman owns that file, so arcus doesn't change it).
-description = "Steam, Prism Launcher, ProtonPlus, protontricks, OpenTTD"
+description = "Steam, Prism Launcher, ProtonPlus, protontricks, OpenTTD, CKAN"
 category    = "apps"
 
 [packages]
 # flite: Minecraft's narrator (and tether's spoken status) loads libflite on Linux.
 pacman = ["steam", "prismlauncher", "flite", "protontricks", "openttd"]
-aur    = ["protonplus"]
+aur    = ["protonplus", "ckan-bin"]   # ckan-bin: KSP mods, a fallback and comparison for orbis

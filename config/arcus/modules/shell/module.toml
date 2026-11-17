@@ -7,4 +7,5 @@ pacman = [
   "wget", "zip", "unzip", "7zip", "unrar", "ncdu", "jq", "wireguard-tools", "cifs-utils",
   "nmap", "traceroute", "bind",   # bind: dig, nslookup
   "magic-wormhole",
+  "bitwarden-cli",   # bw
 ]
