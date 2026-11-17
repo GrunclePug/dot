@@ -1,6 +1,6 @@
 # steam comes from [multilib], which must be enabled in /etc/pacman.conf
 # (pacman owns that file, so arcus doesn't change it).
-description = "Steam, Prism Launcher, ProtonPlus, protontricks, OpenTTD, CKAN, GameMode"
+description = "Steam, Prism Launcher, ProtonPlus, protontricks, OpenTTD, GameMode"
 category    = "apps"
 groups      = ["gamemode"]
 
@@ -9,4 +9,4 @@ groups      = ["gamemode"]
 # gamemode: the performance CPU governor (and nicer scheduling) only while a game
 # runs; start games with "gamemoderun %command%". Its group lets it change the governor.
 pacman = ["steam", "prismlauncher", "flite", "protontricks", "openttd", "gamemode", "lib32-gamemode"]
-aur    = ["protonplus", "ckan-bin"]   # ckan-bin: KSP mods, a fallback and comparison for orbis
+aur    = ["protonplus"]
