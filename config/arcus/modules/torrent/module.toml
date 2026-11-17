@@ -1,3 +1,5 @@
+# In no profile: turn it on for the odd ISO (arcus on torrent), then off again.
+# Media goes through the VPN-protected qBittorrent on andromeda instead.
 description = "qBittorrent"
 category    = "apps"
 

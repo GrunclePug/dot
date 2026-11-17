@@ -15,7 +15,6 @@ modules = [
   "apps",
   "browser",
   "creative",
-  "torrent",
   "syncthing",
   "share",     # the shared drive on andromeda
   "aurlock",
