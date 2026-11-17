@@ -1,6 +1,6 @@
 # Heavy and not always wanted: only the pc profile lists it.
-description = "Godot game engine, LibreSprite, Blender"
+description = "Godot game engine, Blender"
 category    = "dev"
 
 [packages]
-pacman = ["godot", "libresprite", "blender"]
+pacman = ["godot", "blender"]
