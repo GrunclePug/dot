@@ -3,7 +3,8 @@ category    = "system"
 
 [packages]
 pacman = [
-  "eza", "fd", "fzf", "ripgrep", "dust", "ncdu", "btop", "fastfetch", "tealdeer", "tree", "jq", "wget",
+  "eza",   # ls, ll, la and tree (.alias)
+  "fd", "fzf", "ripgrep", "dust", "ncdu", "btop", "fastfetch", "tealdeer", "jq", "wget",
   "zip", "unzip", "7zip", "unrar",
   "bitwarden-cli",   # bw
 ]
