@@ -1,0 +1,4 @@
+#!/bin/sh
+# Helium starts this for the Claude extension (claude --chrome): it runs the
+# user's own Claude Code, which installs itself in ~/.local/bin.
+exec "$HOME/.local/bin/claude" --chrome-native-host "$@"
