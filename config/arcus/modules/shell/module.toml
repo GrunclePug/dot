@@ -7,4 +7,5 @@ pacman = [
   "fd", "fzf", "ripgrep", "dust", "ncdu", "btop", "fastfetch", "tealdeer", "jq", "wget",
   "zip", "unzip", "7zip", "unrar",
   "bitwarden-cli",   # bw
+  "bash-completion", # Tab completion for git, systemctl, pacman…; /etc/bash.bashrc loads it
 ]

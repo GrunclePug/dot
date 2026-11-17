@@ -42,9 +42,10 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    printf 'username=grunclepug\npassword=%s\n' "$(read -rsp 'Password: ' p; echo "$p")" | sudo install -m 600 /dev/stdin /etc/samba/credentials/andromeda
    ```
 8. **Rust** (dev module): `rustup default stable && rustup component add rust-analyzer`; rustup installs no toolchain by itself, and Neovim uses its rust-analyzer.
-9. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
-10. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
-11. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+9. **Coding agents:** install Claude Code, Codex and agy with their own installers. Each puts itself in `~/.local/bin` (already on PATH through `.bashrc`) and updates itself (`claude update`, `codex update`, `agy update`). Installers like to append a PATH line to `~/.bashrc` or `~/.bash_profile`, which are dot's files: afterwards, `git -C ~/builds/dot status`, and revert any such line before it gets committed.
+10. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
+11. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
+12. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
 
 ## Bring an existing Arch install under arcus
 

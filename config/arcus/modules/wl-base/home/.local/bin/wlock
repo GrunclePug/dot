@@ -2,7 +2,7 @@
 # patched waylock (package waylock-arcus, recipe in this module's pkg/), with
 # slock's border; colours from the active theme.
 . "$HOME/.config/theme/colors.sh"
-exec waylock \
+exec /usr/bin/waylock \
 	-border-width 4 \
 	-bg-color 0x000000 \
 	-init-color 0x000000 \
