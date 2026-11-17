@@ -22,7 +22,6 @@ modules = [
   "arduino",
   "gaming",
   "gamedev",
-  "music",
   "cad",
   "peripherals",
 ]
