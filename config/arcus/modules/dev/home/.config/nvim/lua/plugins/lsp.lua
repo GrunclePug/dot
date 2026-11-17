@@ -222,7 +222,7 @@ return {
         },
       }
 
-      -- Servers that pacman installs (dev and arduino modules), so Mason leaves them alone.
+      -- Servers that pacman or rustup installs (dev and arduino modules), so Mason leaves them alone.
       -- Each one is enabled only where its command exists.
       local system_servers = {
         clangd = 'clangd',

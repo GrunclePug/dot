@@ -36,9 +36,10 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
 6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced (the aurlock module already links `~/.config/aurlock/approved` there), run `arcus apply`: what the other machine approved installs without a prompt, and aurlock asks about the rest. Approve nothing before the sync, or Syncthing makes a conflict copy.
-7. **Neovim:** the first start installs the plugins and the language servers; let it finish.
-8. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
-9. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+7. **Rust** (dev module): `rustup default stable && rustup component add rust-analyzer`; rustup installs no toolchain by itself, and Neovim uses its rust-analyzer.
+8. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
+9. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
+10. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
 
 ## Bring an existing Arch install under arcus
 

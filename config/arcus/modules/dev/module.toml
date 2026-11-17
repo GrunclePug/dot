@@ -11,7 +11,7 @@ pacman = [
   "tmux", "git", "git-delta", "github-cli", "tree-sitter-cli",
   "clang",   # clangd for C
   "go", "odin", "raylib",
-  "rustup", "rust-analyzer",
+  "rustup",   # rust-analyzer comes from rustup too, in step with the toolchain
   "vulkan-swrast",   # lavapipe, software Vulkan for headless render tests
   "npm",   # Mason installs basedpyright and bash-language-server with it
   "uv",   # Python projects, tools and interpreters
