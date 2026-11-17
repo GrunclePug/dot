@@ -5,7 +5,7 @@ requires    = ["desktop"]
 [packages]
 pacman = [
   "foot", "wmenu", "waybar", "swaybg", "mako", "wl-clipboard", "playerctl",
-  "grim", "slurp", "ffmpeg", "xdg-desktop-portal-wlr",
+  "grim", "slurp", "xdg-desktop-portal-wlr",
   "xdg-desktop-portal-gtk",   # what portals.conf sends everything but screen capture to
   "kanshi", "wlr-randr",      # monitor modes and positions: wmon saves them
 ]
