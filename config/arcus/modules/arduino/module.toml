@@ -1,7 +1,6 @@
-description = "Arduino IDE, its language server, and a serial terminal"
+description = "Arduino from the command line: its language server (with arduino-cli), and a serial terminal"
 category    = "dev"
 groups      = ["uucp"]   # access to serial ports
 
 [packages]
 pacman = ["picocom", "arduino-language-server"]
-aur    = ["arduino-ide-bin"]
