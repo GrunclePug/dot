@@ -34,7 +34,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    git config --global user.email "<email>"
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
-5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
+5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone) and `~/code` (PC and laptop). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the PC, which is always on, give both folders *trash can* versioning, kept 30 days.
 6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced (the aurlock module already links `~/.config/aurlock/approved` there), run `arcus apply`: what the other machine approved installs without a prompt, and aurlock asks about the rest. Approve nothing before the sync, or Syncthing makes a conflict copy.
 7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
    ```sh
