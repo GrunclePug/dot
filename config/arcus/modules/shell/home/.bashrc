@@ -32,7 +32,7 @@ HISTSIZE=100000
 HISTFILESIZE=100000
 HISTTIMEFORMAT='%F %T '
 HISTCONTROL=ignoreboth
-HISTIGNORE='*bw unlock*:*BW_SESSION=*:*TOKEN=*:*SECRET=*:*PASSWORD=*'
+HISTIGNORE='*bw unlock*:*BW_SESSION=*:*TOKEN=*:*SECRET=*:*PASSWORD=*:*_KEY=*'
 shopt -s histappend
 # PROMPT_COMMAND is an array (/etc/bash.bashrc sets the terminal title in it).
 [[ " ${PROMPT_COMMAND[*]} " == *" history -a "* ]] || PROMPT_COMMAND+=('history -a')
@@ -74,10 +74,14 @@ fastfetch() {
 # Shown when you arrive somewhere: a new terminal (stream's terminal key starts
 # tmux with FASTFETCH=1, which only its first pane gets) or an ssh login.
 # Anywhere else, `ff`.
-if [[ -n $FASTFETCH || ( -n $SSH_TTY && -z $TMUX && $SHLVL == 1 ) ]]; then
-	fastfetch
-fi
+# Cleared before fetching, so a pane split meanwhile doesn't fetch too.
+arrived=
 if [[ -n $FASTFETCH ]]; then
+	arrived=1
 	[[ -n $TMUX ]] && tmux set-environment -u FASTFETCH
 	unset FASTFETCH
+elif [[ -n $SSH_TTY && -z $TMUX && $SHLVL == 1 ]]; then
+	arrived=1
 fi
+[[ -n $arrived ]] && fastfetch
+unset arrived
