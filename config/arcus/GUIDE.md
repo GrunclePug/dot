@@ -100,6 +100,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
 | `~/Sync/aurlock/approved` (the aurlock module links `~/.config/aurlock/approved` here) | AUR approvals, shared between the machines (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
+| `~/.local/share/arcus/modules` | This machine's own modules, such as `trial` for packages being tried out (not in dot) |
 | `~/.config/kanshi/config` | This machine's monitor profiles, written by `wmon` (not in dot) |
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |
 | `~/Pictures/wallpaper.png` | The active theme's wallpaper, if it has one (the file it replaced is kept as `wallpaper.png.orig`) |

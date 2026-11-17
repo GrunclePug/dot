@@ -1,3 +1,7 @@
 # aurlock installs AUR packages only at commits approved in
 # ~/Sync/aurlock/approved. The aurlock module builds it and owns the link.
 aur_helper = "aurlock"
+
+# A machine's own modules that stay out of dot, such as a trial module for
+# packages being tried out. arcus skips the directory where it doesn't exist.
+module_dirs = ["~/.local/share/arcus/modules"]
