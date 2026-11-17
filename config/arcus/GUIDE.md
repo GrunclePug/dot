@@ -36,10 +36,15 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` and `~/code`.
 6. **AUR packages:** the first apply skipped the ones that need review. Once `~/Sync` has synced (the aurlock module already links `~/.config/aurlock/approved` there), run `arcus apply`: what the other machine approved installs without a prompt, and aurlock asks about the rest. Approve nothing before the sync, or Syncthing makes a conflict copy.
-7. **Rust** (dev module): `rustup default stable && rustup component add rust-analyzer`; rustup installs no toolchain by itself, and Neovim uses its rust-analyzer.
-8. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
-9. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
-10. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
+   ```sh
+   sudo install -d -m 700 /etc/samba/credentials
+   printf 'username=grunclepug\npassword=%s\n' "$(read -rsp 'Password: ' p; echo "$p")" | sudo install -m 600 /dev/stdin /etc/samba/credentials/andromeda
+   ```
+8. **Rust** (dev module): `rustup default stable && rustup component add rust-analyzer`; rustup installs no toolchain by itself, and Neovim uses its rust-analyzer.
+9. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
+10. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
+11. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
 
 ## Bring an existing Arch install under arcus
 
@@ -100,6 +105,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `~/.local/state/arcus/host.toml` | This machine: its profile and its own modules (not in dot) |
 | `~/Sync/aurlock/approved` (the aurlock module links `~/.config/aurlock/approved` here) | AUR approvals, shared between the machines (not in dot) |
 | `/etc/arcus/modules/machine` | The machine module (root-owned, not in dot) |
+| `/etc/samba/credentials/andromeda` | The shared drive's login (root-only, not in dot) |
 | `~/.local/share/arcus/modules` | This machine's own modules, such as `trial` for packages being tried out (not in dot) |
 | `~/.config/kanshi/config` | This machine's monitor profiles, written by `wmon` (not in dot) |
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |

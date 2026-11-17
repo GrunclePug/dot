@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount the shared drive on andromeda when /mnt/share is opened
+
+[Automount]
+Where=/mnt/share
+TimeoutIdleSec=10min
+
+[Install]
+WantedBy=multi-user.target

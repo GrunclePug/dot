@@ -1,0 +1,14 @@
+# The shared drive (deep-storage/share on andromeda, the TrueNAS), mounted at
+# /mnt/share over SMB when something opens it. Only share: Nextcloud's data
+# and the backups stay off the desktops. The login is machine-local and
+# root-only, in /etc/samba/credentials/andromeda (username=, password=),
+# made by hand on each machine (GUIDE.md).
+description = "The shared drive on andromeda at /mnt/share (SMB, mounted on use)"
+category    = "system"
+
+[packages]
+pacman = ["cifs-utils"]
+
+[units]
+system = ["mnt-share.automount"]
+now    = true

@@ -1,0 +1,12 @@
+[Unit]
+Description=Shared drive on andromeda (SMB)
+Wants=network-online.target
+After=network-online.target
+
+[Mount]
+What=//andromeda.grunclepug.com/share
+Where=/mnt/share
+Type=cifs
+Options=vers=3.1.1,credentials=/etc/samba/credentials/andromeda,uid=1000,gid=1000,_netdev
+# Away from home (and off the VPN) give up quickly instead of hanging.
+TimeoutSec=10

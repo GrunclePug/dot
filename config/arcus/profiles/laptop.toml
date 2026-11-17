@@ -13,6 +13,7 @@ modules = [
   "stream",
   "apps",
   "syncthing",
+  "share",     # the shared drive on andromeda
   "aurlock",
   "arduino",
   "gaming",
