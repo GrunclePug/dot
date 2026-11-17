@@ -1,9 +1,12 @@
 # Coding agents on a desktop: T3 Code (the launcher in ~/.local/bin points it
 # at the keyring) and what wpo needs. Claude Code and Codex install themselves.
-description = "Coding agents: T3 Code, wpo's dependencies"
+description = "Coding agents: T3 Code, wpo's dependencies, Blender for agents to drive"
 category    = "dev"
 requires    = ["dev", "keyring"]   # T3 Code keeps its connection credentials in the keyring
 
 [packages]
-pacman = ["python-psutil"]   # process queries for wpo (~/builds/wpo)
+pacman = [
+  "python-psutil",   # process queries for wpo (~/builds/wpo)
+  "blender",         # for agents: scenes, renders and assets, headless with blender -b --python
+]
 aur    = ["t3code-bin"]

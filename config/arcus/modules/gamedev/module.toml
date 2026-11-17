@@ -1,6 +1,4 @@
-# Heavy and not always wanted: only the pc profile lists it.
-description = "Godot game engine, Blender"
+# Empty: Godot is gone and Blender moved to agents. Remove this module once
+# every machine has applied that.
+description = "Game engines (empty)"
 category    = "dev"
-
-[packages]
-pacman = ["godot", "blender"]

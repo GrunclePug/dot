@@ -21,7 +21,6 @@ modules = [
   "aurlock",
   "arduino",
   "gaming",
-  "gamedev",
   "cad",
   "peripherals",
 ]
