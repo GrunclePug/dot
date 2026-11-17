@@ -26,4 +26,4 @@ swaybg -i "$HOME/Pictures/wallpaper.png" -m fill &
 waybar -c "$HOME/.config/river/waybar.json" -s "$HOME/.config/river/waybar.css" &
 mako &
 nm-applet --indicator &
-pgrep -x battery_monitor >/dev/null || battery_monitor &
+command -v battery_monitor >/dev/null && { pgrep -x battery_monitor >/dev/null || battery_monitor & }  # laptops only (battery module)
