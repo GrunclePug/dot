@@ -56,8 +56,22 @@ say "dot"
 commit_approvals || die "couldn't commit the approvals"
 pull || die "nothing was upgraded"
 
+# plan_hint: what arcus would do now; never applies anything.
+plan_hint() {
+	say "arcus"
+	if plan=$(arcus plan 2>&1); then
+		grep -q '^Nothing to do' <<<"$plan" && echo "nothing to apply" || echo "dot has changes to apply: run arcus apply"
+	else
+		warn "arcus plan failed:
+$plan"
+	fi
+}
+
 say "pacman"
-sudo pacman -Syu || die "pacman failed; nothing else was upgraded"
+if ! sudo pacman -Syu; then
+	plan_hint
+	die "pacman failed; nothing else was upgraded"
+fi
 
 if command -v rustup >/dev/null; then
 	say "rustup"   # before aurlock: AUR builds use the Rust toolchain
@@ -78,7 +92,7 @@ done
 say "approvals"
 commit_approvals || warn "couldn't commit the approvals"
 if [[ -n $(g rev-list '@{upstream}..HEAD') ]]; then
-	if [[ -n $(g diff --name-only '@{upstream}' HEAD | grep -vxF "$approved") ]]; then
+	if [[ -n $(g log --format= --name-only --diff-merges=first-parent '@{upstream}..HEAD' | grep -vxF -e "$approved" -e '') ]]; then
 		warn "dot has unpushed commits besides the approvals; not pushing. Push them yourself."
 	elif ! err=$(g push -q 2>&1); then
 		if grep -qE 'non-fast-forward|fetch first|rejected' <<<"$err" && pull && g push -q; then
@@ -93,12 +107,5 @@ else
 	echo "nothing to push"
 fi
 
-say "arcus"
-if plan=$(arcus plan 2>&1); then
-	grep -q '^Nothing to do' <<<"$plan" && echo "nothing to apply" || echo "dot has changes to apply: run arcus apply"
-else
-	warn "arcus plan failed:
-$plan"
-fi
-
+plan_hint
 exit "$aur"
