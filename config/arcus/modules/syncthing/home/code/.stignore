@@ -6,3 +6,8 @@
 (?d).gradle
 (?d)node_modules
 (?d)__pycache__
+// Agent work: worktrees and scratch checkouts stay on the machine whose agents
+// use them; the branches reach the other machine through git.
+(?d).worktrees
+(?d)*-worktrees
+(?d).scratch
