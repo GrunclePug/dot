@@ -11,6 +11,200 @@
         "installation_mode": "normal_installed",
         "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
       }
+    },
+    "Preferences": {
+      "accessibility.typeaheadfind.flashBar": {
+        "Value": 0,
+        "Status": "default"
+      },
+      "layout.css.prefers-color-scheme.content-override": {
+        "Value": 0,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_blur": {
+        "Value": "3px",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_color_enabled": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_img": {
+        "Value": "url('https://github.com/sameerasw/my-internet/blob/main/wallpapers/zen-coral-01.jpeg?raw=true')",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_img_enabled": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_img_not_fullscreen": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_bg_opacity": {
+        "Value": "0.8",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_compact_sidebar_width": {
+        "Value": "165px",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_no_shadow": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_notab_img": {
+        "Value": "url('https://github.com/sameerasw/my-internet/blob/main/wave-light.png?raw=true')",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_notab_img_opacity": {
+        "Value": "1",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_notab_img_size": {
+        "Value": "150px",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_tab_switch_anim": {
+        "Value": true,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_trackpad_anim": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_transparency_color": {
+        "Value": "#00000000",
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_transparent_glance_enabled": {
+        "Value": true,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_transparent_sidebar_enabled": {
+        "Value": true,
+        "Status": "default"
+      },
+      "mod.sameerasw.zen_urlbar_zoom_anim": {
+        "Value": false,
+        "Status": "default"
+      },
+      "mod.sameerasw_zen_animations": {
+        "Value": "1",
+        "Status": "default"
+      },
+      "mod.sameerasw_zen_compact_sidebar_type": {
+        "Value": "0",
+        "Status": "default"
+      },
+      "mod.sameerasw_zen_empty_tab_logo": {
+        "Value": "0",
+        "Status": "default"
+      },
+      "mod.sameerasw_zen_light_tint": {
+        "Value": "2",
+        "Status": "default"
+      },
+      "mod.superpins.essentials.grid-count": {
+        "Value": "1",
+        "Status": "default"
+      },
+      "mod.superpins.pins.grid-count": {
+        "Value": "1",
+        "Status": "default"
+      },
+      "privacy.clearOnShutdown_v2.formdata": {
+        "Value": true,
+        "Status": "default"
+      },
+      "sidebar.visibility": {
+        "Value": "hide-on-close",
+        "Status": "default"
+      },
+      "signon.rememberSignons": {
+        "Value": false,
+        "Status": "default"
+      },
+      "theme-better_find_bar-enable_custom_background": {
+        "Value": true,
+        "Status": "default"
+      },
+      "theme.better_find_bar.custom_background": {
+        "Value": "#222222",
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_find_status": {
+        "Value": false,
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_found_matches": {
+        "Value": false,
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_highlight": {
+        "Value": "not_hide",
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_match_case": {
+        "Value": "not_hide",
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_match_diacritics": {
+        "Value": "not_hide",
+        "Status": "default"
+      },
+      "theme.better_find_bar.hide_whole_words": {
+        "Value": "not_hide",
+        "Status": "default"
+      },
+      "theme.better_find_bar.horizontal_position": {
+        "Value": "default",
+        "Status": "default"
+      },
+      "theme.better_find_bar.instant_animations": {
+        "Value": false,
+        "Status": "default"
+      },
+      "theme.better_find_bar.textbox_width": {
+        "Value": "800",
+        "Status": "default"
+      },
+      "theme.better_find_bar.transparent_background": {
+        "Value": true,
+        "Status": "default"
+      },
+      "theme.better_find_bar.vertical_position": {
+        "Value": "default",
+        "Status": "default"
+      },
+      "uc.essentials.gap": {
+        "Value": "Normal",
+        "Status": "default"
+      },
+      "uc.essentials.transition-speed": {
+        "Value": "100ms",
+        "Status": "default"
+      },
+      "uc.essentials.width": {
+        "Value": "Normal",
+        "Status": "default"
+      },
+      "uc.pins.transition-speed": {
+        "Value": "100ms",
+        "Status": "default"
+      },
+      "zen.view.compact.enable-at-startup": {
+        "Value": true,
+        "Status": "default"
+      },
+      "zen.view.window.scheme": {
+        "Value": 0,
+        "Status": "default"
+      },
+      "zen.workspaces.show-workspace-indicator": {
+        "Value": true,
+        "Status": "default"
+      }
     }
   }
 }

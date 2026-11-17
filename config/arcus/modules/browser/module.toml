@@ -1,7 +1,10 @@
 # Zen is the browser (shell scripts open it through `browser`); Helium, a
-# Chromium, is the fallback (`chrome`). Zen installs the extensions in
-# system/etc/zen/policies/policies.json by itself; check about:policies after
-# a change.
+# Chromium, is the fallback (`chrome`) and the browser agents drive. Zen's
+# policy (system/etc/zen/policies/policies.json) installs its extensions and
+# sets its settings, mods' options included, as defaults; check about:policies
+# after a change. Zen Sync carries spaces, folders and pinned tabs; the mods
+# themselves (Better Find Bar, Ghost Tabs, Left close button, Quietify,
+# SuperPins) are installed per profile from Zen's mod store.
 description = "Browsers: Zen with its extensions by policy, Helium as the fallback"
 category    = "apps"
 
