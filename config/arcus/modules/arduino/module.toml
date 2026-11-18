@@ -4,7 +4,7 @@ groups      = ["uucp"]   # access to serial ports
 
 [packages]
 pacman = [
-  "arduino-cli",               # compile, upload, monitor; ~/code/arduino/CLAUDE.md has the workflow
+  "arduino-cli",               # compile, upload, monitor; ~/code/mcu/CLAUDE.md has the workflow
   "arduino-language-server",
   "picocom",                   # serial terminal for troubleshooting: flow control, break, line endings
 ]
