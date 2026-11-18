@@ -2,11 +2,11 @@
   "ExtensionSettings": {
     "fcoeoabgfenejglbffodgkkbkcdhcgfn": {
       "installation_mode": "normal_installed",
-      "update_url": "https://clients2.google.com/service/update2/crx"
+      "update_url": "https://services.helium.imput.net/ext"
     },
     "nngceckbapebfimnlniiiahkandclblb": {
       "installation_mode": "normal_installed",
-      "update_url": "https://clients2.google.com/service/update2/crx"
+      "update_url": "https://services.helium.imput.net/ext"
     }
   }
 }

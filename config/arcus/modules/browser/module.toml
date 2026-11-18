@@ -6,7 +6,8 @@
 # themselves (Better Find Bar, Ghost Tabs, Left close button, Quietify,
 # SuperPins) are installed per profile from Zen's mod store.
 # Helium reads /etc/chromium (nothing else here uses it): its policy installs
-# the Claude extension and Bitwarden, and the native-messaging host lets
+# the Claude extension and Bitwarden through Helium's web-store proxy (its
+# services server; Google's update address isn't rewritten for policies), and the native-messaging host lets
 # `claude --chrome` reach the extension; Claude Code itself only registers
 # for Chrome, Chromium, Brave, Edge and Vivaldi.
 description = "Browsers: Zen with its extensions by policy, Helium as the fallback"
