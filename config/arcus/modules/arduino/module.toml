@@ -1,4 +1,4 @@
-description = "Arduino from the command line: arduino-cli, its language server, and a serial terminal"
+description = "Microcontrollers from the command line: arduino-cli, its language server, a serial terminal, and ST-Link tools"
 category    = "dev"
 groups      = ["uucp"]   # access to serial ports
 
@@ -7,4 +7,5 @@ pacman = [
   "arduino-cli",               # compile, upload, monitor; ~/code/mcu/CLAUDE.md has the workflow
   "arduino-language-server",
   "picocom",                   # serial terminal for troubleshooting: flow control, break, line endings
+  "stlink",                    # st-info and st-flash: an ST-Link on an STM32's SWD pins (printer mainboards and the like)
 ]
