@@ -1,0 +1,11 @@
+description = "Headless T3 Code box: the server profile plus coding agents"
+
+# Stacking order: later modules win a shared file.
+modules = [
+  "base",
+  "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
+  "shell",
+  "net",
+  "dev",
+  "agents",
+]
