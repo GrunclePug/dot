@@ -1,12 +1,12 @@
-# Coding agents on any machine, headless included: what wpo needs and Blender
-# for agents to drive. Claude Code, Codex, agy and, on a headless box, T3 Code
-# (t3) install and update themselves. The desktop app is t3-desktop.
-description = "Coding agents: wpo's dependencies, Blender for agents to drive"
+# Coding agents on a desktop: T3 Code (the launcher in ~/.local/bin points it
+# at the keyring) and what wpo needs. Claude Code and Codex install themselves.
+description = "Coding agents: T3 Code, wpo's dependencies, Blender for agents to drive"
 category    = "dev"
-requires    = ["dev"]
+requires    = ["dev", "keyring"]   # T3 Code keeps its connection credentials in the keyring
 
 [packages]
 pacman = [
   "python-psutil",   # process queries for wpo (~/builds/wpo)
   "blender",         # for agents: scenes, renders and assets, headless with blender -b --python
 ]
+aur    = ["t3code-bin"]

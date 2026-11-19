@@ -15,7 +15,7 @@ How to install a machine from this repository, what to do right after, how to br
    To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
-   - Profile: `laptop` or `pc`, or `t3box` for a headless T3 Code machine (its own section below); add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
+   - Profile: `laptop` or `pc`; add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
    - 32-bit packages: yes (steam needs them).
    - Swap: zram, unless the machine should hibernate. With dotfiles, zram needs the machine module, which the installer writes, so nothing else to pick.
 5. **Review**, then `r` to run; type the disk name to confirm. `s` only saves the plan (`/root/plan.toml`); `arcus-install run /root/plan.toml` runs it later.
@@ -46,20 +46,6 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 10. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
 11. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
 12. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
-
-## A headless T3 box
-
-Profile `t3box`: no desktop, no theme, no 32-bit packages; the T3 Code server runs as a user service and the other machines reach it as a linked environment. Install it as above, then, on the TTY or over SSH:
-
-1. **SSH keys:** from the PC and the laptop, `ssh-copy-id <host>`; from then on work over SSH.
-2. **Git identity and GitHub sign-in** as in "Right after the install" (steps 3 and 4); `gh auth login` gives a code to enter on another device.
-3. **Coding agents:** install Claude Code, Codex and agy as in step 9 and sign each one in; over SSH they print a URL or a device code (`codex login --device-auth`).
-4. **T3 Code:** `npx t3 install` downloads the server into `~/.t3` and puts `t3` in `~/.local/bin`. Then `t3 up --headless` installs it as a user service and asks how the other machines reach it: T3 Connect (sign in with the URL and code it prints) and/or LAN and tailnet with a pairing code (`t3 pair`).
-5. **Keep it running with nobody logged in:** `sudo loginctl enable-linger $USER`; without it the user service stops at logout and doesn't start at boot. `t3 service protect` (asks for sudo) keeps agents under memory pressure from taking the server down.
-6. **Link it** from the PC or the laptop: T3 Code's Settings → Labs → Linked environments, or `t3 environment` there.
-7. **Check:** `t3 status` shows the service and its access; reboot once and check again; `arcus doctor` and `arcus plan` as in step 11.
-
-`update` runs `t3 update` here as well (on a desktop, T3 Code updates itself). It asks before restarting the service, which stops running agent turns.
 
 ## Bring an existing Arch install under arcus
 

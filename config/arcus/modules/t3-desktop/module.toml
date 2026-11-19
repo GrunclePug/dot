@@ -1,8 +1,0 @@
-# The T3 Code desktop app. The launcher in ~/.local/bin points it at the
-# keyring. A headless box runs the t3 server instead (t3 up, GUIDE.md).
-description = "T3 Code desktop app, with its credentials in the keyring"
-category    = "dev"
-requires    = ["agents", "keyring"]   # T3 Code keeps its connection credentials in the keyring
-
-[packages]
-aur = ["t3code-bin"]

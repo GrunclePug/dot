@@ -89,12 +89,6 @@ for t in claude codex agy; do
 	"$t" update || warn "$t update failed"
 done
 
-# The t3 server on a headless box; a desktop's t3 is the app's own CLI.
-if command -v t3 >/dev/null && [[ ! -e /opt/t3code-bin ]]; then
-	say "t3"
-	t3 update || warn "t3 update failed"
-fi
-
 say "approvals"
 commit_approvals || warn "couldn't commit the approvals"
 if [[ -n $(g rev-list '@{upstream}..HEAD') ]]; then
