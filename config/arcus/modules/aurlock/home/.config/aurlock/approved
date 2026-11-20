@@ -1,5 +1,5 @@
 # pkgbase  commit  version  maintainer  approved  network
-solidcraft-bin 6f6d352b5f7efb66b6432ffe960cf9af05194262 0.44.1-1 FrogSnot 2026-11-17 offline
+solidcraft-bin dd7e4669a48ee3ed6af9a90800f023b399ffd1a2 0.45.0-1 FrogSnot 2026-11-19 offline
 protonplus b5feb0aa33b8ec04b8ebe0eb3b0b0a3d10db21e8 0.6.8-2 yochananmarqos 2026-10-28 offline
 zen-browser-bin d3ab7bf02f4ddd0d7fb1f9143637120cdbd918b2 1.24.3b-1 Larvey 2026-11-18 offline
 via-bin 121344f918072d981eadb29330c084972373208a 3.0.0-0 buddyspencer 2026-10-28 offline
