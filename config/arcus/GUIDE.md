@@ -81,6 +81,8 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `arcus update` | Replaces arcus with the latest release, checksum-verified; `doctor` says when one is out |
 | `arcus rebuild <package>` | Builds an own build again although its recipe didn't change |
 | `arcus new` / `rm` / `mv` | Creates, deletes or renames a module |
+| `arcus history` | The latest entries of the state history: each command that changed the machine, with dot's commit (`*`: dot had uncommitted changes) |
+| `arcus rollback <entry>` | Puts the host file's profiles and modules back as of an entry and applies them (shows the plan and asks, like `apply`); it doesn't change dot |
 
 `-n` shows the plan without asking or doing anything.
 
@@ -96,6 +98,7 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 - **AUR packages:** a module's new AUR package gets reviewed at aurlock's prompt during `arcus apply` (`-y` skips it until it's approved). Approving writes into dot: commit `approved` and push, and `git pull` brings it to the other machine. aurlock's README has a cheatsheet.
 - **Firmware updates** (base module): `fwupdmgr refresh`, then `fwupdmgr get-updates` and `fwupdmgr update`; BIOS updates install on the next reboot.
 - **Update arcus:** `arcus update` installs the latest release. On a machine with a clone (`~/code/go/arcus` where you write code, `~/builds/arcus` elsewhere; building needs `go` from the `dev` module): `git pull && make build && sudo make install` in it (build as yourself, install with sudo).
+- **Undo a change:** `arcus history` lists the entries; `arcus rollback <entry>` goes back to the state after that entry, so to undo the latest command, roll back to the one before it. It restores which modules are on, not what they contained: if it says dot has moved on since, check out dot's commit from then (`git -C ~/builds/dot log`) to see the modules as they were.
 - **Release arcus:** bump `VERSION` in `config.mk`, commit, `git tag v<version> && git push origin master v<version>`; CI tests, builds and publishes the release.
 
 ### Where things are
@@ -112,5 +115,6 @@ Then do the steps of "Right after the install" that the machine doesn't have yet
 | `~/.config/theme` | The active theme's shared colours (`colors.sh`, `colors.css`, `Xresources`); each app's own sit next to its config, such as `~/.config/foot/theme.ini` |
 | `~/Pictures/wallpaper.png` | The active theme's wallpaper, if it has one (the file it replaced is kept as `wallpaper.png.orig`) |
 | `~/.local/state/arcus`, `/var/lib/arcus` | What arcus has done (state, ledgers) |
+| `~/.local/state/arcus/history` | The state history, a git repository only you can read (not in dot; `rm -rf` it to drop the history) |
 | `~/.cache/arcus` | Own builds: their packages and sources |
 | `/var/log/arcus-install.log` | The install log |

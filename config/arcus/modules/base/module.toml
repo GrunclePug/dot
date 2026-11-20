@@ -1,10 +1,11 @@
-description = "What every machine gets: networking, SSH, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, rebuild checks, firmware updates, drive health"
+description = "What every machine gets: networking, SSH, git, man pages, a pager, ext4 and NTFS tools, rsync, package cache cleanup, rebuild checks, firmware updates, drive health"
 category    = "system"
 dirs        = ["builds", "code", "Desktop", "Documents", "Downloads", "Music", "Pictures", "Videos"]
 
 [packages]
 pacman = [
   "networkmanager", "man-db", "less", "openssh",
+  "git",              # arcus's state history, and dot itself
   "e2fsprogs",        # ext4 on USB drives, whatever the machine's own filesystems
   "pacman-contrib",   # paccache
   "rebuild-detector", # after each transaction, lists AUR packages and own builds linked against a library that's gone; checkrebuild on demand
