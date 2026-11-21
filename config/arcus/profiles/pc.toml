@@ -11,6 +11,7 @@ modules = [
   "wl-base",
   "keyring",
   "agents",
+  "t3-keyring",
   "stream",
   "apps",
   "browser",

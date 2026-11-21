@@ -1,0 +1,7 @@
+# The T3 Code desktop app keeps its connection credentials in the keyring;
+# the launcher in ~/.local/bin points it there (river gets Chromium's plain
+# text store otherwise, which T3 refuses). For machines someone logs into:
+# the t3box has no keyring and runs only the server.
+description = "T3 Code desktop app with its credentials in the keyring"
+category    = "dev"
+requires    = ["agents", "keyring"]

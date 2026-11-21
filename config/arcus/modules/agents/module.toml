@@ -1,12 +1,14 @@
-# Coding agents on a desktop: T3 Code (the launcher in ~/.local/bin points it
-# at the keyring) and what wpo needs. Claude Code and Codex install themselves.
+# Coding agents on any machine, headless included: T3 Code and what wpo
+# needs. Claude Code, Codex and agy install themselves. On a desktop,
+# t3-keyring points the app at the keyring; a headless box runs only its
+# server (stream-headless and t3-server, GUIDE.md).
 description = "Coding agents: T3 Code, wpo's dependencies, Blender for agents to drive"
 category    = "dev"
-requires    = ["dev", "keyring"]   # T3 Code keeps its connection credentials in the keyring
+requires    = ["dev"]
 
 [packages]
 pacman = [
   "python-psutil",   # process queries for wpo (~/builds/wpo)
   "blender",         # for agents: scenes, renders and assets, headless with blender -b --python
 ]
-aur    = ["t3code-bin"]
+aur    = ["t3code-bin"]   # the desktop app, and the server and t3 CLI it bundles
