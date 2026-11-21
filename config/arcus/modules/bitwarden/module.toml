@@ -1,0 +1,5 @@
+description = "Bitwarden CLI (bw)"
+category    = "apps"
+
+[packages]
+pacman = ["bitwarden-cli"]
