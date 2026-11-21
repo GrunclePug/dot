@@ -1,0 +1,23 @@
+description = "The work laptop: laptop without the personal parts (shared drive, games, Discord, arduino), plus the work tools"
+
+# Stacking order: later modules win a shared file.
+modules = [
+  "base",
+  "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
+  "shell",
+  "net",
+  "dev",
+  "desktop",
+  "wl-base",
+  "keyring",
+  "agents",
+  "t3-keyring",
+  "stream",
+  "apps",
+  "browser",
+  "creative",
+  "syncthing",  # paired only with the work t3box
+  "aurlock",
+  "battery",
+  "work",
+]

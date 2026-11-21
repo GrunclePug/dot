@@ -15,7 +15,7 @@ How to install a machine from this repository, what to do right after, how to br
    To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
-   - Profile: `laptop` or `pc`, or `t3box` for the headless box (its own section below); add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
+   - Profile: `laptop` or `pc`, `work-laptop` for the work laptop, or `t3box` for the headless box (its own section below); add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
    - 32-bit packages: yes (steam needs them).
    - Swap: zram, unless the machine should hibernate. With dotfiles, zram needs the machine module, which the installer writes, so nothing else to pick.
 5. **Review**, then `r` to run; type the disk name to confirm. `s` only saves the plan (`/root/plan.toml`); `arcus-install run /root/plan.toml` runs it later.
