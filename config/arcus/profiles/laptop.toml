@@ -14,7 +14,6 @@ modules = [
   "t3-keyring",
   "stream",
   "apps",
-  "discord",
   "browser",
   "creative",
   "syncthing",

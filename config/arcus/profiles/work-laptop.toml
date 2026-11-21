@@ -1,4 +1,4 @@
-description = "The work laptop: laptop without the personal parts (shared drive, games, Discord, arduino), plus the work tools"
+description = "The work laptop: laptop without the personal parts (shared drive, games and Discord, arduino), plus the work tools"
 
 # Stacking order: later modules win a shared file.
 modules = [

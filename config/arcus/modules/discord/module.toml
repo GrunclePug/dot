@@ -1,5 +1,0 @@
-description = "Discord"
-category    = "apps"
-
-[packages]
-pacman = ["discord"]
