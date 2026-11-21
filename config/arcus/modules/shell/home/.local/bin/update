@@ -90,7 +90,7 @@ t3unit=${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/t3code.service
 if command -v t3 >/dev/null && [[ -r $t3unit ]]; then
 	have=$(sed -n 's|^ExecStart=.*/runtime/versions/\([^/]*\)/t3.*|\1|p' "$t3unit")
 	want=$(t3 --version) want=${want##*v}
-	if [[ $have != "$want" ]]; then
+	if [[ -n $want && $have != "$want" ]]; then
 		say "t3 service"
 		read -rp "Move the T3 service from ${have:-?} to $want? This stops running agent turns. [y/N] " answer
 		if [[ $answer == [yY]* ]]; then

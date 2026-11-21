@@ -34,7 +34,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    git config --global user.email "<email>"
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
-5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone, t3box) and `~/code` (PC, laptop, t3box). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the t3box, which is always on, give both folders *trash can* versioning, kept 30 days.
+5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone, t3box) and `~/code` (PC, laptop, t3box). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the t3box and the PC, give both folders *trash can* versioning, kept 30 days: Syncthing keeps a copy only of what *another* device changed, so the PC (catching up when it wakes) keeps what the t3box's agents delete, and the t3box, always on, keeps what you delete.
 6. **AUR packages:** approvals come with dot (`aurlock/home/.config/aurlock/approved`), so `arcus apply` installs every approved AUR package without asking; aurlock prompts only for packages nobody has approved yet.
 7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
    ```sh
@@ -53,7 +53,7 @@ The always-on headless machine: agents run there through T3 Code, in a stream se
 
 1. **Install** with profile `t3box` and a theme (VNC and screenshots show it); no dwm, no 32-bit packages. Disk encryption asks for its passphrase at boot, so an unattended reboot stops there.
 2. **SSH:** `ssh-copy-id <host>` from the PC and the laptop; everything after this works over SSH.
-3. **The usual steps:** 3 to 9 and 11 of "Right after the install". `gh auth login` and the agents' sign-ins (`claude auth login`, `codex login --device-auth`) give a URL and a code for another device.
+3. **The usual steps:** 3 to 9 and 11 of "Right after the install". Syncthing's GUI is on the box's loopback: `ssh -L 8385:localhost:8384 <host>`, then `http://localhost:8385`. The installer skips AUR packages nobody has approved yet, so run `arcus apply` once and review `wlrctl` at aurlock's prompt. `gh auth login` and the agents' sign-ins (`claude auth login`, `codex login --device-auth`) give a URL and a code for another device.
 4. **Linger**, so the session and T3 run with nobody logged in: `sudo loginctl enable-linger "$USER"`, then `systemctl --user status stream-headless wayvnc`.
 5. **T3 Code:** `t3 up --connect` installs the server as a user service and signs it in to T3 Connect with a URL and a code; turn on approval for new devices, then approve each one with `t3 auth connect-device approve <code>`. Then `t3 browser setup` and `t3 service protect` (they ask for sudo where they need it). So agents find the session, add these lines to `~/.t3/service.env` and `t3 service restart`:
    ```sh

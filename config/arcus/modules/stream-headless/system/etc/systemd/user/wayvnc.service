@@ -6,7 +6,8 @@ StartLimitIntervalSec=0
 
 [Service]
 Environment=WAYLAND_DISPLAY=wayland-stream
-ExecStart=/usr/bin/wayvnc 127.0.0.1 5900
+# With no address it listens on loopback, port 5900.
+ExecStart=/usr/bin/wayvnc
 Restart=always
 RestartSec=2
 
