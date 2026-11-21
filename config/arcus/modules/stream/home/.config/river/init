@@ -10,6 +10,17 @@ while :; do
 	sleep 1
 done &
 
+# A headless session (stream-headless) gets a fixed display name, since
+# river takes the first free wayland-N: wayland-stream, and swm's socket
+# under the name streamctl looks for. Everything started from here on, and
+# what the line below tells systemd, uses it.
+headless=${STREAM_HEADLESS:-}
+if [ -n "$headless" ]; then
+	ln -sfn "$WAYLAND_DISPLAY" "$XDG_RUNTIME_DIR/wayland-stream"
+	ln -sfn "stream-$WAYLAND_DISPLAY.sock" "$XDG_RUNTIME_DIR/stream-wayland-stream.sock"
+	export WAYLAND_DISPLAY=wayland-stream
+fi
+
 # Portals and D-Bus-started apps need to know about this session. Portals
 # left over from an earlier session (dwm, another compositor) keep its
 # XDG_CURRENT_DESKTOP and pick the wrong backend; D-Bus restarts them on
@@ -19,11 +30,13 @@ systemctl --user stop xdg-desktop-portal.service 'xdg-desktop-portal-*.service'
 
 # river closes the bar and wallpaper if they start before swm is running.
 streamctl wait
+# The headless output starts at 1280x720.
+[ -n "$headless" ] && wlr-randr --output HEADLESS-1 --custom-mode 1920x1080
 # Monitor modes and positions, once wmon has saved them on this machine;
 # without them river gives each monitor its preferred mode, often 60 Hz.
 [ -r "${XDG_CONFIG_HOME:-$HOME/.config}/kanshi/config" ] && kanshi &
 swaybg -i "$HOME/Pictures/wallpaper.png" -m fill &
 waybar -c "$HOME/.config/river/waybar.json" -s "$HOME/.config/river/waybar.css" &
 mako &
-nm-applet --indicator &
+[ -z "$headless" ] && nm-applet --indicator &
 command -v battery_monitor >/dev/null && { pgrep -x battery_monitor >/dev/null || battery_monitor & }  # laptops only (battery module)

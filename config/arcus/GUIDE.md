@@ -15,7 +15,7 @@ How to install a machine from this repository, what to do right after, how to br
    To try a build that isn't released, copy both files from `bin/` (after `make build`) onto a second stick, mount it (`mkdir -p /mnt/usb && mount /dev/sdX1 /mnt/usb`) and run `/mnt/usb/arcus-install`.
 4. **Answer the screens.** For this repository:
    - Dotfiles: `https://github.com/grunclepug/dot`, clone to `~/builds/dot` (arcus config stays `config/arcus`).
-   - Profile: `laptop` or `pc`; add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
+   - Profile: `laptop` or `pc`, or `t3box` for the headless box (its own section below); add a theme (`h2o`, `aurora` or `nebula`), `dwm` for an X11 fallback session, and anything else the profile leaves out. `machine` is always on.
    - 32-bit packages: yes (steam needs them).
    - Swap: zram, unless the machine should hibernate. With dotfiles, zram needs the machine module, which the installer writes, so nothing else to pick.
 5. **Review**, then `r` to run; type the disk name to confirm. `s` only saves the plan (`/root/plan.toml`); `arcus-install run /root/plan.toml` runs it later.
@@ -34,7 +34,7 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    git config --global user.email "<email>"
    ```
 4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
-5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone) and `~/code` (PC and laptop). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the PC, which is always on, give both folders *trash can* versioning, kept 30 days.
+5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone, t3box) and `~/code` (PC, laptop, t3box). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the t3box, which is always on, give both folders *trash can* versioning, kept 30 days.
 6. **AUR packages:** approvals come with dot (`aurlock/home/.config/aurlock/approved`), so `arcus apply` installs every approved AUR package without asking; aurlock prompts only for packages nobody has approved yet.
 7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
    ```sh
@@ -46,6 +46,24 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
 10. **Neovim:** the first start installs the plugins and the other language servers; let it finish.
 11. **Check:** `arcus doctor` says no problems, `arcus plan` says nothing to do.
 12. Sign in to the apps (Steam, Discord, Obsidian with its vault in `~/Sync`).
+
+## The t3box
+
+The always-on headless machine: agents run there through T3 Code, in a stream session with no monitor where they can run and screenshot the GUIs they build, and it keeps Syncthing's versions, so the PC can sleep. Nobody logs in at it, so it has no keyring; the T3 server and the CLIs keep their secrets in files.
+
+1. **Install** with profile `t3box` and a theme (VNC and screenshots show it); no dwm, no 32-bit packages. Disk encryption asks for its passphrase at boot, so an unattended reboot stops there.
+2. **SSH:** `ssh-copy-id <host>` from the PC and the laptop; everything after this works over SSH.
+3. **The usual steps:** 3 to 9 and 11 of "Right after the install". `gh auth login` and the agents' sign-ins (`claude auth login`, `codex login --device-auth`) give a URL and a code for another device.
+4. **Linger**, so the session and T3 run with nobody logged in: `sudo loginctl enable-linger "$USER"`, then `systemctl --user status stream-headless wayvnc`.
+5. **T3 Code:** `t3 up --connect` installs the server as a user service and signs it in to T3 Connect with a URL and a code; turn on approval for new devices, then approve each one with `t3 auth connect-device approve <code>`. Then `t3 browser setup` and `t3 service protect` (they ask for sudo where they need it). So agents find the session, add these lines to `~/.t3/service.env` and `t3 service restart`:
+   ```sh
+   WAYLAND_DISPLAY=wayland-stream
+   XDG_SESSION_TYPE=wayland
+   ```
+6. **Watch or take over the session** from another machine: `ssh -L 5900:localhost:5900 <host>`, then a VNC client on `localhost:5900`.
+7. **Check after a reboot**, without logging in: `t3 status`, the units from step 4, and `grim /tmp/shot.png` from an agent's shell.
+
+T3's version is t3code-bin's, from aurlock: `update` moves the service to a new one (it asks, since that stops running agent turns). Never `t3 update`, which installs a release aurlock hasn't seen. For a test GPU, `arcus machine` and `arcus apply` with the card in, and again once it's out.
 
 ## Bring an existing Arch install under arcus
 

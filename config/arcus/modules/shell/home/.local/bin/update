@@ -83,6 +83,24 @@ aurlock upgrade
 aur=$?
 ((aur == 0)) || warn "aurlock upgrade failed (exit $aur); approvals made before the failure are still committed"
 
+# A T3 service (the t3box's) runs its own copy of the t3code-bin version it
+# was installed from; after aurlock brings a new one, point it there. That
+# restarts the server and stops running agent turns, so ask.
+t3unit=${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/t3code.service
+if command -v t3 >/dev/null && [[ -r $t3unit ]]; then
+	have=$(sed -n 's|^ExecStart=.*/runtime/versions/\([^/]*\)/t3.*|\1|p' "$t3unit")
+	want=$(t3 --version) want=${want##*v}
+	if [[ $have != "$want" ]]; then
+		say "t3 service"
+		read -rp "Move the T3 service from ${have:-?} to $want? This stops running agent turns. [y/N] " answer
+		if [[ $answer == [yY]* ]]; then
+			t3 service install || warn "t3 service install failed"
+		else
+			echo "kept $have; run t3 service install later"
+		fi
+	fi
+fi
+
 for t in claude codex agy; do
 	command -v "$t" >/dev/null || continue
 	say "$t"

@@ -1,0 +1,6 @@
+#!/bin/sh
+# t3, the CLI t3code-bin bundles, run by its Electron as plain Node: the
+# launcher the desktop app writes when it first opens (module t3-server).
+export T3CODE_CLI_PATH="$HOME/.local/bin/t3"
+export ELECTRON_RUN_AS_NODE=1
+exec /opt/t3code-bin/t3code /opt/t3code-bin/resources/app.asar/apps/server/dist/bin.mjs "$@"

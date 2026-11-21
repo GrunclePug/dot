@@ -1,0 +1,20 @@
+description = "The t3box: always-on headless dev server for agents, the Syncthing hub"
+
+# Stacking order: later modules win a shared file.
+modules = [
+  "base",
+  "machine",  # /etc/arcus/modules/machine, written by arcus machine or the installer
+  "shell",
+  "net",
+  "dev",
+  "desktop",
+  "wl-base",
+  "agents",
+  "t3-server",        # the t3 command; the server runs as T3's own user service
+  "stream",
+  "stream-headless",  # the session agents run GUIs in, and wayvnc
+  "browser",
+  "syncthing",
+  "share",     # the shared drive on andromeda
+  "aurlock",
+]

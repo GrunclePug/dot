@@ -1,0 +1,20 @@
+# The stream session on a machine with no monitor: river's headless backend
+# as a user service from boot (with linger, GUIDE.md), so agents can run the
+# GUIs they build and look at them, and wayvnc to watch or take over from
+# another machine (ssh -L 5900:localhost:5900). river takes the first free
+# wayland-N; river/init names it wayland-stream and sets the screen size.
+description = "Headless stream session: river with no monitor at boot, wayvnc, input tools for agents"
+category    = "desktop"
+requires    = ["stream"]
+
+[packages]
+pacman = [
+  "wayvnc",
+  "wtype",   # keys for agents (virtual keyboard)
+  "cage",    # a nested compositor for an agent that needs input of its own
+]
+aur    = ["wlrctl"]   # pointer moves and clicks for agents (virtual pointer)
+
+[units]
+user = ["stream-headless.service", "wayvnc.service"]
+now  = true

@@ -1,0 +1,14 @@
+[Unit]
+Description=wayvnc: the headless stream session over VNC, on this machine only
+BindsTo=stream-headless.service
+After=stream-headless.service
+StartLimitIntervalSec=0
+
+[Service]
+Environment=WAYLAND_DISPLAY=wayland-stream
+ExecStart=/usr/bin/wayvnc 127.0.0.1 5900
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=stream-headless.service

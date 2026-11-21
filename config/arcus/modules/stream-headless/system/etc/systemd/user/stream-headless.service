@@ -1,0 +1,12 @@
+[Unit]
+Description=stream session with no monitor (river's headless backend)
+StartLimitIntervalSec=0
+
+[Service]
+Environment=WLR_BACKENDS=headless WLR_LIBINPUT_NO_DEVICES=1 STREAM_HEADLESS=1
+ExecStart=%h/.local/bin/startw
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
