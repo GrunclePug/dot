@@ -1,0 +1,10 @@
+# The work laptop's own tools, on top of the laptop profile (its host file).
+# Its wallpaper stays a local file: use a theme with no wallpaper of its own
+# (not h2o), and .gitignore keeps theme wallpapers out of dot anyway.
+description = "Work tools: LibreOffice, Wireshark, WinBox, sshfs"
+category    = "apps"
+groups      = ["wireshark"]   # captures without root
+
+[packages]
+pacman = ["libreoffice-fresh", "wireshark-qt", "sshfs"]
+aur    = ["winbox"]   # MikroTik RouterOS configurator
