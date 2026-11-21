@@ -2,7 +2,7 @@
 # needs. Claude Code, Codex and agy install themselves. On a desktop,
 # t3-keyring points the app at the keyring; a headless box runs only its
 # server (stream-headless and t3-server, GUIDE.md).
-description = "Coding agents: T3 Code, wpo's dependencies, Blender for agents to drive"
+description = "Coding agents: T3 Code, wpo's dependencies, Blender for agents to drive, cage for GUI tests"
 category    = "dev"
 requires    = ["dev"]
 
@@ -10,5 +10,6 @@ requires    = ["dev"]
 pacman = [
   "python-psutil",   # process queries for wpo (~/builds/wpo)
   "blender",         # for agents: scenes, renders and assets, headless with blender -b --python
+  "cage",            # a headless compositor of its own for each GUI an agent tests
 ]
 aur    = ["t3code-bin"]   # the desktop app, and the server and t3 CLI it bundles

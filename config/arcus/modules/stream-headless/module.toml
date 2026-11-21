@@ -11,8 +11,7 @@ requires    = ["stream"]
 pacman = [
   "wayvnc",
   "wtype",   # keys for agents (virtual keyboard)
-  "cage",    # a nested compositor for an agent that needs input of its own
-]
+]   # cage, for an agent that needs input of its own, comes from the agents module
 aur    = ["wlrctl"]   # pointer moves and clicks for agents (virtual pointer)
 
 [units]
