@@ -6,6 +6,7 @@
 (?d).gradle
 (?d)node_modules
 (?d)__pycache__
+(?d).esphome
 // Agent work: worktrees, scratch checkouts and wpo run state stay on the machine whose agents
 // use them; the branches reach the other machine through git.
 (?d).worktrees
