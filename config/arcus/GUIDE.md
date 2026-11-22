@@ -33,7 +33,11 @@ If the install stops, its log is in `/tmp/arcus-install.log` on the ISO; after a
    git config --global user.name "<name>"
    git config --global user.email "<email>"
    ```
-4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token.
+4. **GitHub sign-in**, once per machine: `gh auth login` (GitHub.com, HTTPS, web browser). Pushing then needs no token. Then the SSH aliases from the private fleet repository:
+   ```sh
+   git clone https://github.com/grunclepug/fleet ~/builds/fleet
+   printf 'Include ~/builds/fleet/ssh_config\n' > ~/.ssh/config
+   ```
 5. **Syncthing**, set up by hand: open `http://127.0.0.1:8384`, add the other devices, and share `~/Sync` (PC, laptop, phone, t3box) and `~/code` (PC, laptop, t3box). Leave *auto accept* off for every device, so a folder another device offers can't land in a stray directory. On the t3box and the PC, give both folders *trash can* versioning, kept 30 days: Syncthing keeps a copy only of what *another* device changed, so the PC (catching up when it wakes) keeps what the t3box's agents delete, and the t3box, always on, keeps what you delete.
 6. **AUR packages:** approvals come with dot (`aurlock/home/.config/aurlock/approved`), so `arcus apply` installs every approved AUR package without asking; aurlock prompts only for packages nobody has approved yet.
 7. **Shared drive** (share module): save the TrueNAS login root-only, then `/mnt/share` mounts when opened:
