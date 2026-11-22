@@ -1,8 +1,12 @@
 # The everyday desktop. home/.config/mimeapps.list sets the default apps; a
 # program that changes a default replaces the link with its own file, which
 # 'arcus doctor' then reports (copy the change back here, or 'arcus apply -f').
-description = "Everyday desktop apps: Thunar, mpv, imv, Obsidian, and the default apps"
+description = "Everyday desktop apps: Thunar, mpv, imv, Obsidian, remote-viewer, and the default apps"
 category    = "apps"
 
 [packages]
-pacman = ["thunar", "tumbler", "mpv", "imv", "obsidian"]   # tumbler: Thunar's thumbnails
+pacman = [
+  "thunar", "tumbler",   # tumbler: Thunar's thumbnails
+  "mpv", "imv", "obsidian",
+  "virt-viewer",         # remote-viewer: Proxmox's SPICE console
+]
