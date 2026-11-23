@@ -1,0 +1,11 @@
+# Unreal Engine 5, Epic's prebuilt Linux release, for MetaHuman Creator (the
+# editor runs it as a plugin since 5.6). Epic only offers the zip behind an
+# Epic account login, so download Linux_Unreal_Engine_<version>.zip from
+# https://www.unrealengine.com/linux into ~/.cache/aurlock/src/unreal-engine-bin/
+# before 'arcus apply'; aurlock builds the package from it. The build needs
+# about three times the zip's size free while it runs.
+description = "Unreal Engine 5 editor (Epic's Linux build), for MetaHuman Creator"
+category    = "apps"
+
+[packages]
+aur = ["unreal-engine-bin"]
