@@ -1,0 +1,4 @@
+#!/bin/sh
+# Unreal Editor (unreal-engine-bin), for MetaHuman Creator. Arguments pass through,
+# such as a .uproject to open.
+exec /opt/unreal-engine/Engine/Binaries/Linux/UnrealEditor "$@"
