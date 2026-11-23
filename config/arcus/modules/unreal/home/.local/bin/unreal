@@ -1,4 +1,7 @@
 #!/bin/sh
 # Unreal Editor (unreal-engine-bin), for MetaHuman Creator. Arguments pass through,
-# such as a .uproject to open.
+# such as a .uproject to open. Its SDL3 window breaks a Wayland protocol rule
+# (a decoration requested after a buffer) and river closes the connection, so
+# it runs through XWayland.
+export SDL_VIDEO_DRIVER=x11 SDL_VIDEODRIVER=x11
 exec /opt/unreal-engine/Engine/Binaries/Linux/UnrealEditor "$@"
