@@ -3,7 +3,9 @@
 # Epic account login, so download Linux_Unreal_Engine_<version>.zip from
 # https://www.unrealengine.com/linux into ~/.cache/aurlock/src/unreal-engine-bin/
 # before 'arcus apply'; aurlock builds the package from it. The build needs
-# about three times the zip's size free while it runs.
+# about three times the zip's size free while it runs. The package owns
+# /opt/unreal-engine, so to keep it on another disk, bind-mount a folder there
+# (an fstab line on that machine); a symlink there makes pacman refuse it.
 description = "Unreal Engine 5 editor (Epic's Linux build), for MetaHuman Creator"
 category    = "apps"
 
