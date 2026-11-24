@@ -1,9 +1,9 @@
 # pkgbase  commit  version  maintainer  approved  network
-solidcraft-bin dd7e4669a48ee3ed6af9a90800f023b399ffd1a2 0.45.0-1 FrogSnot 2026-11-19 offline
+solidcraft-bin 32c5d4ae1a3f09cd7c0296e851ef51d6d934cd1d 0.48.1-1 FrogSnot 2026-11-24 offline
 protonplus b5feb0aa33b8ec04b8ebe0eb3b0b0a3d10db21e8 0.6.8-2 yochananmarqos 2026-10-28 offline
 zen-browser-bin d3ab7bf02f4ddd0d7fb1f9143637120cdbd918b2 1.24.3b-1 Larvey 2026-11-18 offline
 via-bin 121344f918072d981eadb29330c084972373208a 3.0.0-0 buddyspencer 2026-10-28 offline
-orca-slicer-bin 9b82f208370e6934effdd4c69538155194337d57 2.5.1-1 JoveYu 2026-11-17 offline
+orca-slicer-bin 7116e6b48cd17e90e78259b1d7fbfe424b7cf382 2.5.2-1 JoveYu 2026-11-24 offline
 helium-browser-bin 515407619322f3e0fbbd69570fab546642654819 0.22.2.1-1 playleft 2026-11-23 offline
 t3code-bin 524ef61a5288b5e3fbe0f62cc3ddfb478d2b3b04 0.1.11-1 maria_rcks 2026-11-20 offline
 unreal-engine-bin 092bd1cb17abb38fd77f423bd0f27224ccc58534 5.8.2-1 ttc0419 2026-11-22 offline
