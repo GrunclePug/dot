@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Wrapper around Zen Browser. Unreal Engine's Zen Storage Server creates ~/.zen,
+# which triggers Gecko's legacy-home fallback away from ~/.config/zen. When both
+# exist, resolve the default profile from XDG_CONFIG_HOME/zen/profiles.ini and
+# pass --profile explicitly unless the caller already chose a profile action.
+set -euo pipefail
+
+zen_bin=/opt/zen-browser-bin/zen-bin
+
+explicit_profile=0
+for arg in "$@"; do
+	case "$arg" in
+	-P|--profile|-profile|--profile=*|-profile=*|--ProfileManager|-ProfileManager|--CreateProfile|-CreateProfile|-v|--version|-h|--help)
+		explicit_profile=1
+		break
+		;;
+	esac
+done
+
+cfg="${XDG_CONFIG_HOME:-$HOME/.config}/zen"
+if (( ! explicit_profile )) && [[ -d "$HOME/.zen" && -r "$cfg/profiles.ini" ]]; then
+	profile_path=$(awk -F= '
+		function flush_profile() {
+			if (in_profile && p_path != "") {
+				if (first_prof == "") {
+					first_prof = p_path
+					first_rel = p_rel
+				}
+				if (p_def == "1" && prof_def == "") {
+					prof_def = p_path
+					prof_rel = p_rel
+				}
+			}
+		}
+		/^[[:space:]]*([#;]|$)/ { next }
+		/^[[:space:]]*\[/ {
+			flush_profile()
+			sec = $0
+			sub(/^[[:space:]]*\[/, "", sec)
+			sub(/\][[:space:]]*$/, "", sec)
+			in_install = (sec ~ /^Install/)
+			in_profile = (sec ~ /^Profile/)
+			if (in_profile) { p_path = ""; p_rel = "1"; p_def = "0" }
+			next
+		}
+		{
+			key = $1
+			val = substr($0, index($0, "=") + 1)
+			sub(/\r$/, "", val)
+			if (in_install && key == "Default" && install_def == "") {
+				install_def = val
+			} else if (in_profile) {
+				if (key == "Path") p_path = val
+				else if (key == "IsRelative") p_rel = val
+				else if (key == "Default") p_def = val
+			}
+		}
+		END {
+			flush_profile()
+			if (install_def != "") print "1\t" install_def
+			else if (prof_def != "") print prof_rel "\t" prof_def
+			else if (first_prof != "") print first_rel "\t" first_prof
+		}
+	' "$cfg/profiles.ini")
+
+	if [[ -n "$profile_path" ]]; then
+		is_rel=${profile_path%%$'\t'*}
+		rel_or_abs=${profile_path#*$'\t'}
+		if [[ "$is_rel" == "0" ]]; then
+			profile_dir="$rel_or_abs"
+		else
+			profile_dir="$cfg/$rel_or_abs"
+		fi
+		if [[ -d "$profile_dir" ]]; then
+			exec "$zen_bin" --profile "$profile_dir" "$@"
+		fi
+	fi
+fi
+
+exec "$zen_bin" "$@"

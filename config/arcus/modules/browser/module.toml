@@ -1,5 +1,9 @@
 # Zen is the browser (shell scripts open it through `browser`); Helium, a
-# Chromium, is the fallback (`chrome`) and the browser agents drive. Zen's
+# Chromium, is the fallback (`chrome`) and the browser agents drive.
+# system/usr/local/bin/zen-browser (and the zen.desktop override calling it)
+# pins Zen to its XDG profile under ~/.config/zen when ~/.zen also exists,
+# because Unreal Engine's Zen Storage Server creates ~/.zen and triggers
+# Gecko's legacy-home fallback. Zen's
 # policy (system/etc/zen/policies/policies.json) installs its extensions and
 # sets its settings, mods' options included, as defaults; check about:policies
 # after a change. Zen Sync carries spaces, folders and pinned tabs; the mods
